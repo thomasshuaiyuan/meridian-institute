@@ -781,6 +781,13 @@ footer { background: var(--navy); }
   let deletedBP = 0;
   let deletionCount = 0;
 
+  // ── Intro timing ──────────────────────────────────────────
+  const INTRO_RING_DUR   = 0.62;  // ring draws in clockwise, completes just before hit
+  const INTRO_HIT_TIME   = 0.60;  // all bars ignite simultaneously
+  const INTRO_BOOT_START = 1.40;  // boot scan fires
+  const INTRO_BOOT_DUR   = 0.88;  // single fast revolution
+  const INTRO_NORMAL     = 2.10;  // normal idle begins
+
   function buildGenes() {
     genes = GENE_DATA.map(([name, start, end, type]) => {
       const bpSize = end - start;
@@ -799,6 +806,7 @@ footer { background: var(--navy); }
         deleteStartT: 0,
         reinsertAt: 0,
         reinsertStartT: 0,
+        growStart: 0, // unused — burst animation ignites all bars at INTRO_HIT_TIME
       };
     });
   }
@@ -828,9 +836,23 @@ footer { background: var(--navy); }
     ctx.restore();
   }
 
-  // ── Radar sweep ────────────────────────────────────────────
+  // ── Radar sweep (boot-aware) ────────────────────────────────
   function drawScan(cx, cy, outerR, innerR, t) {
-    const angle = (t * 0.38) % (Math.PI * 2) - Math.PI * 0.5;
+    if (t < INTRO_BOOT_START) return;  // silent during ring/bar intro
+
+    let angle, ix;  // ix = intensity multiplier
+    if (t < INTRO_BOOT_START + INTRO_BOOT_DUR) {
+      // Boot scan: one fast bright revolution (easeInOutQuad)
+      const p = (t - INTRO_BOOT_START) / INTRO_BOOT_DUR;
+      const e = p < 0.5 ? 2*p*p : 1 - Math.pow(-2*p+2, 2) / 2;
+      angle = -Math.PI * 0.5 + e * Math.PI * 2;
+      ix = 2.8;
+    } else {
+      // Normal slow sweep
+      const tN = t - (INTRO_BOOT_START + INTRO_BOOT_DUR);
+      angle = (tN * 0.38) % (Math.PI * 2) - Math.PI * 0.5;
+      ix = 1.0;
+    }
     ctx.save();
 
     // Trailing arc fade
@@ -841,7 +863,7 @@ footer { background: var(--navy); }
       const a2 = angle - sweepLen * (1 - (frac + 0.125));
       ctx.beginPath();
       ctx.arc(cx, cy, outerR * 1.02, a1, a2);
-      ctx.strokeStyle = `rgba(77,217,255,${0.012 * frac})`;
+      ctx.strokeStyle = `rgba(77,217,255,${Math.min(0.012 * frac * ix, 0.08)})`;
       ctx.lineWidth = outerR * 0.52 - innerR;
       ctx.stroke();
     }
@@ -850,21 +872,24 @@ footer { background: var(--navy); }
     ctx.beginPath();
     ctx.moveTo(cx + innerR * Math.cos(angle), cy + innerR * Math.sin(angle));
     ctx.lineTo(cx + (outerR + 8) * Math.cos(angle), cy + (outerR + 8) * Math.sin(angle));
-    ctx.strokeStyle = 'rgba(77,217,255,0.28)';
-    ctx.lineWidth = 1.0;
+    ctx.strokeStyle = `rgba(77,217,255,${Math.min(0.28 * ix, 0.85)})`;
+    ctx.lineWidth = ix > 1 ? 1.6 : 1.0;
     ctx.stroke();
 
     // Tip dot
     ctx.beginPath();
-    ctx.arc(cx+(outerR+3)*Math.cos(angle), cy+(outerR+3)*Math.sin(angle), 2.2, 0, Math.PI*2);
-    ctx.fillStyle = 'rgba(77,217,255,0.6)';
+    ctx.arc(cx+(outerR+3)*Math.cos(angle), cy+(outerR+3)*Math.sin(angle),
+            ix > 1 ? 3.5 : 2.2, 0, Math.PI*2);
+    ctx.fillStyle = `rgba(77,217,255,${Math.min(0.6 * ix, 1.0)})`;
     ctx.fill();
 
     ctx.restore();
   }
 
   // ── Region labels (small mono text on outside of ring) ────
-  function drawLabels(cx, cy, outerR) {
+  function drawLabels(cx, cy, outerR, t) {
+    if (t < INTRO_NORMAL) return;
+    const labelAlpha = Math.min(1, (t - INTRO_NORMAL) / 0.8);
     const labels = [
       { text: 'TRL', midBP: 4500 },
       { text: 'UL',  midBP: 63000 },
@@ -874,7 +899,7 @@ footer { background: var(--navy); }
     ];
     ctx.save();
     ctx.font = '8px "Space Mono", monospace';
-    ctx.fillStyle = 'rgba(100,140,200,0.28)';
+    ctx.fillStyle = `rgba(100,140,200,${0.28 * labelAlpha})`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     const labelR = outerR + 18;
@@ -898,32 +923,48 @@ footer { background: var(--navy); }
 
     drawReticle(cx, cy, outerR);
 
-    // ── Genome backbone ring ──
-    ctx.beginPath();
-    ctx.arc(cx, cy, outerR, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(80,130,200,0.20)';
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
+    // ── Genome backbone ring (draws in clockwise, flashes on completion) ──
+    {
+      const ringP = t < INTRO_RING_DUR
+        ? 1 - Math.pow(1 - t / INTRO_RING_DUR, 2.5)
+        : 1;
+      const ringFlash = t >= INTRO_HIT_TIME
+        ? Math.max(0, 1 - (t - INTRO_HIT_TIME) / 0.55) * 0.55
+        : 0;
+      const startA = -Math.PI * 0.5;
+      ctx.beginPath();
+      ctx.arc(cx, cy, outerR, startA, startA + ringP * Math.PI * 2);
+      ctx.strokeStyle = `rgba(80,130,200,${0.20 + ringFlash})`;
+      ctx.lineWidth = ringFlash > 0 ? 1.5 + ringFlash * 2 : 1.5;
+      ctx.stroke();
+    }
 
     // ── Gene blocks ──────────────────────────────────────────
     for (const g of genes) {
       // State transitions (time-based)
       if (g.state === 'deleting') {
         const elapsed = t - g.deleteStartT;
-        g.alpha = Math.max(0, 1.0 - elapsed / 0.55);
-        if (g.alpha <= 0) {
+        const DEL_DUR = 0.72;
+        const delP = Math.min(1, elapsed / DEL_DUR);
+        g._delP = delP;
+        g.alpha = delP < 0.65 ? 1.0 : Math.max(0, 1 - (delP - 0.65) / 0.35);
+        if (delP >= 1) {
           g.state = 'deleted';
           g.alpha = 0;
+          g._delP = 1;
           deletedBP   += g.bpSize;
           deletionCount++;
           g.reinsertAt = t + 9 + Math.random() * 11;
         }
       } else if (g.state === 'reinserting') {
         const elapsed = t - g.reinsertStartT;
-        g.alpha = Math.min(1.0, elapsed / 0.75);
-        if (g.alpha >= 1.0) {
+        const insP = Math.min(1, elapsed / 0.65);
+        g._insP = insP;
+        g.alpha = Math.min(1.0, insP / 0.30);
+        if (insP >= 1) {
           g.state = 'present';
           g.alpha = 1.0;
+          g._insP = 1;
           deletedBP    -= g.bpSize;
           deletionCount--;
         }
@@ -963,9 +1004,25 @@ footer { background: var(--navy); }
 
       const pulse = 0.5 + 0.5 * Math.sin(t * g.pulseSpeed + g.phase);
       const maxDepth = outerR - innerR;
-      const barDepth = g.heightFrac * maxDepth;
+      // Intro: all bars ignite simultaneously when burst hits the ring
+      if (t < INTRO_HIT_TIME) continue;
+      // Deletion: bar retracts inward (height shrinks to 0) with easeInQuint snap
+      // Reinsertion: bar grows outward from 0 with easeOutBack bounce
+      let heightScale = 1.0;
+      if (g.state === 'deleting' && g._delP !== undefined) {
+        const e = g._delP * g._delP * g._delP * g._delP; // easeInQuart — slow then snap
+        heightScale = 1 - e;
+      } else if (g.state === 'reinserting' && g._insP !== undefined) {
+        const p = g._insP;
+        // easeOutBack: overshoot then settle
+        const c1 = 1.70158, c3 = c1 + 1;
+        heightScale = Math.max(0, 1 + c3 * Math.pow(p - 1, 3) + c1 * Math.pow(p - 1, 2));
+      }
+      const barDepth = g.heightFrac * maxDepth * heightScale;
+      if (barDepth < 0.5) { ctx.restore && null; continue; }
       const r1 = outerR;
-      const r2 = outerR - barDepth;
+      const r2 = r1 - barDepth;
+      const _flashAge = t - INTRO_HIT_TIME;
 
       ctx.save();
       ctx.globalAlpha = g.alpha;
@@ -999,6 +1056,19 @@ footer { background: var(--navy); }
         ctx.lineWidth = 0.7;
         ctx.beginPath();
         ctx.arc(cx, cy, r1 + 0.4, a1, a2);
+        ctx.stroke();
+      }
+
+      // Impact flash: bright glow decays after burst hit
+      if (_flashAge < 0.65) {
+        const flashA = (1 - _flashAge / 0.65) * 0.85;
+        const glowCol = g.type === 'essential' ? '220,170,60'
+                      : g.type === 'safe'      ? '120,235,255'
+                      :                          '110,150,220';
+        ctx.beginPath();
+        ctx.arc(cx, cy, r2 - 1, a1, a2);
+        ctx.strokeStyle = `rgba(${glowCol},${flashA})`;
+        ctx.lineWidth = 3.5;
         ctx.stroke();
       }
 
@@ -1040,8 +1110,8 @@ footer { background: var(--navy); }
       ctx.restore();
     }
 
-    // ── Deletion trigger ──────────────────────────────────────
-    if (t > nextDeleteAt) {
+    // ── Deletion trigger (held until normal mode) ────────────
+    if (t > INTRO_NORMAL && t > nextDeleteAt) {
       const candidates = genes.filter(g => g.type === 'safe' && g.state === 'present');
       if (candidates.length > 0) {
         const target = candidates[Math.floor(Math.random() * candidates.length)];
@@ -1055,14 +1125,15 @@ footer { background: var(--navy); }
     drawScan(cx, cy, outerR, innerR, t);
 
     // ── Region labels ─────────────────────────────────────────
-    drawLabels(cx, cy, outerR);
+    drawLabels(cx, cy, outerR, t);
 
     // ── Counter ───────────────────────────────────────────────
     ctx.save();
     ctx.font = '8.5px "Space Mono", monospace';
     ctx.textAlign = 'right';
     const padR = 14, padB = 14;
-    ctx.fillStyle = 'rgba(80,130,200,0.28)';
+    const counterAlpha = t > INTRO_NORMAL ? Math.min(1, (t - INTRO_NORMAL) / 0.8) : 0;
+    ctx.fillStyle = `rgba(80,130,200,${0.28 * counterAlpha})`;
     ctx.fillText('152,261 bp · 74 genes', W - padR, H - padB - 18);
     if (deletionCount > 0) {
       ctx.fillStyle = 'rgba(77,217,255,0.72)';
