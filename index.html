@@ -1133,12 +1133,13 @@ footer { background: var(--navy); }
     ctx.textAlign = 'right';
     const padR = 14, padB = 14;
     const counterAlpha = t > INTRO_NORMAL ? Math.min(1, (t - INTRO_NORMAL) / 0.8) : 0;
-    ctx.fillStyle = `rgba(80,130,200,${0.28 * counterAlpha})`;
-    ctx.fillText('152,261 bp · 74 genes', W - padR, H - padB - 18);
     if (deletionCount > 0) {
-      ctx.fillStyle = 'rgba(77,217,255,0.72)';
+      ctx.fillStyle = `rgba(77,217,255,${0.72 * counterAlpha})`;
       ctx.fillText(`DELETIONS: ${deletionCount}`, W - padR, H - padB - 18);
       ctx.fillText(`ΔBASES: −${deletedBP.toLocaleString()}`, W - padR, H - padB);
+    } else {
+      ctx.fillStyle = `rgba(80,130,200,${0.28 * counterAlpha})`;
+      ctx.fillText('152,261 bp · 74 genes', W - padR, H - padB - 18);
     }
     ctx.restore();
 
