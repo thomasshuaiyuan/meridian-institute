@@ -384,6 +384,92 @@ hr.rule { border: none; border-top: 1px solid var(--rule); }
 .metric-name { font-family: var(--font-display); font-size: 20px; font-weight: 500; color: var(--ink); margin-bottom: 10px; }
 .metric-desc { font-size: 14px; color: var(--ink-light); line-height: 1.65; }
 
+/* ─── INTERACTIVE PROBLEMS ────────────────────────── */
+.problems-tabs {
+  display: flex;
+  gap: 0;
+  margin-top: 48px;
+  border-bottom: 1px solid var(--rule);
+}
+@media (max-width: 680px) { .problems-tabs { flex-direction: column; border-bottom: none; } }
+
+.problem-tab {
+  flex: 1;
+  padding: 20px 20px 18px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-bottom: 2px solid transparent;
+  text-align: left;
+  transition: border-color 0.25s, color 0.25s, background 0.25s;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--ink-light);
+  line-height: 1.4;
+  position: relative;
+  font-family: var(--font-display);
+  user-select: none;
+}
+@media (max-width: 680px) {
+  .problem-tab { border-bottom: 1px solid var(--rule); border-left: 2px solid transparent; padding: 14px 16px; }
+  .problem-tab.p-active { border-left-color: var(--amber); border-bottom-color: var(--rule); }
+}
+.problem-tab:hover { color: var(--ink); background: rgba(128,128,128,0.04); }
+.problem-tab.p-active { color: var(--ink); border-bottom-color: var(--amber); }
+
+.problem-tab .tab-pip {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--amber);
+  margin-bottom: 10px;
+  opacity: 0.4;
+  transition: width 0.25s, opacity 0.25s;
+}
+.problem-tab.p-active .tab-pip { width: 28px; opacity: 1; }
+@media (max-width: 680px) { .problem-tab .tab-pip { display: none; } }
+
+.problem-panel { display: none; padding: 40px 0 32px; }
+.problem-panel.p-active {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 64px;
+  animation: panelFadeIn 0.3s ease forwards;
+}
+@media (max-width: 680px) { .problem-panel.p-active { grid-template-columns: 1fr; gap: 28px; padding: 28px 0; } }
+
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.panel-desc { font-size: 15px; color: var(--ink-light); line-height: 1.75; }
+
+.panel-details { display: flex; flex-direction: column; }
+
+.panel-detail-item {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 16px;
+  align-items: baseline;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--rule);
+}
+.panel-detail-item:first-child { border-top: 1px solid var(--rule); }
+
+.detail-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.10em;
+  color: var(--ink-light);
+  opacity: 0.6;
+  line-height: 1.5;
+  font-family: var(--font-display);
+}
+.detail-value { font-size: 13px; color: var(--ink); line-height: 1.6; }
+
+
 /* ─── TEAM ────────────────────────────────────────── */
 .team-grid {
   display: grid;
@@ -582,26 +668,59 @@ footer { background: var(--navy); }
     <p class="eyebrow">The Work</p>
     <h2 class="section-title" style="max-width:560px">Four problems. One axis.</h2>
 
-    <div class="metrics-row">
-      <div class="metric">
-        <div class="metric-amber"></div>
-        <div class="metric-name">Evolutionary Risk Pricing</div>
-        <div class="metric-desc">Quantifying attenuation barriers, antigenic escape trajectories, and resistance emergence rates across deployed biological countermeasures &#8212; from live-attenuated vaccines to antimicrobial regimens. The target: evolutionary risk priced before a countermeasure enters a regulatory dossier or population programme.</div>
+    <!-- PROBLEMS TABS -->
+    <div class="problems-tabs" role="tablist">
+      <button class="problem-tab p-active" role="tab" aria-selected="true" data-panel="p0">
+        <span class="tab-pip"></span>Evolutionary Risk Pricing
+      </button>
+      <button class="problem-tab" role="tab" aria-selected="false" data-panel="p1">
+        <span class="tab-pip"></span>Observability of Evolutionary Processes
+      </button>
+      <button class="problem-tab" role="tab" aria-selected="false" data-panel="p2">
+        <span class="tab-pip"></span>Immune Landscape Reconstruction
+      </button>
+      <button class="problem-tab" role="tab" aria-selected="false" data-panel="p3">
+        <span class="tab-pip"></span>Spillover &amp; Emergence Inference
+      </button>
+    </div>
+
+    <!-- Panel 0 -->
+    <div class="problem-panel p-active" id="p0" role="tabpanel">
+      <div class="panel-desc">Quantifying attenuation barriers, antigenic escape trajectories, and resistance emergence rates across deployed biological countermeasures &#8212; from live-attenuated vaccines to antimicrobial regimens. The target: evolutionary risk priced before a countermeasure enters a regulatory dossier or population programme.</div>
+      <div class="panel-details">
+        <div class="panel-detail-item"><span class="detail-label">Approach</span><span class="detail-value">Fitness landscape modelling, deep mutational scanning integration, and phylogenetic rate estimation across biologics and antimicrobial regimens</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Output</span><span class="detail-value">Quantitative evolutionary risk score applicable before a countermeasure enters regulatory review or population deployment</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Horizon</span><span class="detail-value">Pre-regulatory &#8212; risk priced earlier than clinical resistance emergence or breakthrough infection data becomes available</span></div>
       </div>
-      <div class="metric">
-        <div class="metric-amber"></div>
-        <div class="metric-name">Observability of Evolutionary Processes</div>
-        <div class="metric-desc">Surveillance effort scales sublinearly with epidemic size (&#945; = 0.716 influenza, 0.819 RSV) &#8212; the world systematically under-observes the largest outbreaks in the least-resourced settings. AI cannot retrospectively surveil the unsampled. Meridian quantifies the observation gap and develops bias-correction frameworks for phylodynamic inference under non-random, sparse sampling.</div>
+    </div>
+
+    <!-- Panel 1 -->
+    <div class="problem-panel" id="p1" role="tabpanel">
+      <div class="panel-desc">Surveillance effort scales sublinearly with epidemic size (&#945;&nbsp;=&nbsp;0.716 influenza, 0.819 RSV) &#8212; the world systematically under-observes the largest outbreaks in the least-resourced settings. AI cannot retrospectively surveil the unsampled. Meridian quantifies the observation gap and develops bias-correction frameworks for phylodynamic inference under non-random, sparse sampling.</div>
+      <div class="panel-details">
+        <div class="panel-detail-item"><span class="detail-label">Finding</span><span class="detail-value">Scaling exponent &#945;&nbsp;=&nbsp;0.716 (influenza) and 0.819 (RSV): largest outbreaks are systematically the most under-observed</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Approach</span><span class="detail-value">Bias-correction frameworks for phylodynamic inference under non-random, geographically stratified sparse sampling</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Stakes</span><span class="detail-value">Unaddressed sampling bias makes phylodynamic clock estimates and R(t) reconstructions unreliable precisely where burden is highest</span></div>
       </div>
-      <div class="metric">
-        <div class="metric-amber"></div>
-        <div class="metric-name">Immune Landscape Reconstruction</div>
-        <div class="metric-desc">The selective environment driving viral evolution is the immune landscape &#8212; and it is least characterised for the populations bearing the highest burden. Population-scale seroprevalence analysis and exposure-history estimation, with the goal of immune landscapes known for all populations, not just well-resourced ones.</div>
+    </div>
+
+    <!-- Panel 2 -->
+    <div class="problem-panel" id="p2" role="tabpanel">
+      <div class="panel-desc">The selective environment driving viral evolution is the immune landscape &#8212; and it is least characterised for the populations bearing the highest burden. Population-scale seroprevalence analysis and exposure-history estimation, with the goal of immune landscapes known for all populations, not just well-resourced ones.</div>
+      <div class="panel-details">
+        <div class="panel-detail-item"><span class="detail-label">Gap</span><span class="detail-value">Immune landscape least characterised in high-burden, low-resource populations &#8212; where selection pressure on viruses is strongest</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Approach</span><span class="detail-value">Population-scale seroprevalence combined with exposure-history inference from phylogenetic and epidemiological data</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Goal</span><span class="detail-value">Immune landscapes known for all populations; antigenic evolution models calibrated to real immune pressure, not proxy from well-surveilled cohorts</span></div>
       </div>
-      <div class="metric">
-        <div class="metric-amber"></div>
-        <div class="metric-name">Spillover &amp; Emergence Inference</div>
-        <div class="metric-desc">Phylodynamic early-warning for zoonotic host-range crossing. HKU-Pasteur geographic position places Meridian at the H5N1 and GBA wildlife&#8211;livestock&#8211;human interface &#8212; where emergence signal arrives first.</div>
+    </div>
+
+    <!-- Panel 3 -->
+    <div class="problem-panel" id="p3" role="tabpanel">
+      <div class="panel-desc">Phylodynamic early-warning for zoonotic host-range crossing. HKU-Pasteur geographic position places Meridian at the H5N1 and GBA wildlife&#8211;livestock&#8211;human interface &#8212; where emergence signal arrives first.</div>
+      <div class="panel-details">
+        <div class="panel-detail-item"><span class="detail-label">Position</span><span class="detail-value">HKU-Pasteur at the H5N1 and Greater Bay Area wildlife&#8211;livestock&#8211;human interface, where emergence signal arrives weeks before wider spread</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Approach</span><span class="detail-value">Phylodynamic models for host-range crossing events; early genomic signatures of adaptive evolution at the human-animal interface</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Signal</span><span class="detail-value">Genomic surveillance provides weeks of early warning for zoonotic spillover &#8212; if inference methods are calibrated to detect it reliably</span></div>
       </div>
     </div>
   </div>
@@ -1233,6 +1352,26 @@ footer { background: var(--navy); }
       startTime = null;
       animId = requestAnimationFrame(draw);
     }
+  });
+})();
+</script>
+
+<script>
+(function() {
+  var tabs = document.querySelectorAll('.problem-tab');
+  var panels = document.querySelectorAll('.problem-panel');
+  tabs.forEach(function(tab) {
+    tab.addEventListener('click', function() {
+      tabs.forEach(function(t) {
+        t.classList.remove('p-active');
+        t.setAttribute('aria-selected', 'false');
+      });
+      panels.forEach(function(p) { p.classList.remove('p-active'); });
+      tab.classList.add('p-active');
+      tab.setAttribute('aria-selected', 'true');
+      var target = document.getElementById(tab.dataset.panel);
+      if (target) target.classList.add('p-active');
+    });
   });
 })();
 </script>
