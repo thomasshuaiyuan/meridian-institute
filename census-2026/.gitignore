@@ -1,6 +1,0 @@
-data/raw/
-data/processed/
-__pycache__/
-*.py[cod]
-.DS_Store
-.env
