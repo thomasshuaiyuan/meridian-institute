@@ -383,6 +383,21 @@ hr.rule { border: none; border-top: 1px solid var(--rule); }
 .metric-amber { width: 32px; height: 2px; background: var(--amber); margin-bottom: 16px; }
 .metric-name { font-family: var(--font-display); font-size: 20px; font-weight: 500; color: var(--ink); margin-bottom: 10px; }
 .metric-desc { font-size: 14px; color: var(--ink-light); line-height: 1.65; }
+.tab-status {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  opacity: 0.55;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 1px 5px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.panel-detail-item.is-planned .detail-value { opacity: 0.75; }
 
 /* ─── INTERACTIVE PROBLEMS ────────────────────────── */
 .problems-tabs {
@@ -680,7 +695,7 @@ footer { background: var(--navy); }
         <span class="tab-pip"></span>Immune Landscape Reconstruction
       </button>
       <button class="problem-tab" role="tab" aria-selected="false" data-panel="p3">
-        <span class="tab-pip"></span>Spillover &amp; Emergence Inference
+        <span class="tab-pip"></span>Spillover &amp; Emergence Inference<span class="tab-status">Planned</span>
       </button>
     </div>
 
@@ -716,11 +731,11 @@ footer { background: var(--navy); }
 
     <!-- Panel 3 -->
     <div class="problem-panel" id="p3" role="tabpanel">
-      <div class="panel-desc">Phylodynamic early-warning for zoonotic host-range crossing. HKU-Pasteur geographic position places Meridian at the H5N1 and GBA wildlife&#8211;livestock&#8211;human interface &#8212; where emergence signal arrives first.</div>
+      <div class="panel-desc">A planned programme direction, not current output. Phylodynamic early-warning for zoonotic host-range crossing. HKU-Pasteur geographic position places Meridian at the H5N1 and Greater Bay Area wildlife&#8211;livestock&#8211;human interface &#8212; where emergence signal arrives first.</div>
       <div class="panel-details">
+        <div class="panel-detail-item is-planned"><span class="detail-label">Status</span><span class="detail-value">Planned. No Meridian output yet &#8212; listed as a programme direction, not a demonstrated capability</span></div>
         <div class="panel-detail-item"><span class="detail-label">Position</span><span class="detail-value">HKU-Pasteur at the H5N1 and Greater Bay Area wildlife&#8211;livestock&#8211;human interface, where emergence signal arrives weeks before wider spread</span></div>
-        <div class="panel-detail-item"><span class="detail-label">Approach</span><span class="detail-value">Phylodynamic models for host-range crossing events; early genomic signatures of adaptive evolution at the human-animal interface</span></div>
-        <div class="panel-detail-item"><span class="detail-label">Signal</span><span class="detail-value">Genomic surveillance provides weeks of early warning for zoonotic spillover &#8212; if inference methods are calibrated to detect it reliably</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Prerequisite</span><span class="detail-value">Surveillance access at the animal&#8211;human interface, and a delay-aware inference stack validated on influenza before extension to host-range crossing</span></div>
       </div>
     </div>
   </div>

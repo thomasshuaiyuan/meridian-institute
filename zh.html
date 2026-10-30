@@ -398,6 +398,21 @@ hr.rule { border: none; border-top: 1px solid var(--rule); }
 .metric-amber { width: 32px; height: 2px; background: var(--amber); margin-bottom: 16px; }
 .metric-name { font-family: var(--font-display); font-size: 18px; font-weight: 500; color: var(--ink); margin-bottom: 10px; letter-spacing: 0.03em; }
 .metric-desc { font-size: 14px; color: var(--ink-light); line-height: 1.8; }
+.tab-status {
+  display: inline-block;
+  margin-left: 8px;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-light);
+  opacity: 0.55;
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 1px 5px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+.panel-detail-item.is-planned .detail-value { opacity: 0.75; }
 
 /* ─── INTERACTIVE PROBLEMS ──── */
 .problems-tabs { display: flex; gap: 0; margin-top: 48px; border-bottom: 1px solid var(--rule); }
@@ -641,7 +656,7 @@ footer { background: var(--navy); }
         <span class="tab-pip"></span>免疫景觀重建
       </button>
       <button class="problem-tab" role="tab" aria-selected="false" data-panel="p3">
-        <span class="tab-pip"></span>溢出與新發推斷
+        <span class="tab-pip"></span>溢出與新發推斷<span class="tab-status">規劃中</span>
       </button>
     </div>
 
@@ -673,11 +688,11 @@ footer { background: var(--navy); }
     </div>
 
     <div class="problem-panel" id="p3" role="tabpanel">
-      <div class="panel-desc">人畜共患病毒宿主域跨越的系統發育動力學預警。港大巴斯德研究中心的地理位置使子午研究院處於 H5N1 與粵港澳大灣區野生動物—畜禽—人類界面的第一線——新發信號最先到達之處。</div>
+      <div class="panel-desc">規劃中的方向，尚非當前產出。人畜共患病毒宿主域跨越的系統發育動力學預警。港大巴斯德研究中心的地理位置使子午研究院處於 H5N1 與粵港澳大灣區野生動物—畜禽—人類界面的第一線——新發信號最先到達之處。</div>
       <div class="panel-details">
+        <div class="panel-detail-item is-planned"><span class="detail-label">狀態</span><span class="detail-value">規劃中。尚無子午研究院產出——列為方向，而非已驗證的能力</span></div>
         <div class="panel-detail-item"><span class="detail-label">位置</span><span class="detail-value">港大巴斯德處於 H5N1 與粵港澳大灣區野生動物—畜禽—人類界面，新發信號提前數週到達</span></div>
-        <div class="panel-detail-item"><span class="detail-label">方法</span><span class="detail-value">宿主域跨越事件的系統發育動力學模型；人畜界面適應性進化的早期基因組特徵識別</span></div>
-        <div class="panel-detail-item"><span class="detail-label">信號</span><span class="detail-value">若推斷方法能夠可靠地捕捉，基因組監測可提供數週的人畜共患病毒溢出早期預警</span></div>
+        <div class="panel-detail-item"><span class="detail-label">前置條件</span><span class="detail-value">人畜界面的監測數據可用性，以及在流感上經驗證的延遲感知推斷架構，方可外推至宿主域跨越</span></div>
       </div>
     </div>
   </div>
