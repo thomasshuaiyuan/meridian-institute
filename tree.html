@@ -166,7 +166,7 @@ canvas.d3:active { cursor: grabbing; }
   const isTip = n => n._kids.length === 0;
 
   // ---------- 2D ----------
-  const ROW = 29, XS = 101, PADX = 20, PADY = 26;
+  const ROW = 42, XS = 116, PADX = 24, PADY = 34;
   const maxDepth = Math.max(...nodes.map(n => n._d));
   const colX = d => PADX + d * XS;
   const TIPX = colX(maxDepth) + 26;
@@ -242,14 +242,14 @@ canvas.d3:active { cursor: grabbing; }
       if (clade) ctx.letterSpacing = "0.16em";
       const txt = clade ? n.n.toUpperCase() : n.n;
       const w = ctx.measureText(txt).width;
-      const bx = { x: p.x + 7, y: p.y - 25, w: w + 8, h: 15 };
+      const bx = { x: p.x + 7, y: p.y - 29, w: w + 8, h: 15 };
       const clash = boxes.some(b => !(bx.x > b.x + b.w || bx.x + bx.w < b.x || bx.y > b.y + b.h || bx.y + bx.h < b.y));
       if (!clash || on || clade) {
         boxes.push(bx);
         ctx.textBaseline = "bottom";
         ctx.fillStyle = clade ? rgba(n._col, 0.9)
           : on ? "rgba(232,238,245,0.97)" : "rgba(140,158,178,0.56)";
-        ctx.fillText(txt, p.x + 7, p.y - 11);
+        ctx.fillText(txt, p.x + 7, p.y - 16);
       }
       if (clade) ctx.letterSpacing = "0px";
       hits.push({ n, x: p.x, y: p.y, r: 11 });
@@ -257,19 +257,43 @@ canvas.d3:active { cursor: grabbing; }
   }
 
   // ---------- 3D radial ----------
-  let yaw = 0.5, pitch = -0.2, dist = 1180, spin = 0.0012, drag = null;
+  let yaw = 0, pitch = -0.08, dist = 1060, spin = 0.0008, drag = null;
   if (matchMedia("(prefers-reduced-motion: reduce)").matches) spin = 0;
   const P3 = new Map();
   (function place3d() {
-    const order = new Map(); allTips.forEach((t, i) => order.set(t, i));
-    const N = allTips.length;
-    const ang = n => { const ts = tipsOf(n); return ts.reduce((s, t) => s + order.get(t), 0) / ts.length; };
+    const nm = v => { const m = Math.hypot(v[0], v[1], v[2]) || 1; return [v[0]/m, v[1]/m, v[2]/m]; };
+    const cr = (a, b) => [a[1]*b[2]-a[2]*b[1], a[2]*b[0]-a[0]*b[2], a[0]*b[1]-a[1]*b[0]];
+
+    // Clades separate mainly along Y. Yaw spins about Y, so the two lobes can never
+    // merge into each other however long it rotates.
+    const base = [nm([-0.86, 0.52, 0]), nm([0.86, -0.52, 0])];
+    const dir = new Map();
+
+    TREE.c.forEach((cl, ci) => {
+      const d = base[ci];
+      const up = Math.abs(d[1]) < 0.9 ? [0, 1, 0] : [1, 0, 0];
+      const ex = nm(cr(up, d)), ey = cr(d, ex);
+      const ts = tipsOf(cl), n = ts.length;
+      ts.forEach((t, k) => {
+        const az = (k / n) * Math.PI * 2;
+        const pol = 0.60 * Math.sqrt((k + 0.6) / n);
+        const s = Math.sin(pol), c = Math.cos(pol);
+        dir.set(t, nm([
+          d[0]*c + (ex[0]*Math.cos(az) + ey[0]*Math.sin(az))*s,
+          d[1]*c + (ex[1]*Math.cos(az) + ey[1]*Math.sin(az))*s,
+          d[2]*c + (ex[2]*Math.cos(az) + ey[2]*Math.sin(az))*s
+        ]));
+      });
+    });
+
+    // every node points along the mean direction of its own tips; radius is depth
     nodes.forEach(n => {
       if (n.s === "root") { P3.set(n, [0, 0, 0]); return; }
-      const a = (ang(n) / N) * Math.PI * 2;
-      const tilt = Math.sin(a * 1.7) * 0.52;   // oscillates about the equator, no drift with depth
-      const r = n._d * 72;
-      P3.set(n, [Math.cos(a) * r * Math.cos(tilt), Math.sin(tilt) * r, Math.sin(a) * r * Math.cos(tilt)]);
+      let v = [0, 0, 0];
+      tipsOf(n).forEach(t => { const d = dir.get(t); v = [v[0]+d[0], v[1]+d[1], v[2]+d[2]]; });
+      v = nm(v);
+      const r = n._d * 62;
+      P3.set(n, [v[0]*r, v[1]*r, v[2]*r]);
     });
   })();
   function proj(p) {
