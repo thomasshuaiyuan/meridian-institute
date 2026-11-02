@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Research phylogeny of the Meridian Institute programme.">
+<title>Research Phylogeny</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* Layout: dark plate. 2D cladogram scrolls; 3D radial orbits. Record docks below. */
+:root {
+  --void: #08101e; --ink: #e8eef5; --ink-soft: #8c9bad; --ink-faint: #4a5a6e;
+  --ice: #4dd9ff; --amber: #d4a855; --rule: rgba(255,255,255,0.09);
+  --display: "Cormorant Garamond", Georgia, serif;
+  --mono: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+body { background: var(--void); color: var(--ink); font-family: var(--display); margin: 0; }
+.page { max-width: 1180px; margin: 0 auto;
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+  padding-block: 26px 40px; }
+.eyebrow { font-family: var(--mono); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(77,217,255,0.55); margin: 0 0 10px; }
+h1 { font-size: clamp(22px, 3vw, 32px); font-weight: 300; margin: 0 0 12px; }
+.question { font-size: 13.5px; line-height: 1.75; color: var(--ink-soft); max-width: 58ch; font-weight: 300; margin: 0 0 8px; }
+.reading { font-family: var(--mono); font-size: 10px; letter-spacing: 0.06em; color: var(--ink-faint); margin: 0 0 22px; line-height: 1.8; }
+.bar { display: flex; flex-wrap: wrap; gap: 16px; align-items: center; margin-bottom: 16px; }
+.toggle { display: flex; border: 1px solid var(--rule); border-radius: 2px; overflow: hidden; }
+.toggle button { font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  background: none; border: none; color: var(--ink-soft); padding: 6px 14px; cursor: pointer; transition: background .15s, color .15s; }
+.toggle button:hover { color: var(--ink); }
+.toggle button[aria-pressed="true"] { background: rgba(77,217,255,0.13); color: var(--ice); }
+.toggle button:focus-visible { outline: 1px solid var(--ice); outline-offset: -1px; }
+.keys { display: flex; flex-wrap: wrap; gap: 13px; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.07em; color: var(--ink-soft); }
+.sw { display: inline-block; width: 7px; height: 7px; margin-right: 6px; vertical-align: 0; border-radius: 50%; }
+.sw.sq { border-radius: 1px; background: #8c9bad; }
+.sw.ring { background: none; border: 1px solid var(--ink-soft); }
+.frame { border: 1px solid var(--rule); border-radius: 2px; position: relative; background: rgba(13,24,41,0.4); }
+.scroll { overflow: auto; max-height: 74vh; }
+.scroll.flat { overflow: hidden; height: 68vh; min-height: 400px; }
+canvas { display: block; }
+canvas.d3 { cursor: grab; touch-action: none; width: 100%; height: 100%; }
+canvas.d3:active { cursor: grabbing; }
+.hint { position: absolute; bottom: 8px; right: 12px; font-family: var(--mono); font-size: 9px; letter-spacing: 0.1em; color: var(--ink-faint); pointer-events: none; }
+.record { margin-top: 20px; min-height: 96px; border-top: 1px solid var(--rule); padding-top: 16px; }
+.record .clade { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 6px; }
+.record h2 { font-size: 20px; font-weight: 300; margin: 0 0 8px; line-height: 1.3; }
+.record p.body { font-size: 13px; line-height: 1.75; color: var(--ink-soft); margin: 0; font-weight: 300; max-width: 68ch; }
+.record .state { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.12em; text-transform: uppercase; margin: 10px 0 0; }
+</style>
+</head>
+<body>
+<nav style="max-width:1180px;margin:0 auto;padding:18px max(20px,env(safe-area-inset-left,0px)) 0;"><a href="index.html" style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:rgba(77,217,255,.55);text-decoration:none;">&larr; Meridian Institute</a></nav>
+<div class="page">
+  <p class="eyebrow">Meridian Institute &middot; Research Phylogeny</p>
+  <h1>One question.</h1>
+  <p class="question">What can be known about a pathogen&rsquo;s evolutionary trajectory before the evidence that would normally settle it exists &mdash; and how much does the structure of the observation system distort that answer?</p>
+  <p class="reading">Squares are finished work; an edge means <em>is built from</em>. How far right a paper sits is how much it stands on.</p>
+
+  <div class="bar">
+    <div class="toggle" role="group" aria-label="View">
+      <button id="b2" aria-pressed="true">2D cladogram</button>
+      <button id="b3" aria-pressed="false">3D</button>
+    </div>
+    <div class="keys">
+      <span><span class="sw" style="background:#4dd9ff"></span>Meridian</span>
+      <span><span class="sw" style="background:#d4a855"></span>Academic</span>
+      <span><span class="sw sq"></span>Done</span>
+      <span><span class="sw ring"></span>In prep</span>
+      <span><span class="sw" style="background:#4a5a6e"></span>Planned</span>
+    </div>
+  </div>
+
+  <div class="frame">
+    <div class="scroll" id="scroll"><canvas id="c"></canvas></div>
+    <div class="hint" id="hint"></div>
+  </div>
+
+  <div class="record" id="rec"></div>
+</div>
+
+<script>
+(function () {
+  const ICE = [77, 217, 255], AMB = [212, 168, 85];
+
+  // n name · s state (done|prep|plan) · b blurb · c children · x second parent (reticulation)
+  const TREE = {
+    n: "Root question", s: "root", b: "What can be known before the evidence that would settle it exists.",
+    c: [
+      { n: "Observation", s: "clade", col: AMB, b: "What the surveillance system permits you to see. Academic programme, HKU-Pasteur.", c: [
+
+        { n: "GISAID delays", s: "done", b: "Hong Kong H3N2 sequences across successive real-time snapshots, with collection-to-deposit delay fitted as a parametric distribution.", c: [
+          { n: "D2 estimator", s: "prep", id: "d2", b: "A delay-aware correction to the birth-death skyline sampling proportion. Validated against known ground truth in simulation.", c: [
+            { n: "Delay bridge", s: "plan", b: "Published delay distributions from other surveillance systems run through the D2 harness to report the coverage each implies." },
+            { n: "Delay-NPE", s: "plan", b: "Amortised neural posterior estimation replacing per-region sampling, which does not scale to a global network.", c: [
+              { n: "Surveillance platform", s: "plan", b: "Phylogenomics joined to case counts inside existing surveillance infrastructure.", c: [
+                { n: "Antigenic R(t)", s: "plan", b: "Variant-stratified transmission accounting for cross-immunity. Feeds vaccine strain selection." }
+              ] }
+            ] }
+          ] }
+        ] },
+
+        { n: "Reporting map", s: "done", b: "Complete enumeration of the architecture linking case reporting to public sequence deposition.", c: [
+          { n: "Sampling exponent", s: "prep", b: "Surveillance effort scales sublinearly with epidemic size, so the largest outbreaks are the least observed.", c: [
+            { n: "Bias x delay", s: "plan", x: "d2", b: "What sublinear sampling does to phylodynamic estimates. Draws on both the exponent and the delay correction — the only point where the two lineages meet." }
+          ] }
+        ] },
+
+        { n: "HK surveillance", s: "done", b: "Influenza and RSV case series for Hong Kong across twelve seasons.", c: [
+          { n: "Onset detection", s: "prep", b: "Retrospective cross-pathogen evaluation of epidemic onset detection from routine surveillance." }
+        ] }
+      ] },
+
+      { n: "Evolution", s: "clade", col: ICE, b: "What a countermeasure will do once deployed. Meridian's own programme.", c: [
+
+        { n: "HSV-2 corpus", s: "done", b: "A genome corpus retrieved and quality-controlled at several times the prior literature baseline.", c: [
+          { n: "ICP0 atlas", s: "done", b: "Coordinate-anchored gene extraction across the corpus, reduced to strain-cluster representatives with per-position conservation.", c: [
+            { n: "Arm-walk", s: "done", b: "Contiguous high-identity extension from a breakpoint, with explicit termination rules and two N-handling conventions.", c: [
+
+              { n: "Barrier metrics", s: "done", b: "Metric definitions and categorical scoring rules, locked before computation, with a numbered deviations log.", c: [
+                { n: "Homology deserts", s: "prep", b: "Deletion multiplicity does not determine recombinational rescue risk. The availability of flanking homology does." },
+                { n: "Reversion barriers", s: "prep", b: "Pre-registered comparative analysis across published live-attenuated candidates.", c: [
+                  { n: "Deployment geography", s: "plan", b: "Where a countermeasure's evolutionary risk depends on local population immunity, and is therefore a question of place rather than of design." }
+                ] }
+              ] },
+
+              { n: "Substrate map", s: "prep", b: "Where in the genome recombination substrate exists at population scale — distinct from where recombination has already been detected.", c: [
+                { n: "Cross-pathogen barriers", s: "plan", b: "The same operator across other live-attenuated platforms, making the method construct-agnostic." },
+                { n: "Repeat resolution", s: "plan", b: "The structural regions short-read assemblies leave unresolved, and what their absence conceals." }
+              ] }
+            ] }
+          ] }
+        ] },
+
+        { n: "Correlates DB", s: "done", b: "Cross-pathogen structured record of vaccine immune readouts against efficacy, including terminated candidates.", c: [
+          { n: "Normalisation audit", s: "prep", b: "Whether the infrastructure needed to compare immune readouts across trials exists at all." }
+        ] },
+
+        { n: "Deletion corpus", s: "done", b: "Published gene-deletion phenotypes, curated by study, mutant, model and phenotype.", c: [
+          { n: "Phenotype atlas", s: "plan", b: "The curation assembled into a structured, queryable resource." }
+        ] }
+      ] }
+    ]
+  };
+
+  // ---- flatten, assign clade colour + depth ----
+  const nodes = [], edges = [], byId = {};
+  (function walk(n, parent, col, depth) {
+    n._col = n.col || col || [160, 180, 200];
+    n._d = depth; n._p = parent; n._kids = n.c || [];
+    nodes.push(n);
+    if (n.id) byId[n.id] = n;
+    if (parent) edges.push({ a: parent, b: n, dash: false });
+    n._kids.forEach(k => walk(k, n, n._col, depth + 1));
+  })(TREE, null, null, 0);
+  nodes.forEach(n => { if (n.x && byId[n.x]) edges.push({ a: byId[n.x], b: n, dash: true }); });
+
+  const tipsOf = n => n._kids.length ? n._kids.flatMap(tipsOf) : [n];
+  const allTips = tipsOf(TREE);
+
+  const cvs = document.getElementById("c"), ctx = cvs.getContext("2d");
+  const scroll = document.getElementById("scroll"), rec = document.getElementById("rec"), hint = document.getElementById("hint");
+  let mode = "2d", sel = null, hov = null, DPR = 1, W = 0, H = 0, hits = [];
+  try { if (localStorage.getItem("mtree-mode") === "3d") mode = "3d"; } catch (e) {}
+  const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+  const isTip = n => n._kids.length === 0;
+
+  // ---------- 2D ----------
+  const ROW = 29, XS = 101, PADX = 20, PADY = 26;
+  const maxDepth = Math.max(...nodes.map(n => n._d));
+  const colX = d => PADX + d * XS;
+  const TIPX = colX(maxDepth) + 26;
+
+  function layout2d() {
+    const pos = new Map(); let i = 0;
+    (function place(n) {
+      if (!n._kids.length) { pos.set(n, { x: colX(n._d), y: PADY + i * ROW + ROW / 2 }); i++; return; }
+      n._kids.forEach(place);
+      const ys = n._kids.map(k => pos.get(k).y);
+      pos.set(n, { x: colX(n._d), y: (Math.min(...ys) + Math.max(...ys)) / 2 });
+    })(TREE);
+    return { pos, h: PADY * 2 + allTips.length * ROW };
+  }
+
+  function draw2d() {
+    const { pos, h } = layout2d();
+    const need = Math.max(h, 320);
+    const wide = Math.max(W, TIPX + 320);
+    cvs.width = wide * DPR; cvs.height = need * DPR;
+    cvs.style.width = wide + "px"; cvs.style.height = need + "px";
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    H = need; ctx.clearRect(0, 0, wide, H); hits = [];
+
+    // branches
+    edges.forEach(e => {
+      const a = pos.get(e.a), b = pos.get(e.b);
+      ctx.save();
+      ctx.strokeStyle = rgba(e.b._col, e.dash ? 0.5 : 0.3);
+      ctx.lineWidth = e.dash ? 1 : 1.2;
+      if (e.dash) ctx.setLineDash([3, 4]);
+      ctx.beginPath();
+      if (e.dash) { ctx.moveTo(a.x, a.y); ctx.bezierCurveTo(a.x + 40, a.y, b.x - 40, b.y, b.x, b.y); }
+      else { ctx.moveTo(a.x, a.y); ctx.lineTo(a.x, b.y); ctx.lineTo(b.x, b.y); }
+      ctx.stroke(); ctx.restore();
+    });
+
+    // nodes
+    nodes.forEach(n => {
+      const p = pos.get(n), on = sel === n || hov === n, c = n._col;
+      ctx.save();
+      if (on) { ctx.shadowBlur = 13; ctx.shadowColor = rgba(c, 0.85); }
+      else if (n.s === "prep" || n.s === "clade") { ctx.shadowBlur = 7; ctx.shadowColor = rgba(c, 0.3); }
+      if (n.s === "root") { ctx.beginPath(); ctx.arc(p.x, p.y, 3.2, 0, 7); ctx.fillStyle = "rgba(200,215,230,0.5)"; ctx.fill(); }
+      else if (n.s === "clade") { ctx.beginPath(); ctx.arc(p.x, p.y, 4.6, 0, 7); ctx.fillStyle = rgba(c, 0.9); ctx.fill(); }
+      else if (n.s === "done") { ctx.fillStyle = rgba(c, on ? 0.95 : 0.6); ctx.fillRect(p.x - 3.2, p.y - 3.2, 6.4, 6.4); }
+      else if (n.s === "prep") { ctx.beginPath(); ctx.arc(p.x, p.y, 3.9, 0, 7); ctx.strokeStyle = rgba(c, on ? 1 : 0.9); ctx.lineWidth = 1.35; ctx.stroke(); }
+      else { ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, 7); ctx.fillStyle = rgba(c, on ? 0.85 : 0.38); ctx.fill(); }
+      ctx.restore();
+    });
+
+    // tip labels at their own node — depth stays visible, and one row holds one tip, so they cannot collide
+    const boxes = [];
+    allTips.forEach(t => {
+      const p = pos.get(t), on = sel === t || hov === t;
+      ctx.font = '300 14.5px "Cormorant Garamond", Georgia, serif';
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = on ? "rgba(232,238,245,0.99)"
+        : t.s === "prep" ? "rgba(232,238,245,0.8)" : "rgba(232,238,245,0.5)";
+      ctx.fillText(t.n, p.x + 11, p.y + 0.5);
+      const w = ctx.measureText(t.n).width;
+      hits.push({ n: t, x: p.x, y: p.y, r: 9, lx: p.x - 9, lw: w + 24 });
+    });
+
+    // internal labels — above the branch, standard convention; suppress on collision
+    const internal = nodes.filter(n => n._kids.length && n.s !== "root");
+    // clades and the focused node claim their space first, so a bypass can't collide
+    const prio = n => (n.s === "clade" ? 0 : (sel === n || hov === n) ? 1 : 2);
+    internal.sort((a, b) => prio(a) - prio(b));
+    internal.forEach(n => {
+      const p = pos.get(n), on = sel === n || hov === n, clade = n.s === "clade";
+      ctx.font = clade ? '400 10px "IBM Plex Mono", monospace' : '400 11px "IBM Plex Mono", monospace';
+      if (clade) ctx.letterSpacing = "0.16em";
+      const txt = clade ? n.n.toUpperCase() : n.n;
+      const w = ctx.measureText(txt).width;
+      const bx = { x: p.x + 7, y: p.y - 25, w: w + 8, h: 15 };
+      const clash = boxes.some(b => !(bx.x > b.x + b.w || bx.x + bx.w < b.x || bx.y > b.y + b.h || bx.y + bx.h < b.y));
+      if (!clash || on || clade) {
+        boxes.push(bx);
+        ctx.textBaseline = "bottom";
+        ctx.fillStyle = clade ? rgba(n._col, 0.9)
+          : on ? "rgba(232,238,245,0.97)" : "rgba(140,158,178,0.56)";
+        ctx.fillText(txt, p.x + 7, p.y - 11);
+      }
+      if (clade) ctx.letterSpacing = "0px";
+      hits.push({ n, x: p.x, y: p.y, r: 11 });
+    });
+  }
+
+  // ---------- 3D radial ----------
+  let yaw = 0.5, pitch = -0.2, dist = 1180, spin = 0.0012, drag = null;
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) spin = 0;
+  const P3 = new Map();
+  (function place3d() {
+    const order = new Map(); allTips.forEach((t, i) => order.set(t, i));
+    const N = allTips.length;
+    const ang = n => { const ts = tipsOf(n); return ts.reduce((s, t) => s + order.get(t), 0) / ts.length; };
+    nodes.forEach(n => {
+      if (n.s === "root") { P3.set(n, [0, 0, 0]); return; }
+      const a = (ang(n) / N) * Math.PI * 2;
+      const tilt = Math.sin(a * 1.7) * 0.52;   // oscillates about the equator, no drift with depth
+      const r = n._d * 72;
+      P3.set(n, [Math.cos(a) * r * Math.cos(tilt), Math.sin(tilt) * r, Math.sin(a) * r * Math.cos(tilt)]);
+    });
+  })();
+  function proj(p) {
+    const cy = Math.cos(yaw), sy = Math.sin(yaw);
+    let x = p[0]*cy - p[2]*sy, z = p[0]*sy + p[2]*cy;
+    const cp = Math.cos(pitch), sp = Math.sin(pitch);
+    let y = p[1]*cp - z*sp; z = p[1]*sp + z*cp;
+    const f = 760 / (dist + z);
+    return { x: W/2 + x*f, y: H/2 + y*f, s: f, z };
+  }
+  function draw3d() {
+    ctx.clearRect(0, 0, W, H); hits = [];
+    edges.forEach(e => {
+      const a = proj(P3.get(e.a)), b = proj(P3.get(e.b));
+      ctx.save();
+      ctx.strokeStyle = rgba(e.b._col, Math.max(0.06, (e.dash ? 0.4 : 0.26) - b.z / 3400));
+      ctx.lineWidth = e.dash ? 1 : 1.1;
+      if (e.dash) ctx.setLineDash([3, 4]);
+      ctx.beginPath(); ctx.moveTo(a.x, a.y); ctx.lineTo(b.x, b.y); ctx.stroke(); ctx.restore();
+    });
+    const sorted = nodes.slice().sort((p, q) => proj(P3.get(q)).z - proj(P3.get(p)).z);
+    sorted.forEach(n => {
+      const p = proj(P3.get(n)), near = Math.max(0.2, Math.min(1, 1.2 - p.z / 1400));
+      const on = sel === n || hov === n, c = n._col, k = Math.max(0.6, p.s * 1.5);
+      ctx.save();
+      if (on) { ctx.shadowBlur = 15; ctx.shadowColor = rgba(c, 0.85); }
+      else if (n.s === "prep" || n.s === "clade") { ctx.shadowBlur = 8; ctx.shadowColor = rgba(c, 0.3); }
+      if (n.s === "root") { ctx.beginPath(); ctx.arc(p.x, p.y, 3.6*k, 0, 7); ctx.fillStyle = `rgba(200,215,230,${0.55*near})`; ctx.fill(); }
+      else if (n.s === "clade") { ctx.beginPath(); ctx.arc(p.x, p.y, 5*k, 0, 7); ctx.fillStyle = rgba(c, 0.9*near); ctx.fill(); }
+      else if (n.s === "done") { ctx.fillStyle = rgba(c, (on ? 0.95 : 0.6)*near); ctx.fillRect(p.x - 3.2*k, p.y - 3.2*k, 6.4*k, 6.4*k); }
+      else if (n.s === "prep") { ctx.beginPath(); ctx.arc(p.x, p.y, 4*k, 0, 7); ctx.strokeStyle = rgba(c, 0.9*near); ctx.lineWidth = 1.3; ctx.stroke(); }
+      else { ctx.beginPath(); ctx.arc(p.x, p.y, 2.6*k, 0, 7); ctx.fillStyle = rgba(c, 0.36*near); ctx.fill(); }
+      ctx.restore();
+      hits.push({ n, x: p.x, y: p.y, r: 13 });
+    });
+    const boxes = [];
+    sorted.slice().reverse().forEach(n => {
+      if (n.s === "root") return;
+      const p = proj(P3.get(n)), near = Math.max(0.2, Math.min(1, 1.2 - p.z / 1400));
+      const on = sel === n || hov === n, clade = n.s === "clade";
+      if (!on && !clade && near < 0.56) return;
+      ctx.font = clade ? '400 10.5px "IBM Plex Mono", monospace'
+        : n.s === "done" ? '400 11px "IBM Plex Mono", monospace'
+        : '300 14px "Cormorant Garamond", Georgia, serif';
+      const txt = clade ? n.n.toUpperCase() : n.n;
+      const w = ctx.measureText(txt).width;
+      const bx = { x: p.x + 10, y: p.y - 8, w: w + 6, h: 16 };
+      if (!on && !clade && boxes.some(b => !(bx.x > b.x+b.w || bx.x+bx.w < b.x || bx.y > b.y+b.h || bx.y+bx.h < b.y))) return;
+      boxes.push(bx);
+      if (clade) ctx.letterSpacing = "0.16em";
+      ctx.textBaseline = "middle";
+      ctx.fillStyle = clade ? rgba(n._col, 0.88)
+        : n.s === "done" ? `rgba(160,176,194,${(on ? 0.95 : 0.62)*near})`
+        : `rgba(232,238,245,${on ? 0.98 : 0.62*near})`;
+      ctx.fillText(txt, p.x + 10, p.y);
+      ctx.letterSpacing = "0px";
+    });
+  }
+
+  // ---------- shared ----------
+  function render() { mode === "2d" ? draw2d() : draw3d(); }
+  function frame() { if (mode === "3d") { if (!drag) yaw += spin; draw3d(); } requestAnimationFrame(frame); }
+  function pick(mx, my) {
+    let best = null, bd = 1e9;
+    hits.forEach(h => {
+      const ok = h.lx !== undefined
+        ? ((mx > h.lx && mx < h.lx + h.lw) || Math.hypot(h.x - mx, h.y - my) < h.r) && Math.abs(my - h.y) < 12
+        : Math.hypot(h.x - mx, h.y - my) < h.r;
+      if (ok) { const d = Math.hypot(h.x - mx, h.y - my); if (d < bd) { bd = d; best = h.n; } }
+    });
+    return best;
+  }
+  const STATE = { done: "Complete", prep: "In preparation", plan: "Planned" };
+  function show(n) {
+    if (!n) { rec.innerHTML = ""; return; }
+    let chain = [], p = n._p;
+    while (p && p.s !== "root") { chain.unshift(p.n); p = p._p; }
+    const st = STATE[n.s] ? `<p class="state" style="color:${rgba(n._col, 0.75)}">${STATE[n.s]}</p>` : "";
+    rec.innerHTML = `<p class="clade">${chain.join(" &rsaquo; ") || "Root"}</p><h2>${n.n}</h2><p class="body">${n.b}</p>${st}`;
+  }
+  function setMode(m) {
+    mode = m;
+    try { localStorage.setItem("mtree-mode", m); } catch (e) {}
+    document.getElementById("b2").setAttribute("aria-pressed", String(m === "2d"));
+    document.getElementById("b3").setAttribute("aria-pressed", String(m === "3d"));
+    scroll.classList.toggle("flat", m === "3d");
+    cvs.classList.toggle("d3", m === "3d");
+    hint.textContent = m === "3d" ? "drag to rotate · scroll to zoom" : "click a node";
+    W = scroll.clientWidth;
+    if (m === "3d") { H = scroll.clientHeight; cvs.width = W*DPR; cvs.height = H*DPR;
+      cvs.style.width = W+"px"; cvs.style.height = H+"px"; ctx.setTransform(DPR,0,0,DPR,0,0); }
+    render();
+  }
+  document.getElementById("b2").addEventListener("click", () => setMode("2d"));
+  document.getElementById("b3").addEventListener("click", () => setMode("3d"));
+  cvs.addEventListener("pointerdown", e => { if (mode !== "3d") return; cvs.setPointerCapture(e.pointerId); drag = { x: e.clientX, y: e.clientY, moved: 0 }; });
+  cvs.addEventListener("pointermove", e => {
+    const r = cvs.getBoundingClientRect();
+    if (drag) { const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+      drag.moved += Math.abs(dx) + Math.abs(dy); yaw += dx * 0.006;
+      pitch = Math.max(-1.2, Math.min(1.2, pitch + dy * 0.005));
+      drag.x = e.clientX; drag.y = e.clientY; return; }
+    const h = pick(e.clientX - r.left, e.clientY - r.top);
+    if (h !== hov) { hov = h; cvs.style.cursor = h ? "pointer" : (mode === "3d" ? "grab" : "default"); render(); }
+  });
+  cvs.addEventListener("pointerup", e => {
+    const r = cvs.getBoundingClientRect();
+    if (!drag || drag.moved < 6) { const n = pick(e.clientX - r.left, e.clientY - r.top); if (n) { sel = n; show(n); render(); } }
+    drag = null;
+  });
+  cvs.addEventListener("pointerleave", () => { if (hov) { hov = null; render(); } });
+  cvs.addEventListener("wheel", e => { if (mode !== "3d") return; e.preventDefault(); dist = Math.max(460, Math.min(1700, dist + e.deltaY * 0.9)); }, { passive: false });
+  window.addEventListener("resize", () => { DPR = Math.min(2, devicePixelRatio || 1); setMode(mode); });
+
+  DPR = Math.min(2, devicePixelRatio || 1);
+  sel = nodes.find(n => n.id === "d2");
+  show(sel); setMode(mode); frame();
+})();
+</script>
+</body>
+</html>
