@@ -413,6 +413,14 @@ hr.rule { border: none; border-top: 1px solid var(--rule); }
   white-space: nowrap;
 }
 .panel-detail-item.is-planned .detail-value { opacity: 0.75; }
+.tab-status.is-flag {
+  color: var(--amber);
+  opacity: 1;
+  border-color: rgba(184,131,42,0.4);
+  background: rgba(184,131,42,0.07);
+}
+.tab-status.is-second { opacity: 0.8; }
+
 
 /* ─── INTERACTIVE PROBLEMS ──── */
 .problems-tabs { display: flex; gap: 0; margin-top: 48px; border-bottom: 1px solid var(--rule); }
@@ -566,6 +574,8 @@ footer { background: var(--navy); }
     </a>
     <ul class="nav-links">
       <li><a href="#research">研究</a></li>
+      <li><a href="program-zh.html">研究綱領</a></li>
+      <li><a href="tree.html">研究譜系</a></li>
       <li><a href="#team">團隊</a></li>
       <li><a href="#publications">發表</a></li>
       <li><a href="#join">同行者</a></li>
@@ -579,7 +589,7 @@ footer { background: var(--navy); }
 <section class="hero">
   <div class="hero-split">
     <div class="hero-text">
-      <p class="hero-eyebrow">獨立計算研究機構 · 香港</p>
+      <p class="hero-eyebrow">病原體進化計算研究 · 香港</p>
       <h1 class="hero-title">人工智能完成了對生命科學的降維。<em>子午研究院研究那些無法被降維的問題。</em></h1>
 
       <div class="hero-data">
@@ -643,56 +653,58 @@ footer { background: var(--navy); }
 <section class="band band--alt">
   <div class="band-inner">
     <p class="eyebrow">我們的工作</p>
-    <h2 class="section-title" style="max-width:480px">四個問題。一條軸線。</h2>
+    <h2 class="section-title" style="max-width:560px">一個旗艦。一個第二應用。兩個方向。</h2>
+    <p class="panel-desc" style="max-width:40em; margin:18px 0 6px">框架本身才是研究綱領，病原體只是它的演示。四條線之下是同一層方法基礎——觀測偏差量化、延遲感知的系統發育動力學估計、以及設定曲線分析——正是這一層使上述任何主張成為可核查的。<a href="program-zh.html" style="color:var(--amber); text-decoration:none; border-bottom:1px solid rgba(184,131,42,0.35)">閱讀完整研究綱領 &rarr;</a></p>
 
     <div class="problems-tabs" role="tablist">
       <button class="problem-tab p-active" role="tab" aria-selected="true" data-panel="p0">
-        <span class="tab-pip"></span>進化風險定價
+        <span class="tab-pip"></span>回覆突變<span class="tab-status is-flag">旗艦</span>
       </button>
       <button class="problem-tab" role="tab" aria-selected="false" data-panel="p1">
-        <span class="tab-pip"></span>進化過程的可觀測性
+        <span class="tab-pip"></span>抗原逃逸<span class="tab-status is-second">第二應用</span>
       </button>
       <button class="problem-tab" role="tab" aria-selected="false" data-panel="p2">
-        <span class="tab-pip"></span>免疫景觀重建
+        <span class="tab-pip"></span>耐藥性<span class="tab-status">方向</span>
       </button>
       <button class="problem-tab" role="tab" aria-selected="false" data-panel="p3">
-        <span class="tab-pip"></span>溢出與新發推斷<span class="tab-status">規劃中</span>
+        <span class="tab-pip"></span>溢出<span class="tab-status">方向</span>
       </button>
     </div>
 
     <div class="problem-panel p-active" id="p0" role="tabpanel">
-      <div class="panel-desc">橫跨已部署生物對抗措施的進化風險量化——回覆突變障礙指標、抗原逃逸軌跡、耐藥性出現速率。從減毒活疫苗到抗菌素方案，目標是在候選藥物進入監管申報或人罣項目之前完成進化風險定價。</div>
+      <div class="panel-desc"><strong style="font-weight:500; color:var(--ink)">經工程改造的減毒活疫苗，是否會一直保持減毒狀態</strong>——在生產傳代中、在受種者體內、在傳播鏈上？今天這個問題靠斷言回答，其依據是在與實際部署環境並不相似的細胞基質中所做的傳代研究。子午研究院的旗艦工作，是把它轉化為一個預註冊的量化估計量，並建立在部署之後核查該答案的現場監測科學。</div>
       <div class="panel-details">
-        <div class="panel-detail-item"><span class="detail-label">方法</span><span class="detail-value">適應度景觀建模、深度突變掃描整合、跨生物製品與抗菌素方案的系統發育速率估算</span></div>
-        <div class="panel-detail-item"><span class="detail-label">產出</span><span class="detail-value">可在對抗措施進入監管審查或人罣部署前應用的量化進化風險評分</span></div>
-        <div class="panel-detail-item"><span class="detail-label">時間點</span><span class="detail-value">監管前——在臨床耐藥性出現或突破性感染數據可獲得之前完成風險定價</span></div>
+        <div class="panel-detail-item"><span class="detail-label">設計階段</span><span class="detail-value">全基因組尺度的保守性分析、適應度景觀先驗、深度突變掃描整合，合成為針對任一工程化缺失的回覆突變障礙評分——奠基分析基於單純皰疹病毒 2 型臨牀基因組集，橫跨五個已發表疫苗構建體</span></div>
+        <div class="panel-detail-item"><span class="detail-label">部署階段</span><span class="detail-value">把基因組監測機制——基因組 R(t)、譜系更替、延遲感知校正——延伸至現場序列，用以偵測疫苗譜系的傳播與回覆突變，並將其與輸入性傳播區分開</span></div>
+        <div class="panel-detail-item"><span class="detail-label">系統階段</span><span class="detail-value">以設定曲線與觀測偏差機制作為統計骨架：需要多少基因組信號、跨越多長窗口，「這一譜系正在進化」才成為監管者可據以行動的主張</span></div>
+        <div class="panel-detail-item"><span class="detail-label">監管切入點</span><span class="detail-value">世衞組織與美國 FDA 的指導文件都邀請廠商提出量化的穩定性判據，卻都未規定計算它的框架。目標產出是一個可進入監管前申報材料的回覆突變風險評分</span></div>
       </div>
     </div>
 
     <div class="problem-panel" id="p1" role="tabpanel">
-      <div class="panel-desc">監測力度随疫情規模呈亞線性增長（流感 α = 0.716，RSV α = 0.819）——世界系統性地對資源最匈乏地區最大規模的疫情存在低監測。人工智能無法回溯性地監測未被採樣的罣體。子午研究院量化觀測缺口，並針對非隨機稀疏採樣下的系統發育動力學推斷開發偏差校正框架。</div>
+      <div class="panel-desc">同一套機制，反方向運行：不是問疫苗病毒不能走到哪裏，而是問野毒株無處可藏之處。保守性分析、基因組 R(t) 與譜系更替，構成用於毒株更新決策（流感組分、變異株更新疫苗）的逃逸潛勢估計器——這類決策今天主要依賴抗原距離的經驗規則。</div>
       <div class="panel-details">
-        <div class="panel-detail-item"><span class="detail-label">發現</span><span class="detail-value">縮放指數 α = 0.716（流感）、0.819（RSV）：最大規模疫情恰恰是觀測最不足的</span></div>
-        <div class="panel-detail-item"><span class="detail-label">方法</span><span class="detail-value">針對非隨機、地理分層稀疏採樣下系統發育動力學推斷的偏差校正框架</span></div>
-        <div class="panel-detail-item"><span class="detail-label">意義</span><span class="detail-value">未解決的採樣偏差使系統發育時鐘估計和 R(t) 重建在疾病負擅最高的地區恰恰最不可靠</span></div>
+        <div class="panel-detail-item"><span class="detail-label">定位</span><span class="detail-value">第二應用，刻意排在旗艦之後。該賽道更為擁擠，而方法是共用的，因此旗艦一旦成立，這一步的邊際成本很低</span></div>
+        <div class="panel-detail-item"><span class="detail-label">路徑</span><span class="detail-value">經由已在進行的監測工作，連接至世衞組織的疫苗組分網絡</span></div>
+        <div class="panel-detail-item"><span class="detail-label">前置條件</span><span class="detail-value">旗艦的保守性與障礙機制，須先在一個真值可復原的系統上得到驗證</span></div>
       </div>
     </div>
 
     <div class="problem-panel" id="p2" role="tabpanel">
-      <div class="panel-desc">驅動病毒進化的選擩環境是免疫景觀——而承擖最高疾病負擅的人罣恰恰是其中刻畫最少的。人罣規模血清流行率分析與暴露史估算，目標是使所有人罣——而非僅條件優越的人罣——的免疫景觀得到完整描繪。</div>
+      <div class="panel-desc">耐藥性沿着可測量的進化軌跡攀升，而且早於臨牀出現。系統發育動力學估計在抗微生物耐藥性上的應用尚不充分；把框架推廣到那裏，正好檢驗它究竟是一個框架，還是僅僅一套疫苗方法。</div>
       <div class="panel-details">
-        <div class="panel-detail-item"><span class="detail-label">缺口</span><span class="detail-value">高疾病負擅、低資源人罣的免疫景觀刻畫最少——恰恰是病毒所受選擩壓力最強之處</span></div>
-        <div class="panel-detail-item"><span class="detail-label">方法</span><span class="detail-value">人罣規模血清流行率分析，結合系統發育與流行病學數據的暴露史推斷</span></div>
-        <div class="panel-detail-item"><span class="detail-label">目標</span><span class="detail-value">所有人罣的免疫景觀均得到描繪；抗原進化模型以真實免疫壓力為基準，而非以條件優越人罣的代理數據替代</span></div>
+        <div class="panel-detail-item is-planned"><span class="detail-label">狀態</span><span class="detail-value">一個方向，而非承諾。尚無子午研究院產出</span></div>
+        <div class="panel-detail-item"><span class="detail-label">為何等待</span><span class="detail-value">不同的研究共同體、不同的資助體系、不同的數據基礎設施——這些都不像逃逸方向那樣可以直接承接旗艦的積累</span></div>
+        <div class="panel-detail-item"><span class="detail-label">前置條件</span><span class="detail-value">一個值得推廣的已發表框架，以及一項提供耐藥性數據的合作</span></div>
       </div>
     </div>
 
     <div class="problem-panel" id="p3" role="tabpanel">
-      <div class="panel-desc">規劃中的方向，尚非當前產出。人畜共患病毒宿主域跨越的系統發育動力學預警。港大巴斯德研究中心的地理位置使子午研究院處於 H5N1 與粵港澳大灣區野生動物—畜禽—人類界面的第一線——新發信號最先到達之處。</div>
+      <div class="panel-desc">宿主域跨越處的系統發育動力學預警。港大巴斯德的位置，使這項工作處於 H5N1 與粵港澳大灣區野生動物—畜禽—人類界面，新發信號最先到達之處。位置是真實的資產；產出尚不存在。</div>
       <div class="panel-details">
-        <div class="panel-detail-item is-planned"><span class="detail-label">狀態</span><span class="detail-value">規劃中。尚無子午研究院產出——列為方向，而非已驗證的能力</span></div>
-        <div class="panel-detail-item"><span class="detail-label">位置</span><span class="detail-value">港大巴斯德處於 H5N1 與粵港澳大灣區野生動物—畜禽—人類界面，新發信號提前數週到達</span></div>
-        <div class="panel-detail-item"><span class="detail-label">前置條件</span><span class="detail-value">人畜界面的監測數據可用性，以及在流感上經驗證的延遲感知推斷架構，方可外推至宿主域跨越</span></div>
+        <div class="panel-detail-item is-planned"><span class="detail-label">狀態</span><span class="detail-value">一個方向，而非承諾。尚無子午研究院產出——列出它是因為位置真實，而非因為能力已獲驗證</span></div>
+        <div class="panel-detail-item"><span class="detail-label">位置</span><span class="detail-value">粵港澳大灣區的野生動物—畜禽—人類界面，新發信號在更廣泛擴散前數週即已到達</span></div>
+        <div class="panel-detail-item"><span class="detail-label">前置條件</span><span class="detail-value">人畜界面的監測數據可用性，以及在流感上經驗證、而後方可延伸至宿主域跨越的延遲感知推斷系統</span></div>
       </div>
     </div>
   </div>

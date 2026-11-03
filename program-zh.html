@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="子午研究院研究綱領：減毒活疫苗的進化約束量化，以及在部署之後核查它的監測科學。">
+<title>研究綱領</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500&family=Noto+Serif+SC:wght@300;400;500&family=Noto+Sans+SC:wght@300;400;500&family=Space+Mono:wght@400&display=swap">
+<style>
+:root {
+  --cream:      #faf8f4;
+  --parchment:  #f3f0e8;
+  --ink:        #1c1c2e;
+  --ink-mid:    #46465e;
+  --ink-light:  #8888a0;
+  --amber:      #b8832a;
+  --amber-pale: #d4a855;
+  --ice:        #2a8fb0;
+  --rule:       #dedad0;
+  --font-display: 'Noto Serif SC', 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'Noto Sans SC', system-ui, sans-serif;
+  --font-mono:    'Space Mono', 'Courier New', monospace;
+  --gutter: max(24px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(24px, env(safe-area-inset-right, 0px));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cream:      #0f1621;
+    --parchment:  #161e2d;
+    --ink:        #e4e0d8;
+    --ink-mid:    #a8a4a0;
+    --ink-light:  #686878;
+    --amber:      #d4a855;
+    --amber-pale: #d4a855;
+    --ice:        #4dd9ff;
+    --rule:       #252e3e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --cream:      #0f1621;
+  --parchment:  #161e2d;
+  --ink:        #e4e0d8;
+  --ink-mid:    #a8a4a0;
+  --ink-light:  #686878;
+  --amber:      #d4a855;
+  --amber-pale: #d4a855;
+  --ice:        #4dd9ff;
+  --rule:       #252e3e;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.95;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: 820px;
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter-r);
+  padding-block: 0 96px;
+}
+nav.top {
+  max-width: 820px; margin: 0 auto;
+  padding-left: var(--gutter); padding-right: var(--gutter-r);
+  padding-block: 22px 0;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+nav.top a {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-light); text-decoration: none;
+}
+nav.top .zh { font-family: var(--font-body); font-size: 11px; letter-spacing: 0.06em; text-transform: none; }
+nav.top a:hover { color: var(--amber); }
+nav.top .right { display: flex; gap: 20px; align-items: center; }
+nav.top .lang {
+  border: 1px solid rgba(184,131,42,0.25); border-radius: 2px; padding: 2px 8px;
+  color: var(--amber); font-family: var(--font-mono); font-size: 10px;
+}
+
+.eyebrow {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--amber); margin: 0 0 14px;
+}
+h1 {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: clamp(27px, 4.4vw, 40px); line-height: 1.35;
+  margin: 0 0 22px; text-wrap: balance; letter-spacing: 0.01em;
+}
+.byline {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.06em;
+  color: var(--ink-light); line-height: 2.1; margin: 0 0 8px;
+}
+.byline .cjk { font-family: var(--font-body); font-size: 12px; letter-spacing: 0.04em; }
+.lede {
+  font-family: var(--font-display); font-size: clamp(17px, 2.1vw, 20px);
+  line-height: 1.95; font-weight: 300; color: var(--ink-mid);
+  max-width: 24em; margin: 34px 0 0;
+}
+.lede em { color: var(--ink); font-style: normal; font-weight: 500; }
+
+hr.rule { border: none; border-top: 1px solid var(--rule); margin: 60px 0; }
+
+h2 {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: clamp(22px, 2.9vw, 28px); line-height: 1.5;
+  margin: 0 0 8px; text-wrap: balance;
+}
+h3 {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: 19px; line-height: 1.6; margin: 42px 0 10px;
+}
+.sec-num {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-light); margin: 0 0 12px;
+}
+.sec-num .cjk { font-family: var(--font-body); letter-spacing: 0.12em; }
+p { margin: 0 0 18px; max-width: 40em; }
+p:last-child { margin-bottom: 0; }
+strong { font-weight: 500; color: var(--ink); }
+a { color: var(--amber); text-decoration: none; border-bottom: 1px solid rgba(184,131,42,0.3); }
+a:hover { border-bottom-color: var(--amber); }
+
+.tier {
+  border-left: 2px solid var(--rule);
+  padding: 2px 0 2px 24px;
+  margin: 0 0 44px;
+}
+.tier.flag { border-left-color: var(--amber); }
+.tier-tag {
+  display: inline-block; font-family: var(--font-body); font-size: 10px;
+  letter-spacing: 0.14em; color: var(--ink-light);
+  border: 1px solid var(--rule); border-radius: 2px; padding: 2px 8px;
+  margin-bottom: 10px;
+}
+.tier.flag .tier-tag {
+  color: var(--amber); border-color: rgba(184,131,42,0.4);
+  background: rgba(184,131,42,0.07);
+}
+.tier h3 { margin-top: 0; }
+
+ul.plain, ol.plain { margin: 0 0 18px; padding-left: 20px; max-width: 40em; }
+ul.plain li, ol.plain li { margin-bottom: 12px; }
+
+.grid {
+  display: grid; grid-template-columns: 150px 1fr; gap: 16px 26px;
+  margin: 24px 0 0; padding-top: 22px; border-top: 1px solid var(--rule);
+}
+.grid dt {
+  font-family: var(--font-body); font-size: 11px; letter-spacing: 0.12em;
+  color: var(--ink-light); padding-top: 6px;
+}
+.grid dd { margin: 0; font-size: 14.5px; line-height: 1.95; color: var(--ink-mid); }
+.grid dd .rare {
+  display: block; margin-top: 6px; font-size: 13px; color: var(--ink-light);
+}
+@media (max-width: 620px) {
+  .grid { grid-template-columns: 1fr; gap: 4px 0; }
+  .grid dt { padding-top: 16px; }
+}
+
+ol.papers { list-style: none; margin: 0; padding: 0; counter-reset: pp; }
+ol.papers li {
+  counter-increment: pp; position: relative;
+  padding: 16px 0 16px 42px; border-bottom: 1px solid var(--rule);
+  max-width: 46em;
+}
+ol.papers li:first-child { border-top: 1px solid var(--rule); }
+ol.papers li::before {
+  content: counter(pp, decimal-leading-zero);
+  position: absolute; left: 0; top: 21px;
+  font-family: var(--font-mono); font-size: 10px; color: var(--ink-light);
+  letter-spacing: 0.08em;
+}
+ol.papers .pt { font-family: var(--font-display); font-size: 16.5px; line-height: 1.75; display: block; }
+ol.papers .pe { display: block; margin-top: 6px; font-size: 12.5px; color: var(--ink-light); line-height: 1.6; font-family: var(--font-body); }
+ol.papers .pa {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.07em;
+  color: var(--ink-light); display: block; margin-top: 7px;
+}
+
+ol.road { list-style: none; margin: 0; padding: 0; counter-reset: rr; }
+ol.road li {
+  counter-increment: rr; position: relative; padding: 0 0 26px 46px; max-width: 42em;
+}
+ol.road li::before {
+  content: counter(rr); position: absolute; left: 0; top: 3px;
+  font-family: var(--font-mono); font-size: 10px; color: var(--amber);
+  border: 1px solid rgba(184,131,42,0.35); border-radius: 50%;
+  width: 24px; height: 24px; display: grid; place-items: center;
+}
+ol.road .rt { font-weight: 500; color: var(--ink); display: block; margin-bottom: 4px; }
+ol.road .rd { font-size: 14.5px; color: var(--ink-mid); }
+
+.note {
+  background: var(--parchment); border: 1px solid var(--rule); border-radius: 2px;
+  padding: 26px 28px; margin: 0;
+}
+.note p { font-size: 14.5px; color: var(--ink-mid); }
+.note p:last-child { margin-bottom: 0; }
+
+ol.refs { padding-left: 22px; margin: 0; max-width: 46em; }
+ol.refs li { font-size: 13px; line-height: 1.9; color: var(--ink-light); margin-bottom: 14px; }
+ol.refs a { font-size: 12px; word-break: break-word; }
+
+footer {
+  border-top: 1px solid var(--rule); margin-top: 72px; padding-top: 26px;
+  font-size: 11.5px; letter-spacing: 0.04em;
+  color: var(--ink-light); line-height: 2.2;
+}
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <a href="zh.html" class="zh">&larr; 子午研究院</a>
+  <span class="right">
+    <a href="tree.html" class="zh">研究譜系 &rarr;</a>
+    <a href="program.html" class="lang">EN</a>
+  </span>
+</nav>
+
+<div class="wrap">
+
+  <header style="padding-block:54px 0">
+    <p class="eyebrow">Research Programme &middot; <span class="cjk" style="font-family:var(--font-body)">研究綱領</span></p>
+    <h1>把「它會一直保持減毒」<br>變成一個數字。</h1>
+    <p class="byline">
+      <span class="cjk">袁帥（Shuai Thomas Yuan）&middot; 創始人</span><br>
+      <span class="cjk">香港大學巴斯德研究中心博士研究員 &middot; Dhanasekaran 實驗室</span><br>
+      草稿 v1 &middot; 2026 年 11 月
+    </p>
+    <p class="lede">子午研究院的存在，是為了把<em>「這支減毒疫苗是否會一直保持減毒」</em>從一句監管上的斷言，轉化為一個系統發育動力學的估計量——並在人羣規模上於現場監測這個答案。</p>
+  </header>
+
+  <hr class="rule">
+
+  <section>
+    <p class="sec-num">01 &mdash; <span class="cjk">論點</span></p>
+    <h2>人工智能壓低分析的成本，卻壓不短進化的時間。</h2>
+    <p>設計空間搜索、偏差下的推斷、跨場景的統計強度遷移——這些問題受算力約束，而且正在迅速縮小。壓不短的是進化時間、數據生成時間、以及制度時間。剩下的那部分不可壓縮的殘餘，正是生物對抗措施中進化風險的量化，以及使這種量化值得信賴的測量體系。</p>
+    <p>健康情報隨財富而擴張。最大規模的疫情發生在資源最匱乏的地方，而那裏的觀測也最少——這一點是可以測量的：監測力度隨疫情規模呈亞線性增長。減毒活疫苗所攜帶的進化風險，在部署之前無處定價。抗原漂移侵蝕疫苗誘導的免疫，其時間尺度超出任何臨牀試驗的追蹤範圍。沒有任何模型能回溯性地監測未被採樣的羣體。</p>
+    <p>子午研究院工作在這條邊界上：<strong>預註冊的進化風險框架、觀測偏差量化、以及免疫景觀重建——即模型輸出與「必須經得起監管或同行審視的主張」之間的那一層。</strong></p>
+    <p>運作標準由此而來。每項分析預先註冊，每項主張可溯源至具體產物，每次更正均有編號並公開。當分析本身變得廉價，可信度就成為稀缺資產，而預註冊正是它得以複利累積的方式。</p>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <p class="sec-num">02 &mdash; <span class="cjk">位置</span></p>
+    <h2>五樣通常不會同時出現在一處的東西。</h2>
+    <p>可防守的位置不在於任何單一技能，而在於五項資產的同處共存——每一項單獨來看都很普通。</p>
+
+    <dl class="grid">
+      <dt>方法</dt>
+      <dd>機器學習系統發育動力學：基於物理信息神經網絡的傳播過程與觀測過程聯合估計、用於恢復代際間隔的貝葉斯神經網絡、延遲感知的出生—死亡天際線校正、跨多個監測渠道與多個估計器族的起始時點設定曲線分析。
+        <span class="rare">多數系統發育動力學團隊缺乏深度機器學習；多數機器學習團隊缺乏系統發育的領域深度。</span></dd>
+
+      <dt>產業席位</dt>
+      <dd>海博生物（深圳）疫苗計算生物學負責人——身處一項減毒活疫苗計劃內部；設計了該計劃首個帶固定「繼續／終止」判據的預註冊動物安全性研究。
+        <span class="rare">學界的系統發育動力學研究者鮮有疫苗產業席位；產業界也鮮少發表估計方法。</span></dd>
+
+      <dt>機構基礎</dt>
+      <dd>香港大學巴斯德研究中心，Dhanasekaran 實驗室——該機構參與共同開發了 DelNS1 鼻內減毒活流感疫苗平台，並嵌入世衞組織相關的流感監測網絡。
+        <span class="rare">亞洲減毒活流感疫苗生態與學術系統發育動力學之間，幾乎不存在橋樑。</span></dd>
+
+      <dt>實務</dt>
+      <dd>此前任職紐約市衞生與心理衞生局流行病學家，在行政數據上構建生產級自然語言處理監測管線。
+        <span class="rare">直接了解監測系統實際產出的是什麼，而不是方法學論文所假設的乾淨數據。</span></dd>
+
+      <dt>地理</dt>
+      <dd>香港與粵港澳大灣區：H5N1 與野生動物—畜禽—人類界面所在，新發信號最先到達之處，同時緊鄰以人羣規模部署減毒活疫苗的生產基地。
+        <span class="rare">新發疫情的源頭、疫苗部署的前沿、以及監測數據的可及性，同處一地。</span></dd>
+    </dl>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <p class="sec-num">03 &mdash; <span class="cjk">綱領結構</span></p>
+    <h2>一個旗艦。一個第二應用。兩個設有前置條件的方向。</h2>
+    <p>框架本身才是研究綱領，病原體只是它的演示。不做並行啟動。</p>
+
+    <div class="tier flag" style="margin-top:40px">
+      <span class="tier-tag">旗艦</span>
+      <h3>回覆突變——把減毒穩定性變成一個被測量的量</h3>
+      <p><strong>問題。</strong>經工程改造的減毒活疫苗，是否會一直保持減毒——在生產傳代中、在受種者體內、在傳播鏈上？今天這個問題靠斷言回答，其依據是在與實際部署環境並不相似的細胞基質中所做的傳代研究。</p>
+
+      <p><strong>現行標準，以及它停在哪裏。</strong></p>
+      <ul class="plain">
+        <li>世衞組織要求遺傳穩定性須驗證至「與最終疫苗原液相當、並最好超出預期最高傳代水平」的傳代層級，而「可接受的變異範圍……由廠商界定並經國家藥品監管機構同意」——也就是說，逐個產品、臨時議定，底下並無統一的進化模型 <a href="#r1">[1]</a>。</li>
+        <li>美國 FDA／CBER 要求完整的種子序列測定、亞羣分析，以及「包括回覆突變易感性在內的遺傳穩定性」，卻未規定任何計算它的框架；它並明確指出不同細胞基質施加不同的選擇壓力、對應不同的回覆突變可能性（脊髓灰質炎 Sabin 株先例）<a href="#r2">[2]</a>。</li>
+        <li>世衞組織的減毒活流感疫苗建議，僅以定性語言陳述了該領域的核心實證發現：單一溫度敏感型減毒突變「即使在人體受種者中傳代一次後亦可預期發生回覆」，而多節段減毒「似乎有助於穩定性」<a href="#r3">[3]</a>。至今沒有量化的多位點回覆突變模型。</li>
+        <li>高通量測序如今已屬預期要求，但尚無統計框架可把低頻變異的頻譜讀作回覆突變潛勢的證據；而共識序列恰恰丟棄了這部分信息 <a href="#r1">[1]</a>。</li>
+        <li>上市後監測只是一句口號——「在上市後階段密切監測」<a href="#r3">[3]</a>——沒有界定的估計量、沒有採樣設計、沒有決策閾值。脊髓灰質炎的疫苗衍生病毒體系是唯一可用的範本，而它是人工的、特定於單一病原體的。針對特定突變的回覆定量確實存在，但只以逐產品定製的檢測形式出現 <a href="#r4">[4]</a>，而非作為一種方法。</li>
+      </ul>
+
+      <p><strong>子午研究院補上的部分——三根支柱。</strong></p>
+      <ol class="plain">
+        <li><strong>設計階段：回覆突變潛勢的估計量。</strong>基於臨牀基因組集的全基因組尺度保守性分析、適應度景觀先驗、深度突變掃描整合，合成為針對任一工程化缺失的量化回覆突變障礙評分——並以脊髓灰質炎疫苗衍生病毒的歷史記錄作為真值驗證。奠基分析在單純皰疹病毒 2 型上完成，橫跨五個已發表疫苗構建體。</li>
+        <li><strong>部署階段：疫苗衍生譜系的系統發育動力學。</strong>把基因組監測機制——基因組 R(t)、譜系更替、延遲感知校正——延伸至現場序列，用以偵測並監測疫苗譜系的傳播、回覆突變與重配，並把疫苗譜系傳播與輸入性傳播區分開。</li>
+        <li><strong>系統階段：信號的可信度。</strong>以設定曲線與觀測偏差機制作為統計骨架：需要多少基因組信號、跨越多長的窗口，「這一疫苗譜系正在進化」才成為監管者可據以行動的主張。</li>
+      </ol>
+
+      <p><strong>切入點。</strong>世衞組織與 FDA 的文件都邀請廠商提出量化判據 <a href="#r1">[1]</a>、<a href="#r2">[2]</a>，而至今無人提出一個有原則的版本。目標產出是一個可進入監管前申報材料的回覆突變風險評分。</p>
+    </div>
+
+    <div class="tier">
+      <span class="tier-tag">第二應用</span>
+      <h3>抗原逃逸——逃逸軌跡與毒株選擇</h3>
+      <p>同一套機制，反方向運行：不是問疫苗病毒不能走到哪裏，而是問野毒株無處可藏之處。基因組 R(t)、譜系更替與保守性分析，構成用於毒株更新決策（流感組分、變異株更新疫苗）的逃逸潛勢估計器——這類決策今天主要依賴抗原距離的經驗規則。該方向經由已在進行的監測工作連接至世衞組織的疫苗組分網絡，是旗艦方法最自然的第二應用。它也更為擁擠，因此刻意排在第二而非第一。</p>
+    </div>
+
+    <div class="tier">
+      <span class="tier-tag">方向——設有前置條件</span>
+      <h3>耐藥性——抗微生物耐藥性的出現</h3>
+      <p>耐藥性沿着可測量的進化軌跡攀升，而且早於臨牀出現。系統發育動力學估計在抗微生物耐藥性上的應用尚不充分；把框架推廣到那裏，正好檢驗它究竟是一個框架，還是僅僅一套疫苗方法。但那是不同的研究共同體、不同的資助體系、不同的數據基礎設施。列為方向，而非承諾。尚無子午研究院產出。</p>
+    </div>
+
+    <div class="tier">
+      <span class="tier-tag">方向——設有前置條件</span>
+      <h3>溢出——宿主域跨越處的系統發育動力學預警</h3>
+      <p>港大巴斯德在 H5N1 與粵港澳大灣區界面的位置，是真實的資產。前置條件是人畜界面的監測數據可及性，以及一套先在流感上經過驗證的延遲感知推斷系統。如實列為規劃中，尚無產出。</p>
+    </div>
+
+    <p style="margin-top:8px"><strong>排序規則。</strong>框架才是職業生涯，各個病原體只是它的演示。一個旗艦，一個第二應用，兩個設有前置條件的方向。</p>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <p class="sec-num">04 &mdash; <span class="cjk">奠基科學</span></p>
+    <h2>六篇準備中的論文。</h2>
+    <p>其中尚無一篇公開。在此列出，是為了讓上述綱領可以對照正在寫的東西來核查，而不是對照一句承諾。每一篇在發布時都會附帶可溯源的產物——預印本、數據存檔或代碼庫。</p>
+
+    <ol class="papers">
+      <li><span class="pt">決定理性設計單純皰疹病毒疫苗重組拯救風險的，是側翼同源荒漠，而非缺失數量</span><span class="pe">Flanking-homology deserts, not deletion multiplicity, determine recombinational rescue risk of rationally designed HSV vaccines</span><span class="pa">Yuan S, Dhanasekaran V</span></li>
+      <li><span class="pt">減毒活單純皰疹病毒疫苗候選之間的回覆突變障礙存在種類差異，而非程度差異：一項預註冊的比較分析</span><span class="pe">Reversion barriers in live-attenuated HSV vaccine candidates differ in kind, not degree: a pre-registered comparative analysis</span><span class="pa">Yuan S et al.</span></li>
+      <li><span class="pt">已發表疫苗效力試驗中系統性缺失康復期血清panel標準化基礎設施：一項跨病原體的證據庫審計</span><span class="pe">Convalescent-panel normalisation infrastructure is systematically absent from published vaccine efficacy trials: a cross-pathogen evidence-base audit</span><span class="pa">Yuan S</span></li>
+      <li><span class="pt">全球公開基因組記錄看不見世界上多數的流感報告：世衞報告至序列提交架構的枚舉，以及採樣指數的跨病原體檢驗</span><span class="pe">The global public genomic record cannot see most of the world&rsquo;s influenza reporting: enumeration of the WHO-reporting-to-sequence-deposition architecture, and a cross-pathogen test of the sampling exponent</span><span class="pa">Yuan S et al.</span></li>
+      <li><span class="pt">用於呼吸道病原體流行起始偵測的監測數據 R(t) 估計：香港 2014–2026 年回顧性跨病原體評估</span><span class="pe">Surveillance-based R(t) estimation for respiratory pathogen onset detection: retrospective cross-pathogen evaluation, Hong Kong 2014&ndash;2026</span><span class="pa">Yuan S, Dhanasekaran V</span></li>
+      <li><span class="pt">D2：實時系統發育動力學 R(t) 估計中出生—死亡天際線採樣比例的延遲感知校正</span><span class="pe">D2: a delay-aware correction for the birth&ndash;death skyline sampling proportion in real-time phylodynamic R(t) estimation</span><span class="pa">Yuan S et al.</span></li>
+    </ol>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <p class="sec-num">05 &mdash; <span class="cjk">路線圖</span></p>
+    <h2>未來十二個月，按優先次序。</h2>
+
+    <ol class="road">
+      <li><span class="rt">一個學期內完成第一篇預印本。</span><span class="rd">單純皰疹病毒 2 型回覆突變障礙的比較分析最接近完成，也最具區別度。在第一件公開產物出現之前，本站上的每一項可信度主張都只是承諾。這是槓桿最大的單一行動。</span></li>
+      <li><span class="rt">發表監管缺口的梳理。</span><span class="rd">一份簡短、可被引用的「現行標準及其缺口」，以世衞技術報告系列與 FDA 指導文件為依據，使旗艦方向對監管者與資助者而言是可讀的。方法學圈子通常不做這份功課，而這本身就是一種區別度。</span></li>
+      <li><span class="rt">公開陳述綱領層級與利益衝突。</span><span class="rd">回覆突變為旗艦、抗原逃逸為第二應用、耐藥性與溢出為設有前置條件的方向——並附明確的利益衝突聲明。一家以可信度為先的研究機構，首先要把自己的標準用在自己身上。<em>已完成：本頁與主站的綱領章節。</em></span></li>
+      <li><span class="rt">每一項主張都可溯源至產物。</span><span class="rd">每一條奠基科學的主張，都連結到一份預印本、一個 Zenodo 存檔或一個代碼庫。站上的內容不得跑在它的產物之前。</span></li>
+      <li><span class="rt">以書面協議鎖定數據取用。</span><span class="rd">這個綱領的護城河是數據：減毒活疫苗回覆突變的歷史記錄、部署之後的現場序列、以及單純皰疹病毒比對面板。在進一步的公開主張之前，先有書面協議。</span></li>
+      <li><span class="rt">招募方式：一個學期，一件產物。</span><span class="rd">每個開放問題的規模都按一個學期設定，並綁定一篇論文。給的是產物上的共同作者身份，不是致謝。</span></li>
+    </ol>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <p class="sec-num">06 &mdash; <span class="cjk">利益衝突與標準</span></p>
+    <h2>先把標準用在自己身上。</h2>
+    <div class="note">
+      <p><strong>利益衝突。</strong>創始人在海博生物（深圳）擔任計算生物學職務，該公司有一項減毒活疫苗計劃。海博生物在子午研究院的產出中不擔任任何角色，亦不提供任何資助。子午研究院發表的構建體排名包含海博任何計劃的競爭對手，且排名方法在結果已知之前即已預先註冊，使排序無法事後選定。港大數據的使用受大學政策規管。</p>
+      <p><strong>預註冊。</strong>比較分析在結果出現之前即確定其估計量、比較對象集合與接受判據。預註冊的預測若被推翻，該失敗將以與成功相同的顯著程度報告。</p>
+      <p><strong>溯源。</strong>量化主張可追溯至有記錄、可重新生成的分析。不能重新生成的結果，不進入記錄。</p>
+      <p><strong>更正。</strong>有編號、有日期、並公開。更正不是難堪；未經更正的記錄才是。</p>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <p class="sec-num">07 &mdash; <span class="cjk">參考文獻</span></p>
+    <ol class="refs">
+      <li id="r1">WHO Expert Committee on Biological Standardization. Recommendations for rotavirus vaccines (post-ECBS). WHO Technical Report Series, Annex. <a href="https://cdn.who.int/media/docs/default-source/biologicals/vaccine-standardization/rotavirus/who-rotavirus-vaccines-recommendations--post-ecbs_-5-nov-2024.pdf">who.int</a>——種子批系統；至最高傳代的基因型穩定性；廠商界定的可接受範圍；高通量測序多態性分析。</li>
+      <li id="r2">FDA/CBER. Guidance for Industry: Characterization and Qualification of Cell Substrates and Other Biological Materials Used in the Production of Viral Vaccines for Infectious Disease Indications. <a href="https://www.fda.gov/media/78428/download">fda.gov</a>——病毒種子表徵；遺傳穩定性與回覆突變易感性；細胞基質的選擇壓力；神經毒力試驗。</li>
+      <li id="r3">WHO Expert Committee on Biological Standardization. Recommendations for live attenuated influenza vaccines. WHO Technical Report Series 977, Annex 4. <a href="https://cdn.who.int/media/docs/default-source/biologicals/vaccine-standardization/influenza/trs_977_annex_4.pdf">who.int</a>——單一突變回覆；多節段穩定性；上市後監測。</li>
+      <li id="r4">Huang C-Y et al. Genetic and phenotypic characterization of manufacturing seeds for a tetravalent dengue vaccine (DENVax). <em>PLOS Neglected Tropical Diseases</em>, 2013. <a href="https://journals.plos.org/plosntds/article?id=10.1371/journal.pntd.0002243">journals.plos.org</a>——5&prime;NCR-57 位點針對特定突變的回覆定量。</li>
+    </ol>
+  </section>
+
+  <footer>
+    子午研究院 &middot; 香港<br>
+    研究綱領，草稿 v1 &middot; 2026 年 11 月 &middot; 歷史版本仍可檢索<br>
+    <a href="zh.html" style="border:none">主站</a> &middot; <a href="tree.html" style="border:none">研究譜系</a> &middot; <a href="program.html" style="border:none">English</a>
+  </footer>
+
+</div>
+</body>
+</html>

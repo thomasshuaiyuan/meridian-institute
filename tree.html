@@ -85,7 +85,7 @@ canvas.d3:active { cursor: grabbing; }
 
   // n name · s state (done|prep|plan) · b blurb · c children · x second parent (reticulation)
   const TREE = {
-    n: "Root question", s: "root", b: "What can be known before the evidence that would settle it exists.",
+    n: "Inference ahead of evidence", s: "root", b: "The trunk both clades descend from. Each side freezes a specification before results exist, and each estimates something the available data cannot directly show \u2014 a reversion that has not happened, a transmission rate the sampling cannot see. No decision tier descends from either yet; every edge here runs data to method to paper.",
     c: [
       { n: "Observation", s: "clade", col: AMB, b: "What the surveillance system permits you to see. Academic programme, HKU-Pasteur.", c: [
 
@@ -210,7 +210,7 @@ canvas.d3:active { cursor: grabbing; }
       ctx.save();
       if (on) { ctx.shadowBlur = 13; ctx.shadowColor = rgba(c, 0.85); }
       else if (n.s === "prep" || n.s === "clade") { ctx.shadowBlur = 7; ctx.shadowColor = rgba(c, 0.3); }
-      if (n.s === "root") { ctx.beginPath(); ctx.arc(p.x, p.y, 3.2, 0, 7); ctx.fillStyle = "rgba(200,215,230,0.5)"; ctx.fill(); }
+      if (n.s === "root") { ctx.beginPath(); ctx.arc(p.x, p.y, 4.4, 0, 7); ctx.fillStyle = "rgba(205,218,232,0.7)"; ctx.fill(); }
       else if (n.s === "clade") { ctx.beginPath(); ctx.arc(p.x, p.y, 4.6, 0, 7); ctx.fillStyle = rgba(c, 0.9); ctx.fill(); }
       else if (n.s === "done") { ctx.fillStyle = rgba(c, on ? 0.95 : 0.6); ctx.fillRect(p.x - 3.2, p.y - 3.2, 6.4, 6.4); }
       else if (n.s === "prep") { ctx.beginPath(); ctx.arc(p.x, p.y, 3.9, 0, 7); ctx.strokeStyle = rgba(c, on ? 1 : 0.9); ctx.lineWidth = 1.35; ctx.stroke(); }
@@ -232,7 +232,7 @@ canvas.d3:active { cursor: grabbing; }
     });
 
     // internal labels — above the branch, standard convention; suppress on collision
-    const internal = nodes.filter(n => n._kids.length && n.s !== "root");
+    const internal = nodes.filter(n => n._kids.length);
     // clades and the focused node claim their space first, so a bypass can't collide
     const prio = n => (n.s === "clade" ? 0 : (sel === n || hov === n) ? 1 : 2);
     internal.sort((a, b) => prio(a) - prio(b));
@@ -331,7 +331,6 @@ canvas.d3:active { cursor: grabbing; }
     });
     const boxes = [];
     sorted.slice().reverse().forEach(n => {
-      if (n.s === "root") return;
       const p = proj(P3.get(n)), near = Math.max(0.2, Math.min(1, 1.2 - p.z / 1400));
       const on = sel === n || hov === n, clade = n.s === "clade";
       if (!on && !clade && near < 0.56) return;

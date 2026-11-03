@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Meridian Institute research programme: evolutionary constraint quantification for live-attenuated vaccines, and the surveillance science that checks it after deployment.">
+<title>Research Programme</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500&family=DM+Sans:wght@300;400;500&family=Space+Mono:wght@400&display=swap">
+<style>
+:root {
+  --cream:      #faf8f4;
+  --parchment:  #f3f0e8;
+  --ink:        #1c1c2e;
+  --ink-mid:    #46465e;
+  --ink-light:  #8888a0;
+  --amber:      #b8832a;
+  --amber-pale: #d4a855;
+  --ice:        #2a8fb0;
+  --rule:       #dedad0;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+  --font-mono:    'Space Mono', 'Courier New', monospace;
+  --gutter: max(24px, env(safe-area-inset-left, 0px));
+  --gutter-r: max(24px, env(safe-area-inset-right, 0px));
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cream:      #0f1621;
+    --parchment:  #161e2d;
+    --ink:        #e4e0d8;
+    --ink-mid:    #a8a4a0;
+    --ink-light:  #686878;
+    --amber:      #d4a855;
+    --amber-pale: #d4a855;
+    --ice:        #4dd9ff;
+    --rule:       #252e3e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --cream:      #0f1621;
+  --parchment:  #161e2d;
+  --ink:        #e4e0d8;
+  --ink-mid:    #a8a4a0;
+  --ink-light:  #686878;
+  --amber:      #d4a855;
+  --amber-pale: #d4a855;
+  --ice:        #4dd9ff;
+  --rule:       #252e3e;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 300;
+  line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: 820px;
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: var(--gutter-r);
+  padding-block: 0 96px;
+}
+nav.top {
+  max-width: 820px; margin: 0 auto;
+  padding-left: var(--gutter); padding-right: var(--gutter-r);
+  padding-block: 22px 0;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+nav.top a {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-light); text-decoration: none;
+}
+nav.top a:hover { color: var(--amber); }
+
+.eyebrow {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--amber); margin: 0 0 14px;
+}
+h1 {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: clamp(30px, 5vw, 48px); line-height: 1.15;
+  margin: 0 0 20px; text-wrap: balance; letter-spacing: -0.01em;
+}
+.byline {
+  font-family: var(--font-mono); font-size: 10.5px; letter-spacing: 0.08em;
+  color: var(--ink-light); line-height: 2; margin: 0 0 8px;
+}
+.lede {
+  font-family: var(--font-display); font-size: clamp(19px, 2.4vw, 23px);
+  line-height: 1.55; font-weight: 300; color: var(--ink-mid);
+  max-width: 34ch; margin: 34px 0 0;
+}
+.lede em { color: var(--ink); font-style: normal; }
+
+hr.rule { border: none; border-top: 1px solid var(--rule); margin: 60px 0; }
+
+h2 {
+  font-family: var(--font-display); font-weight: 300;
+  font-size: clamp(24px, 3.2vw, 32px); line-height: 1.25;
+  margin: 0 0 8px; text-wrap: balance;
+}
+h3 {
+  font-family: var(--font-display); font-weight: 400;
+  font-size: 21px; line-height: 1.3; margin: 42px 0 10px;
+}
+.sec-num {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--ink-light); margin: 0 0 12px;
+}
+p { margin: 0 0 18px; max-width: 70ch; }
+p:last-child { margin-bottom: 0; }
+strong { font-weight: 500; color: var(--ink); }
+a { color: var(--amber); text-decoration: none; border-bottom: 1px solid rgba(184,131,42,0.3); }
+a:hover { border-bottom-color: var(--amber); }
+
+.tier {
+  border-left: 2px solid var(--rule);
+  padding: 2px 0 2px 24px;
+  margin: 0 0 44px;
+}
+.tier.flag { border-left-color: var(--amber); }
+.tier-tag {
+  display: inline-block; font-family: var(--font-mono); font-size: 9px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-light);
+  border: 1px solid var(--rule); border-radius: 2px; padding: 2px 7px;
+  margin-bottom: 10px;
+}
+.tier.flag .tier-tag {
+  color: var(--amber); border-color: rgba(184,131,42,0.4);
+  background: rgba(184,131,42,0.07);
+}
+.tier h3 { margin-top: 0; }
+
+ul.plain, ol.plain { margin: 0 0 18px; padding-left: 20px; max-width: 70ch; }
+ul.plain li, ol.plain li { margin-bottom: 10px; }
+
+.grid {
+  display: grid; grid-template-columns: 170px 1fr; gap: 14px 26px;
+  margin: 24px 0 0; padding-top: 22px; border-top: 1px solid var(--rule);
+}
+.grid dt {
+  font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.13em;
+  text-transform: uppercase; color: var(--ink-light); padding-top: 4px;
+}
+.grid dd { margin: 0; font-size: 14.5px; line-height: 1.7; color: var(--ink-mid); }
+.grid dd .rare {
+  display: block; margin-top: 5px; font-size: 13px; color: var(--ink-light);
+  font-style: italic;
+}
+@media (max-width: 620px) {
+  .grid { grid-template-columns: 1fr; gap: 4px 0; }
+  .grid dt { padding-top: 14px; }
+}
+
+ol.papers { list-style: none; margin: 0; padding: 0; counter-reset: pp; }
+ol.papers li {
+  counter-increment: pp; position: relative;
+  padding: 16px 0 16px 42px; border-bottom: 1px solid var(--rule);
+  max-width: 74ch;
+}
+ol.papers li:first-child { border-top: 1px solid var(--rule); }
+ol.papers li::before {
+  content: counter(pp, decimal-leading-zero);
+  position: absolute; left: 0; top: 19px;
+  font-family: var(--font-mono); font-size: 10px; color: var(--ink-light);
+  letter-spacing: 0.08em;
+}
+ol.papers .pt { font-family: var(--font-display); font-size: 18px; line-height: 1.4; display: block; }
+ol.papers .pa {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.07em;
+  color: var(--ink-light); display: block; margin-top: 7px;
+}
+
+ol.road { list-style: none; margin: 0; padding: 0; counter-reset: rr; }
+ol.road li {
+  counter-increment: rr; position: relative; padding: 0 0 26px 46px; max-width: 72ch;
+}
+ol.road li::before {
+  content: counter(rr); position: absolute; left: 0; top: 1px;
+  font-family: var(--font-mono); font-size: 10px; color: var(--amber);
+  border: 1px solid rgba(184,131,42,0.35); border-radius: 50%;
+  width: 24px; height: 24px; display: grid; place-items: center;
+}
+ol.road .rt { font-weight: 500; color: var(--ink); display: block; margin-bottom: 4px; }
+ol.road .rd { font-size: 14.5px; color: var(--ink-mid); }
+
+.note {
+  background: var(--parchment); border: 1px solid var(--rule); border-radius: 2px;
+  padding: 26px 28px; margin: 0;
+}
+.note p { font-size: 14.5px; color: var(--ink-mid); }
+.note p:last-child { margin-bottom: 0; }
+
+ol.refs { padding-left: 22px; margin: 0; max-width: 76ch; }
+ol.refs li { font-size: 13px; line-height: 1.7; color: var(--ink-light); margin-bottom: 14px; }
+ol.refs a { font-size: 12px; word-break: break-word; }
+
+footer {
+  border-top: 1px solid var(--rule); margin-top: 72px; padding-top: 26px;
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em;
+  color: var(--ink-light); line-height: 2;
+}
+</style>
+</head>
+<body>
+
+<nav class="top">
+  <a href="index.html">&larr; Meridian Institute</a>
+  <span style="display:flex; gap:20px; align-items:center">
+    <a href="tree.html">Research phylogeny &rarr;</a>
+    <a href="program-zh.html" style="border:1px solid rgba(184,131,42,0.25); border-radius:2px; padding:2px 8px; color:var(--amber); text-transform:none; letter-spacing:0.06em">中文</a>
+  </span>
+</nav>
+
+<div class="wrap">
+
+  <header style="padding-block:54px 0">
+    <p class="eyebrow">Research Programme</p>
+    <h1>Turning &ldquo;it will stay attenuated&rdquo;<br>into a number.</h1>
+    <p class="byline">
+      Shuai (Thomas) Yuan &middot; Founder<br>
+      Doctoral researcher, HKU-Pasteur Research Pole &middot; Dhanasekaran Laboratory<br>
+      Draft v1 &middot; November 2026
+    </p>
+    <p class="lede">Meridian exists to turn <em>will this attenuated vaccine stay attenuated</em> from a regulatory assertion into a phylodynamic estimand &mdash; and to monitor the answer in the field at population scale.</p>
+  </header>
+
+  <hr class="rule">
+
+  <section>
+    <p class="sec-num">01 &mdash; The thesis</p>
+    <h2>AI collapses the cost of analysis. It does not compress evolutionary time.</h2>
+    <p>Design-space search, inference under bias, statistical-strength transfer across settings &mdash; these are compute-bound and they are shrinking fast. What does not shrink is evolutionary time, data-generation time, and institutional time. The incompressible residue is the quantification of evolutionary risk in biological countermeasures, and the measurement systems that make such quantification trustworthy.</p>
+    <p>Health intelligence scales with wealth. The largest outbreaks occur in the least-resourced settings and are the least observed &mdash; measurably so: surveillance effort scales sublinearly with epidemic size. Live-attenuated vaccines carry evolutionary risk that is priced nowhere before deployment. Antigenic drift erodes vaccine-matched immunity on timescales no trial can follow. No model can retrospectively surveil the unsampled.</p>
+    <p>Meridian works at that boundary: <strong>pre-registered evolutionary-risk frameworks, observation-bias quantification, and immune-landscape reconstruction &mdash; the layer between a model&rsquo;s output and the claim that has to survive regulatory or peer scrutiny.</strong></p>
+    <p>The operating standard follows from it. Every analysis pre-registered, every claim traced to an artifact, every correction numbered and public. When analysis is cheap, credibility is the scarce asset, and pre-registration is how it compounds.</p>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <p class="sec-num">02 &mdash; Position</p>
+    <h2>Five things that do not usually sit together.</h2>
+    <p>The defensible position is not any single skill. It is the co-location of five assets, each ordinary on its own.</p>
+
+    <dl class="grid">
+      <dt>Methods</dt>
+      <dd>ML-phylodynamics: PINN-based joint estimation of transmission and observation processes, Bayesian neural networks for serial-interval recovery, delay-aware birth&ndash;death skyline correction, specification-curve analysis of onset estimators across many surveillance channels and estimator families.
+        <span class="rare">Most phylodynamics groups lack deep ML; most ML groups lack the phylodynamic domain depth.</span></dd>
+
+      <dt>Industry seat</dt>
+      <dd>Computational Biology Lead, Vaccines, at Hyper Biotech (Shenzhen) &mdash; inside a live-attenuated vaccine programme; designed its first pre-registered animal safety study with fixed go/no-go criteria.
+        <span class="rare">Academic phylodynamicists rarely hold a vaccine-industry seat; industry rarely publishes estimation methods.</span></dd>
+
+      <dt>Institutional base</dt>
+      <dd>HKU-Pasteur Research Pole, Dhanasekaran Laboratory &mdash; within the institution that co-developed the DelNS1 intranasal LAIV platform, and embedded in WHO-linked influenza surveillance networks.
+        <span class="rare">Few bridges exist between the Asian LAIV ecosystem and academic phylodynamics.</span></dd>
+
+      <dt>Practice</dt>
+      <dd>Prior work as an epidemiologist at the New York City Department of Health and Mental Hygiene, building production NLP surveillance pipelines on administrative data.
+        <span class="rare">Direct knowledge of what surveillance systems actually emit, versus the clean data that methods papers assume.</span></dd>
+
+      <dt>Geography</dt>
+      <dd>Hong Kong and the Greater Bay Area: the H5N1 and wildlife&ndash;livestock&ndash;human interface, where emergence signal arrives first, adjacent to the manufacturing base deploying LAIV at population scale.
+        <span class="rare">Emergence epicentre, deployment epicentre and surveillance access in one place.</span></dd>
+    </dl>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <p class="sec-num">03 &mdash; Portfolio</p>
+    <h2>One flagship. One second application. Two gated directions.</h2>
+    <p>The framework is the programme; the pathogens are demonstrations of it. No parallel launches.</p>
+
+    <div class="tier flag" style="margin-top:40px">
+      <span class="tier-tag">Flagship</span>
+      <h3>Reversion &mdash; attenuation stability as a measured quantity</h3>
+      <p><strong>The question.</strong> Will an engineered live-attenuated vaccine stay attenuated &mdash; through manufacturing passage, inside a vaccinee, and along a transmission chain? Today this is answered by assertion, backed by passage studies in cell substrates that do not resemble the deployment environment.</p>
+
+      <p><strong>The current standard, and where it stops.</strong></p>
+      <ul class="plain">
+        <li>WHO requires genetic stability demonstrated to a passage level comparable to final vaccine bulk and preferably beyond the anticipated maximum, with acceptable limits for variation defined by the manufacturer and agreed with the national regulatory authority &mdash; that is, ad hoc, per product, with no underlying evolutionary model <a href="#r1">[1]</a>.</li>
+        <li>FDA/CBER requires full seed sequencing, subpopulation analysis, and genetic stability including susceptibility to reversion &mdash; but prescribes no framework for computing it. It notes explicitly that different cell substrates impose different selective pressures and different reversion likelihoods, the Sabin poliovirus precedent <a href="#r2">[2]</a>.</li>
+        <li>WHO&rsquo;s live influenza recommendations state the field&rsquo;s core empirical finding in qualitative language only: a single temperature-sensitive attenuating mutation can be expected to revert even after one passage in human recipients, while multi-segment attenuation appears to contribute to stability <a href="#r3">[3]</a>. No quantitative multi-locus reversion model exists.</li>
+        <li>High-throughput sequencing is now expected, but there is no statistical framework for reading minority-variant frequency spectra as reversion-potential evidence &mdash; and consensus sequencing discards exactly that information <a href="#r1">[1]</a>.</li>
+        <li>Post-marketing monitoring is a slogan &mdash; &ldquo;monitored carefully during the post-marketing period&rdquo; <a href="#r3">[3]</a> &mdash; with no defined estimand, sampling design, or decision threshold. Polio&rsquo;s vaccine-derived poliovirus system is the only working template, and it is manual and pathogen-specific. Mutation-specific reversion quantification exists in bespoke per-product assays <a href="#r4">[4]</a>, not as a method.</li>
+      </ul>
+
+      <p><strong>What Meridian adds &mdash; three pillars.</strong></p>
+      <ol class="plain">
+        <li><strong>Design-time: a reversion-potential estimand.</strong> Genome-scale conservation across a clinical genome corpus, fitness-landscape priors and deep-mutational-scanning integration, combined into a quantitative reversion-barrier score for any engineered deletion &mdash; with the polio VDPV record as validation ground truth. Founding analysis in HSV-2, ranking five published vaccine constructs.</li>
+        <li><strong>Deployment-time: phylodynamics of vaccine-derived lineages.</strong> Genomic surveillance machinery &mdash; genomic R(t), lineage turnover, delay-aware correction &mdash; extended to detect and monitor vaccine-lineage circulation, reversion and reassortment in field sequences, and to distinguish vaccine-lineage transmission from importation.</li>
+        <li><strong>System-time: signal trust.</strong> Specification-curve and observation-bias machinery as the statistical backbone: how much genomic signal, over what window, before &ldquo;this vaccine lineage is evolving&rdquo; becomes a claim a regulator can act on.</li>
+      </ol>
+
+      <p><strong>The hook.</strong> WHO and FDA documents both invite manufacturer-proposed quantitative criteria <a href="#r1">[1]</a><a href="#r2">[2]</a>. Nobody has proposed a principled one. The target output is a reversion-risk score admissible in a pre-regulatory dossier.</p>
+    </div>
+
+    <div class="tier">
+      <span class="tier-tag">Second application</span>
+      <h3>Escape &mdash; antigenic escape trajectories and strain selection</h3>
+      <p>The same machinery run in the opposite direction: not where the vaccine virus cannot go, but where the wild virus cannot hide. Genomic R(t), lineage turnover and conservation analysis become an escape-potential estimator for strain-update decisions &mdash; influenza composition, variant-updated vaccines &mdash; which today run largely on antigenic-distance heuristics. The lane connects to WHO vaccine-composition networks and is the natural second application of the flagship&rsquo;s methods. It is also more crowded, which is why it is sequenced second rather than first.</p>
+    </div>
+
+    <div class="tier">
+      <span class="tier-tag">Direction &mdash; gated</span>
+      <h3>Resistance &mdash; antimicrobial resistance emergence</h3>
+      <p>Resistance climbs measurable evolutionary trajectories before clinical emergence. Phylodynamic estimation applied to AMR is underdeveloped, and generalising the framework there would test whether it is a framework at all or only a vaccine method. It is a different community, a different funder base and a different data infrastructure. Listed as a direction, not a commitment. No Meridian output.</p>
+    </div>
+
+    <div class="tier">
+      <span class="tier-tag">Direction &mdash; gated</span>
+      <h3>Spillover &mdash; phylodynamic early warning at the host-range crossing</h3>
+      <p>HKU-Pasteur&rsquo;s position at the H5N1 and Greater Bay Area interface is the asset. The prerequisites are surveillance access at the animal&ndash;human interface and a delay-aware inference stack validated on influenza first. Listed honestly as planned, with no output yet.</p>
+    </div>
+
+    <p style="margin-top:8px"><strong>The sequencing rule.</strong> The framework is the career; the modalities are demonstrations of it. One flagship, one second application, two gated directions.</p>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <p class="sec-num">04 &mdash; Founding science</p>
+    <h2>Six papers in preparation.</h2>
+    <p>None of these is public yet. They are listed so that the programme above can be checked against what is actually being written, rather than against a promise. Each will carry a traceable artifact &mdash; preprint, deposit or repository &mdash; on release.</p>
+
+    <ol class="papers">
+      <li><span class="pt">Flanking-homology deserts, not deletion multiplicity, determine recombinational rescue risk of rationally designed HSV vaccines</span><span class="pa">Yuan S, Dhanasekaran V</span></li>
+      <li><span class="pt">Reversion barriers in live-attenuated HSV vaccine candidates differ in kind, not degree: a pre-registered comparative analysis</span><span class="pa">Yuan S et al.</span></li>
+      <li><span class="pt">Convalescent-panel normalisation infrastructure is systematically absent from published vaccine efficacy trials: a cross-pathogen evidence-base audit</span><span class="pa">Yuan S</span></li>
+      <li><span class="pt">The global public genomic record cannot see most of the world&rsquo;s influenza reporting: enumeration of the WHO-reporting-to-sequence-deposition architecture, and a cross-pathogen test of the sampling exponent</span><span class="pa">Yuan S et al.</span></li>
+      <li><span class="pt">Surveillance-based R(t) estimation for respiratory pathogen onset detection: retrospective cross-pathogen evaluation, Hong Kong 2014&ndash;2026</span><span class="pa">Yuan S, Dhanasekaran V</span></li>
+      <li><span class="pt">D2: a delay-aware correction for the birth&ndash;death skyline sampling proportion in real-time phylodynamic R(t) estimation</span><span class="pa">Yuan S et al.</span></li>
+    </ol>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <p class="sec-num">05 &mdash; Roadmap</p>
+    <h2>Next twelve months, in priority order.</h2>
+
+    <ol class="road">
+      <li><span class="rt">Preprint #1 within one semester.</span><span class="rd">The HSV-2 reversion-barrier comparative analysis is closest to complete and most differentiated. Until one public artifact exists, every credibility claim on this site is a promise. Single highest-leverage action.</span></li>
+      <li><span class="rt">Publish the regulatory-gap mapping.</span><span class="rd">A short, citable treatment of the current standard and its gaps, grounded in WHO TRS and FDA guidance, making the flagship legible to regulators and funders. Methods groups do not usually do this homework, which is itself a differentiator.</span></li>
+      <li><span class="rt">Hierarchy and conflicts, stated publicly.</span><span class="rd">Reversion as flagship, escape as second application, resistance and spillover as gated directions &mdash; with an explicit conflicts statement. A credibility-first institute applies its standard to itself first. <em>Done: this document and the programme section of the main site.</em></span></li>
+      <li><span class="rt">Artifact provenance for every claim.</span><span class="rd">Each founding-science claim links to a preprint, a Zenodo deposit or a repository. Nothing on the site outruns its artifact.</span></li>
+      <li><span class="rt">Data access, contractually secured.</span><span class="rd">The programme&rsquo;s moat is data: historical LAIV reversion records, field sequences after deployment, and the HSV alignment panels. Written agreements before further public claims.</span></li>
+      <li><span class="rt">Recruitment: one semester, one artifact.</span><span class="rd">Each open problem sized to a semester and attached to a publication. Co-authorship on artifacts, not acknowledgements.</span></li>
+    </ol>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <p class="sec-num">06 &mdash; Conflicts and standards</p>
+    <h2>The standard, applied here first.</h2>
+    <div class="note">
+      <p><strong>Conflicts of interest.</strong> The founder holds a computational biology role at Hyper Biotech (Shenzhen), a company with a live-attenuated vaccine programme. Hyper Biotech has no role in, and provides no funding for, Meridian outputs. Construct rankings published by Meridian include competitors of any Hyper Biotech programme, and the ranking method is pre-registered before results are known so that the ordering cannot be chosen after the fact. Use of HKU data is governed by university policy.</p>
+      <p><strong>Pre-registration.</strong> Comparative analyses commit to their estimand, their comparator set and their acceptance criteria before the result exists. Where a pre-registered prediction fails, the failure is reported with the same prominence as a success.</p>
+      <p><strong>Provenance.</strong> Quantitative claims trace to a logged, regenerable analysis. A result that cannot be regenerated does not enter the record.</p>
+      <p><strong>Corrections.</strong> Numbered, dated and public. A correction is not an embarrassment; an uncorrected record is.</p>
+    </div>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <p class="sec-num">07 &mdash; References</p>
+    <ol class="refs">
+      <li id="r1">WHO Expert Committee on Biological Standardization. Recommendations for rotavirus vaccines (post-ECBS). WHO Technical Report Series, Annex. <a href="https://cdn.who.int/media/docs/default-source/biologicals/vaccine-standardization/rotavirus/who-rotavirus-vaccines-recommendations--post-ecbs_-5-nov-2024.pdf">who.int</a> &mdash; seed lot system; genotypic stability to maximum passage; manufacturer-defined acceptable limits; HTS polymorphism analysis.</li>
+      <li id="r2">FDA/CBER. Guidance for Industry: Characterization and Qualification of Cell Substrates and Other Biological Materials Used in the Production of Viral Vaccines for Infectious Disease Indications. <a href="https://www.fda.gov/media/78428/download">fda.gov</a> &mdash; viral seed characterization; genetic stability and reversion susceptibility; cell-substrate selective pressures; neurovirulence testing.</li>
+      <li id="r3">WHO Expert Committee on Biological Standardization. Recommendations for live attenuated influenza vaccines. WHO Technical Report Series 977, Annex 4. <a href="https://cdn.who.int/media/docs/default-source/biologicals/vaccine-standardization/influenza/trs_977_annex_4.pdf">who.int</a> &mdash; single-mutation reversion; multi-segment stability; post-marketing monitoring.</li>
+      <li id="r4">Huang C-Y et al. Genetic and phenotypic characterization of manufacturing seeds for a tetravalent dengue vaccine (DENVax). <em>PLOS Neglected Tropical Diseases</em>, 2013. <a href="https://journals.plos.org/plosntds/article?id=10.1371/journal.pntd.0002243">journals.plos.org</a> &mdash; mutation-specific reversion quantification at the 5&prime;NCR-57 locus.</li>
+    </ol>
+  </section>
+
+  <footer>
+    Meridian Institute &middot; Hong Kong<br>
+    Research programme, draft v1 &middot; November 2026 &middot; superseded versions remain retrievable<br>
+    <a href="index.html" style="border:none">Main site</a> &middot; <a href="tree.html" style="border:none">Research phylogeny</a>
+  </footer>
+
+</div>
+</body>
+</html>

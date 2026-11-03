@@ -398,6 +398,14 @@ hr.rule { border: none; border-top: 1px solid var(--rule); }
   white-space: nowrap;
 }
 .panel-detail-item.is-planned .detail-value { opacity: 0.75; }
+.tab-status.is-flag {
+  color: var(--amber);
+  opacity: 1;
+  border-color: rgba(184,131,42,0.4);
+  background: rgba(184,131,42,0.07);
+}
+.tab-status.is-second { opacity: 0.8; }
+
 
 /* ─── INTERACTIVE PROBLEMS ────────────────────────── */
 .problems-tabs {
@@ -600,6 +608,7 @@ footer { background: var(--navy); }
     </a>
     <ul class="nav-links">
       <li><a href="#research">Research</a></li>
+      <li><a href="program.html">Programme</a></li>
       <li><a href="tree.html">Phylogeny</a></li>
       <li><a href="#team">Team</a></li>
       <li><a href="#publications">Publications</a></li>
@@ -682,60 +691,62 @@ footer { background: var(--navy); }
 <section class="band band--alt">
   <div class="band-inner">
     <p class="eyebrow">The Work</p>
-    <h2 class="section-title" style="max-width:560px">Four problems. One axis.</h2>
+    <h2 class="section-title" style="max-width:620px">One flagship. One second application. Two directions.</h2>
+    <p class="panel-desc" style="max-width:68ch; margin:18px 0 6px">The framework is the programme; the pathogens are demonstrations of it. Underneath all four sits one methods layer &#8212; observation-bias quantification, delay-aware phylodynamic estimation, and specification-curve analysis &#8212; which is what makes any of these claims checkable. <a href="program.html" style="color:var(--amber); text-decoration:none; border-bottom:1px solid rgba(184,131,42,0.35)">Read the full research programme &rarr;</a></p>
 
     <!-- PROBLEMS TABS -->
     <div class="problems-tabs" role="tablist">
       <button class="problem-tab p-active" role="tab" aria-selected="true" data-panel="p0">
-        <span class="tab-pip"></span>Evolutionary Risk Pricing
+        <span class="tab-pip"></span>Reversion<span class="tab-status is-flag">Flagship</span>
       </button>
       <button class="problem-tab" role="tab" aria-selected="false" data-panel="p1">
-        <span class="tab-pip"></span>Observability of Evolutionary Processes
+        <span class="tab-pip"></span>Escape<span class="tab-status is-second">Second</span>
       </button>
       <button class="problem-tab" role="tab" aria-selected="false" data-panel="p2">
-        <span class="tab-pip"></span>Immune Landscape Reconstruction
+        <span class="tab-pip"></span>Resistance<span class="tab-status">Direction</span>
       </button>
       <button class="problem-tab" role="tab" aria-selected="false" data-panel="p3">
-        <span class="tab-pip"></span>Spillover &amp; Emergence Inference<span class="tab-status">Planned</span>
+        <span class="tab-pip"></span>Spillover<span class="tab-status">Direction</span>
       </button>
     </div>
 
     <!-- Panel 0 -->
     <div class="problem-panel p-active" id="p0" role="tabpanel">
-      <div class="panel-desc">Quantifying attenuation barriers, antigenic escape trajectories, and resistance emergence rates across deployed biological countermeasures &#8212; from live-attenuated vaccines to antimicrobial regimens. The target: evolutionary risk priced before a countermeasure enters a regulatory dossier or population programme.</div>
+      <div class="panel-desc"><strong style="font-weight:500; color:var(--ink)">Will an engineered live-attenuated vaccine stay attenuated</strong> &#8212; through manufacturing passage, inside a vaccinee, and along a transmission chain? Today that question is answered by assertion, backed by passage studies in cell substrates that do not resemble the deployment environment. Meridian&#8217;s flagship converts it into a pre-registered, quantitative estimand, and builds the field-monitoring science to check the answer after deployment.</div>
       <div class="panel-details">
-        <div class="panel-detail-item"><span class="detail-label">Approach</span><span class="detail-value">Fitness landscape modelling, deep mutational scanning integration, and phylogenetic rate estimation across biologics and antimicrobial regimens</span></div>
-        <div class="panel-detail-item"><span class="detail-label">Output</span><span class="detail-value">Quantitative evolutionary risk score applicable before a countermeasure enters regulatory review or population deployment</span></div>
-        <div class="panel-detail-item"><span class="detail-label">Horizon</span><span class="detail-value">Pre-regulatory &#8212; risk priced earlier than clinical resistance emergence or breakthrough infection data becomes available</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Design-time</span><span class="detail-value">Genome-scale conservation, fitness-landscape priors and deep-mutational-scanning integration, combined into a reversion-barrier score for an engineered deletion &#8212; founding analysis on a clinical HSV-2 genome corpus, across five published vaccine constructs</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Deployment-time</span><span class="detail-value">Genomic surveillance machinery &#8212; genomic R(t), lineage turnover, delay-aware correction &#8212; extended to detect vaccine-lineage circulation and reversion in field sequences, and to separate it from importation</span></div>
+        <div class="panel-detail-item"><span class="detail-label">System-time</span><span class="detail-value">Specification-curve and observation-bias machinery as the statistical backbone: how much genomic signal, over what window, before &#8220;this lineage is evolving&#8221; is a claim a regulator can act on</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Regulatory hook</span><span class="detail-value">WHO and FDA guidance both invite manufacturer-proposed quantitative stability criteria and prescribe no framework for computing them. The target output is a reversion-risk score admissible in a pre-regulatory dossier</span></div>
       </div>
     </div>
 
     <!-- Panel 1 -->
     <div class="problem-panel" id="p1" role="tabpanel">
-      <div class="panel-desc">Surveillance effort scales sublinearly with epidemic size (&#945;&nbsp;=&nbsp;0.716 influenza, 0.819 RSV) &#8212; the world systematically under-observes the largest outbreaks in the least-resourced settings. AI cannot retrospectively surveil the unsampled. Meridian quantifies the observation gap and develops bias-correction frameworks for phylodynamic inference under non-random, sparse sampling.</div>
+      <div class="panel-desc">The same machinery, run in the opposite direction: not where the vaccine virus cannot go, but where the wild virus cannot hide. Conservation analysis, genomic R(t) and lineage turnover become an escape-potential estimator for strain-update decisions &#8212; influenza composition, variant-updated vaccines &#8212; which today run largely on antigenic-distance heuristics.</div>
       <div class="panel-details">
-        <div class="panel-detail-item"><span class="detail-label">Finding</span><span class="detail-value">Scaling exponent &#945;&nbsp;=&nbsp;0.716 (influenza) and 0.819 (RSV): largest outbreaks are systematically the most under-observed</span></div>
-        <div class="panel-detail-item"><span class="detail-label">Approach</span><span class="detail-value">Bias-correction frameworks for phylodynamic inference under non-random, geographically stratified sparse sampling</span></div>
-        <div class="panel-detail-item"><span class="detail-label">Stakes</span><span class="detail-value">Unaddressed sampling bias makes phylodynamic clock estimates and R(t) reconstructions unreliable precisely where burden is highest</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Position</span><span class="detail-value">Second application, deliberately sequenced after the flagship. The lane is more crowded and the methods are shared, so it costs little once the flagship exists</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Route</span><span class="detail-value">Connects to WHO vaccine-composition networks through the surveillance work already under way</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Prerequisite</span><span class="detail-value">The flagship&#8217;s conservation and barrier machinery, validated first on a system where the ground truth is recoverable</span></div>
       </div>
     </div>
 
     <!-- Panel 2 -->
     <div class="problem-panel" id="p2" role="tabpanel">
-      <div class="panel-desc">The selective environment driving viral evolution is the immune landscape &#8212; and it is least characterised for the populations bearing the highest burden. Population-scale seroprevalence analysis and exposure-history estimation, with the goal of immune landscapes known for all populations, not just well-resourced ones.</div>
+      <div class="panel-desc">Resistance climbs evolutionary trajectories that are measurable before clinical emergence. Phylodynamic estimation applied to antimicrobial resistance is underdeveloped, and generalising the framework there would test whether it is a framework at all or only a vaccine method.</div>
       <div class="panel-details">
-        <div class="panel-detail-item"><span class="detail-label">Gap</span><span class="detail-value">Immune landscape least characterised in high-burden, low-resource populations &#8212; where selection pressure on viruses is strongest</span></div>
-        <div class="panel-detail-item"><span class="detail-label">Approach</span><span class="detail-value">Population-scale seroprevalence combined with exposure-history inference from phylogenetic and epidemiological data</span></div>
-        <div class="panel-detail-item"><span class="detail-label">Goal</span><span class="detail-value">Immune landscapes known for all populations; antigenic evolution models calibrated to real immune pressure, not proxy from well-surveilled cohorts</span></div>
+        <div class="panel-detail-item is-planned"><span class="detail-label">Status</span><span class="detail-value">A direction, not a commitment. No Meridian output</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Why it waits</span><span class="detail-value">Different research community, different funder base, different data infrastructure &#8212; none of which the flagship builds on the way the escape lane does</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Prerequisite</span><span class="detail-value">A published framework worth generalising, and a collaboration that supplies the resistance data</span></div>
       </div>
     </div>
 
     <!-- Panel 3 -->
     <div class="problem-panel" id="p3" role="tabpanel">
-      <div class="panel-desc">A planned programme direction, not current output. Phylodynamic early-warning for zoonotic host-range crossing. HKU-Pasteur geographic position places Meridian at the H5N1 and Greater Bay Area wildlife&#8211;livestock&#8211;human interface &#8212; where emergence signal arrives first.</div>
+      <div class="panel-desc">Phylodynamic early-warning at the host-range crossing. HKU-Pasteur&#8217;s position places this work at the H5N1 and Greater Bay Area wildlife&#8211;livestock&#8211;human interface, where emergence signal arrives first. The position is the asset; the output does not exist yet.</div>
       <div class="panel-details">
-        <div class="panel-detail-item is-planned"><span class="detail-label">Status</span><span class="detail-value">Planned. No Meridian output yet &#8212; listed as a programme direction, not a demonstrated capability</span></div>
-        <div class="panel-detail-item"><span class="detail-label">Position</span><span class="detail-value">HKU-Pasteur at the H5N1 and Greater Bay Area wildlife&#8211;livestock&#8211;human interface, where emergence signal arrives weeks before wider spread</span></div>
+        <div class="panel-detail-item is-planned"><span class="detail-label">Status</span><span class="detail-value">A direction, not a commitment. No Meridian output &#8212; listed because the position is real, not because the capability is demonstrated</span></div>
+        <div class="panel-detail-item"><span class="detail-label">Position</span><span class="detail-value">The wildlife&#8211;livestock&#8211;human interface of the Greater Bay Area, where emergence signal arrives weeks before wider spread</span></div>
         <div class="panel-detail-item"><span class="detail-label">Prerequisite</span><span class="detail-value">Surveillance access at the animal&#8211;human interface, and a delay-aware inference stack validated on influenza before extension to host-range crossing</span></div>
       </div>
     </div>
