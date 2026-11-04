@@ -108,10 +108,14 @@ body::before {
 
 .nav-links {
   display: flex;
-  gap: 28px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px 24px;
   list-style: none;
   align-items: center;
+  min-width: 0;
 }
+@media (max-width: 1000px) { .nav-links .nav-sec { display: none; } }
 
 .nav-links a {
   font-size: 11px;
@@ -141,8 +145,7 @@ body::before {
 }
 
 @media (max-width: 600px) {
-  .nav-links { gap: 16px; }
-  .nav-links li:not(:last-child):not(:nth-last-child(2)) { display: none; }
+  .nav-links { gap: 8px 16px; }
 }
 
 /* ─── HERO ────────────────────────────────────────── */
@@ -573,14 +576,11 @@ footer { background: var(--navy); }
       <span class="nav-wordmark">子午研究院</span>
     </a>
     <ul class="nav-links">
-      <li><a href="#research">研究</a></li>
       <li><a href="program-cn.html">研究纲领</a></li>
-      <li><a href="tree.html">研究谱系</a></li>
       <li><a href="methods-cn.html">方法演示</a></li>
-      <li><a href="#team">团队</a></li>
-      <li><a href="#publications">发表</a></li>
-      <li><a href="#join">同行者</a></li>
-      <li><a href="#contact">联系</a></li>
+      <li class="nav-sec"><a href="tree.html">研究谱系</a></li>
+      <li class="nav-sec"><a href="#publications">发表</a></li>
+      <li class="nav-sec"><a href="#contact">联系</a></li>
       <li><a href="zh.html" class="lang-toggle">繁</a></li>
       <li><a href="index.html" class="lang-toggle">EN</a></li>
     </ul>

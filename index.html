@@ -108,9 +108,14 @@ body::before {
 
 .nav-links {
   display: flex;
-  gap: 32px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px 26px;
   list-style: none;
+  align-items: center;
+  min-width: 0;
 }
+@media (max-width: 1000px) { .nav-links .nav-sec { display: none; } }
 
 .nav-links a {
   font-size: 11px;
@@ -124,7 +129,7 @@ body::before {
 }
 .nav-links a:hover { color: rgba(255,255,255,0.85); }
 
-@media (max-width: 600px) { .nav-links { display: none; } }
+@media (max-width: 600px) { .nav-links { gap: 8px 16px; } }
 
 /* ─── HERO ────────────────────────────────────────── */
 .hero {
@@ -607,16 +612,12 @@ footer { background: var(--navy); }
       <span class="nav-wordmark">Meridian Institute</span>
     </a>
     <ul class="nav-links">
-      <li><a href="#research">Research</a></li>
       <li><a href="program.html">Programme</a></li>
-      <li><a href="tree.html">Phylogeny</a></li>
       <li><a href="methods.html">Methods</a></li>
-      <li><a href="#team">Team</a></li>
-      <li><a href="#publications">Publications</a></li>
-      <li><a href="#join">Join</a></li>
-      <li><a href="#contact">Contact</a></li>
-      <li><a href="zh.html" class="lang-toggle" style="font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;color:rgba(77,217,255,.5);border:1px solid rgba(77,217,255,.18);padding:2px 8px;border-radius:2px;">繁</a></li>
-      <li><a href="cn.html" class="lang-toggle" style="font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;color:rgba(77,217,255,.5);border:1px solid rgba(77,217,255,.18);padding:2px 8px;border-radius:2px;">简</a></li>
+      <li class="nav-sec"><a href="tree.html">Phylogeny</a></li>
+      <li class="nav-sec"><a href="#publications">Publications</a></li>
+      <li class="nav-sec"><a href="#contact">Contact</a></li>
+      <li><a href="zh.html" class="lang-toggle" style="font-family:var(--font-mono);font-size:10px;letter-spacing:.1em;color:rgba(77,217,255,.5);border:1px solid rgba(77,217,255,.18);padding:2px 8px;border-radius:2px;">中文</a></li>
     </ul>
   </div>
 </nav>
