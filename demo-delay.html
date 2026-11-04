@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Why real-time R(t) is biased downward by sequence deposition delay, and what a delay-aware sampling proportion corrects.">
+<title>Delay-Aware Correction</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{
+  --paper:#faf8f4;--ink:#1c1c2e;--ink-2:#46465e;--ink-3:#8888a0;
+  --rule:#dedad0;--hair:rgba(28,28,46,0.08);
+  --amber:#b8832a;--amber-soft:rgba(184,131,42,0.13);
+  --teal:#1b7f8c;--flag:#bf4f68;--ghost:rgba(28,28,46,0.13);
+  --display:"Cormorant Garamond",Georgia,serif;
+  --sans:"DM Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;--ghost:rgba(228,224,216,0.14);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;--ghost:rgba(228,224,216,0.14);color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:15px;font-weight:300;line-height:1.75;-webkit-font-smoothing:antialiased}
+.page{max-width:780px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:48px 76px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 14px}
+h1{font-family:var(--display);font-weight:300;font-size:clamp(27px,4.4vw,38px);line-height:1.2;
+  margin:0 0 18px;text-wrap:balance}
+.intro{color:var(--ink-2);max-width:60ch;margin:0 0 14px}
+.intro em{font-style:normal;color:var(--ink)}
+.note{font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:var(--ink-3);
+  line-height:1.9;margin:0 0 34px}
+.controls{display:flex;flex-wrap:wrap;gap:9px 12px;align-items:center;margin-bottom:22px}
+button{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  background:none;border:1px solid var(--rule);border-radius:100px;color:var(--ink-2);
+  padding:6px 15px;cursor:pointer;transition:color .15s,border-color .15s,background .15s}
+button:hover{color:var(--ink);border-color:var(--ink-3)}
+button.on{background:var(--amber-soft);border-color:transparent;color:var(--amber)}
+button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.sl{display:flex;align-items:center;gap:10px}
+.sl label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.sl output{font-family:var(--mono);font-size:11px;color:var(--ink)}
+input[type=range]{width:120px;accent-color:var(--amber)}
+.sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);border-top:1px solid var(--rule);padding-top:18px;margin:34px 0 8px}
+canvas{display:block;width:100%}
+#dep{height:260px}#rt{height:250px}
+.stats{display:flex;flex-wrap:wrap;gap:26px 40px;border-top:1px solid var(--rule);
+  padding-top:20px;margin-top:26px}
+.stat .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);display:block;margin-bottom:5px}
+.stat .v{font-family:var(--display);font-size:27px;line-height:1;font-weight:300}
+.v.t{color:var(--teal)}.v.a{color:var(--amber)}.v.f{color:var(--flag)}
+.verdict{color:var(--ink-2);max-width:62ch;margin:22px 0 0}
+.verdict b{color:var(--ink);font-weight:500}
+.foot{margin-top:40px;border-top:1px solid var(--rule);padding-top:20px;
+  color:var(--ink-2);max-width:64ch;font-size:14.5px}
+.foot strong{color:var(--ink);font-weight:500}
+
+.sitenav {
+  max-width: 780px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 22px 0;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.sitenav span { display: flex; gap: 20px; flex-wrap: wrap; }
+.sitenav a {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-3); text-decoration: none;
+}
+.sitenav a:hover { color: var(--amber); }
+.page { padding-block: 34px 76px; }
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <a href="methods.html">&larr; Method demonstrations</a>
+  <span><a href="index.html">Meridian Institute</a><a href="program.html">Research programme</a></span>
+</nav>
+
+
+<div class="page">
+  <p class="eyebrow">D2 &middot; simulated</p>
+  <h1>The last two weeks are always wrong.</h1>
+  <p class="intro">A sequence is deposited some time after the case occurs. So at any real-time snapshot the recent end of the genomic record is not sparse by accident &mdash; it is <em>systematically</em> incomplete, and the deficit grows the closer you get to today.</p>
+  <p class="intro">A birth&ndash;death skyline fit with a constant sampling proportion cannot tell that apart from a genuine fall in transmission. It reads the missing sequences as a real decline and pushes R(t) down exactly where the answer matters. D2 replaces the constant with a function of time since the event &mdash; the probability a sequence from day <i>t</i> has arrived by today.</p>
+  <p class="note">Simulated renewal epidemic &middot; 140 days &middot; fixed seed &middot; no real data<br>Move the delay slider: the bias is not a constant, it scales with delay relative to the estimation window</p>
+
+  <div class="controls">
+    <button id="play" class="on">Play</button>
+    <button id="reset">Reset</button>
+    <span class="sl"><label for="dly">Mean delay</label><input id="dly" type="range" min="1" max="21" step="1" value="9"><output id="dlyv">9 d</output></span>
+  </div>
+
+  <p class="sub">Cases, and the sequences that have arrived</p>
+  <canvas id="dep"></canvas>
+
+  <p class="sub">R(t) &mdash; truth, naive fit, delay-corrected</p>
+  <canvas id="rt"></canvas>
+
+  <div class="stats">
+    <span class="stat"><span class="k">Today</span><span class="v" id="today">day 0</span></span>
+    <span class="stat"><span class="k">R(t) truth</span><span class="v t" id="rTrue">&mdash;</span></span>
+    <span class="stat"><span class="k">Naive fit</span><span class="v f" id="rNaive">&mdash;</span></span>
+    <span class="stat"><span class="k">Delay-corrected</span><span class="v a" id="rCorr">&mdash;</span></span>
+  </div>
+  <p class="verdict" id="verdict">&nbsp;</p>
+
+  <p class="foot">The correction is not a smoother and it is not a forecast. <strong>It is a statement about what the sampling proportion actually is:</strong> not a scalar fitted once, but <i>p</i>&nbsp;&times;&nbsp;<i>G</i>(today &minus; <i>t</i>), where <i>G</i> is the deposition-delay distribution. Where <i>G</i> is still near zero the honest output is no estimate at all &mdash; the grey zone on the right &mdash; rather than a confident one.</p>
+</div>
+
+<script>
+(function(){
+  // ---------- deterministic RNG ----------
+  let s = 4242 >>> 0;
+  const rnd = () => (s = (Math.imul(s,1664525)+1013904223)>>>0)/4294967296;
+  const gauss = () => { let u=0,v=0; while(!u)u=rnd(); while(!v)v=rnd();
+    return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); };
+  const gamma2 = scale => -scale*Math.log((1-rnd())*(1-rnd())); // shape 2 via sum of exponentials
+
+  const D = 140, PSEQ = 0.11;
+
+  // ---------- true R(t) ----------
+  const smoothstep = (a,b,x)=>{const t=Math.min(1,Math.max(0,(x-a)/(b-a)));return t*t*(3-2*t);};
+  const Rtrue = new Float64Array(D);
+  for(let t=0;t<D;t++){
+    Rtrue[t] = 1.95 - 1.20*smoothstep(26,62,t) + 0.42*smoothstep(78,116,t);
+  }
+
+  // ---------- serial interval, discretised gamma(mean 2.9, sd 1.6) ----------
+  const W = (()=>{ const k=(2.9/1.6)**2, th=1.6**2/2.9, m=14, w=[];
+    const gpdf=x=>Math.pow(x,k-1)*Math.exp(-x/th);
+    let sum=0; for(let i=1;i<=m;i++){const v=gpdf(i);w.push(v);sum+=v;}
+    return w.map(v=>v/sum); })();
+
+  // ---------- renewal incidence ----------
+  const I = new Float64Array(D);
+  for(let t=0;t<5;t++) I[t]=6;
+  for(let t=5;t<D;t++){
+    let f=0; for(let k=0;k<W.length;k++){const u=t-1-k; if(u>=0) f+=I[u]*W[k];}
+    I[t] = Math.max(0, Rtrue[t]*f*(1+0.06*gauss()));
+  }
+
+  // ---------- sequenced cases, each with a deposition delay quantile ----------
+  // store quantiles so the delay distribution can change without re-drawing counts
+  const seq = [];               // seq[t] = array of U(0,1) draws, one per sequenced case
+  for(let t=0;t<D;t++){
+    const lam = I[t]*PSEQ;
+    let n = Math.max(0, Math.round(lam + Math.sqrt(Math.max(lam,0.001))*gauss()));
+    const a=[]; for(let i=0;i<n;i++) a.push(rnd());
+    seq.push(a);
+  }
+  // inverse-CDF of gamma(2, scale) by bisection on the closed form 1-(1+x/b)e^{-x/b}
+  const gcdf = (x,b)=> x<=0?0:1-(1+x/b)*Math.exp(-x/b);
+  const ginv = (u,b)=>{ let lo=0, hi=b*30; for(let i=0;i<40;i++){const m=(lo+hi)/2; gcdf(m,b)<u?lo=m:hi=m;} return (lo+hi)/2; };
+
+  let meanDelay = 9, B = meanDelay/2;
+  let delay = [];               // delay[t][i] in days
+  function rebuildDelays(){
+    B = meanDelay/2;
+    delay = seq.map(a => a.map(u => ginv(u,B)));
+  }
+  rebuildDelays();
+
+  // ---------- reconstruction at snapshot T ----------
+  const trail = (arr,w)=>{const o=new Float64Array(arr.length);
+    for(let i=0;i<arr.length;i++){let s=0,n=0;for(let j=Math.max(0,i-w+1);j<=i;j++){s+=arr[j];n++;}o[i]=s/n;}return o;};
+  function reconstruct(T){
+    const dep=new Float64Array(D), naive=new Float64Array(D), corr=new Float64Array(D), g=new Float64Array(D);
+    for(let t=0;t<=T&&t<D;t++){
+      let c=0; const age=T-t;
+      for(const d of delay[t]) if(d<=age) c++;
+      dep[t]=c;
+      g[t]=gcdf(age,B);
+      naive[t]=c/PSEQ;
+      corr[t]= g[t]>0.08 ? c/(PSEQ*g[t]) : NaN;
+    }
+    const sN=trail(naive,7), sC=trail(corr.map(v=>isNaN(v)?0:v),7);
+    const rN=new Float64Array(D).fill(NaN), rC=new Float64Array(D).fill(NaN);
+    for(let t=22;t<=T&&t<D;t++){
+      let fN=0,fC=0;
+      for(let k=0;k<W.length;k++){const u=t-1-k; if(u>=0){fN+=sN[u]*W[k];fC+=sC[u]*W[k];}}
+      if(fN>9) rN[t]=sN[t]/fN;
+      if(fC>9 && g[t]>0.08) rC[t]=sC[t]/fC;
+    }
+    return {dep,g,rN,rC};
+  }
+
+  // ---------- canvas ----------
+  const dc=document.getElementById('dep'), rc=document.getElementById('rt');
+  const dx=dc.getContext('2d'), rx=rc.getContext('2d');
+  let C={};
+  function pal(){const cs=getComputedStyle(document.documentElement);const g=n=>cs.getPropertyValue(n).trim();
+    C={ink:g('--ink'),ink2:g('--ink-2'),ink3:g('--ink-3'),rule:g('--rule'),hair:g('--hair'),
+       amber:g('--amber'),teal:g('--teal'),flag:g('--flag'),ghost:g('--ghost'),paper:g('--paper')};}
+  pal();
+  const mq=window.matchMedia('(prefers-color-scheme: dark)');
+  mq.addEventListener&&mq.addEventListener('change',()=>{pal();render();});
+  function fit(cv,ctx){const r=cv.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);
+    cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);return{w:r.width,h:r.height};}
+  const al=(hex,a)=>{const m=hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+    return m?`rgba(${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)},${a})`:hex;};
+
+  const Imax = Math.max(...I)*1.08;
+
+  function drawDep(T,R){
+    const {w,h}=fit(dc,dx); dx.clearRect(0,0,w,h);
+    const pL=38,pR=14,pT=12,pB=28, bw=(w-pL-pR)/D;
+    const X=t=>pL+t*bw, Y=v=>pT+(1-v/Imax)*(h-pT-pB);
+    // all cases (ghost)
+    dx.fillStyle=C.ghost;
+    for(let t=0;t<D;t++) dx.fillRect(X(t)+0.3, Y(I[t]), Math.max(0.8,bw-0.6), (h-pT-pB)*(I[t]/Imax));
+    // deposited sequences, scaled back up by p for comparability
+    dx.fillStyle=al(C.teal,0.8);
+    for(let t=0;t<=T&&t<D;t++){const v=R.dep[t]/PSEQ;
+      dx.fillRect(X(t)+0.3, Y(v), Math.max(0.8,bw-0.6), (h-pT-pB)*(v/Imax));}
+    // today line
+    dx.strokeStyle=C.amber;dx.lineWidth=1.4;dx.beginPath();
+    dx.moveTo(X(T),pT-4);dx.lineTo(X(T),h-pB);dx.stroke();
+    dx.font='10px "IBM Plex Mono",monospace';dx.fillStyle=C.amber;dx.textAlign='right';
+    if(X(T)>70) dx.fillText('today',X(T)-6,pT+6);
+    // axes
+    dx.strokeStyle=C.hair;dx.lineWidth=1;dx.beginPath();dx.moveTo(pL,h-pB+.5);dx.lineTo(w-pR,h-pB+.5);dx.stroke();
+    dx.fillStyle=C.ink3;dx.textAlign='center';
+    for(let t=0;t<D;t+=35) dx.fillText('day '+t,X(t),h-pB+16);
+    dx.textAlign='left';
+    dx.fillStyle=C.ink3; dx.fillText('cases',pL,pT+6);
+    dx.fillStyle=C.teal; dx.fillText('sequences arrived',pL+46,pT+6);
+  }
+
+  function drawRt(T,R){
+    const {w,h}=fit(rc,rx); rx.clearRect(0,0,w,h);
+    const pL=38,pR=58,pT=14,pB=30, lo=0.4, hi=2.3;
+    const X=t=>pL+(t/D)*(w-pL-pR), Y=v=>pT+(1-(v-lo)/(hi-lo))*(h-pT-pB);
+    rx.font='10px "IBM Plex Mono",monospace';
+    // grid
+    rx.strokeStyle=C.hair;rx.lineWidth=1;
+    [0.5,1,1.5,2].forEach(v=>{rx.beginPath();rx.moveTo(pL,Y(v));rx.lineTo(w-pR,Y(v));rx.stroke();});
+    rx.fillStyle=C.ink3;rx.textAlign='right';
+    [0.5,1,1.5,2].forEach(v=>rx.fillText(v.toFixed(1),pL-7,Y(v)+3));
+    // R=1
+    rx.strokeStyle=al(C.ink3,0.85);rx.setLineDash([3,3]);rx.beginPath();
+    rx.moveTo(pL,Y(1));rx.lineTo(w-pR,Y(1));rx.stroke();rx.setLineDash([]);
+    // unreliable zone
+    let tg=T; while(tg>0 && gcdf(T-tg,B)<0.5) tg--;
+    if(tg<T){rx.fillStyle=al(C.flag,0.07);rx.fillRect(X(tg),pT,X(T)-X(tg),h-pT-pB);}
+    const line=(arr,st,lw)=>{rx.strokeStyle=st;rx.lineWidth=lw;rx.lineJoin='round';
+      rx.beginPath();let on=false;
+      for(let t=0;t<D;t++){const v=arr[t];
+        if(isNaN(v)){on=false;continue;}
+        const x=X(t),y=Y(Math.min(hi,Math.max(lo,v)));
+        on?rx.lineTo(x,y):rx.moveTo(x,y);on=true;}
+      rx.stroke();};
+    line(Rtrue,al(C.teal,0.9),1.7);
+    line(R.rN,al(C.flag,0.95),1.7);
+    line(R.rC,C.amber,2.1);
+    // today
+    rx.strokeStyle=al(C.amber,0.5);rx.lineWidth=1;rx.beginPath();
+    rx.moveTo(X(T),pT);rx.lineTo(X(T),h-pB);rx.stroke();
+    // axis + direct labels
+    rx.strokeStyle=C.hair;rx.beginPath();rx.moveTo(pL,h-pB+.5);rx.lineTo(w-pR,h-pB+.5);rx.stroke();
+    rx.fillStyle=C.ink3;rx.textAlign='center';
+    for(let t=0;t<D;t+=35) rx.fillText('day '+t,X(t),h-pB+16);
+    rx.textAlign='left';
+    rx.fillStyle=C.teal; rx.fillText('truth', w-pR+7, Y(Rtrue[D-1])+3);
+    const findLast=a=>{for(let t=T;t>22;t--) if(!isNaN(a[t])) return {t,v:a[t]};return null;};
+    const pN=findLast(R.rN), pC=findLast(R.rC);
+    if(pN||pC){
+      let yN=pN?Y(Math.min(hi,Math.max(lo,pN.v))):null;
+      let yC=pC?Y(Math.min(hi,Math.max(lo,pC.v))):null;
+      if(yN!==null&&yC!==null&&Math.abs(yN-yC)<13){const m=(yN+yC)/2;yN=m+7;yC=m-7;}
+      if(pN){rx.fillStyle=C.flag;rx.fillText('naive',Math.min(w-pR+7,X(pN.t)+7),yN+3);}
+      if(pC){rx.fillStyle=C.amber;rx.fillText('corrected',Math.min(w-pR+7,X(pC.t)+7),yC+3);}
+    }
+    const lastN=pN?pN.v:NaN, lastC=pC?pC.v:NaN;
+    return {lastN,lastC,tg};
+  }
+
+  const el=id=>document.getElementById(id);
+  let T=10, playing=true, last=0, acc=0;
+
+  function render(){
+    const R=reconstruct(T);
+    drawDep(T,R);
+    const {lastN,lastC}=drawRt(T,R);
+    el('today').textContent='day '+T;
+    el('rTrue').textContent=Rtrue[T].toFixed(2);
+    el('rNaive').textContent=isNaN(lastN)?'—':lastN.toFixed(2);
+    el('rCorr').textContent=isNaN(lastC)?'—':lastC.toFixed(2);
+    const errN=isNaN(lastN)?NaN:lastN-Rtrue[T], errC=isNaN(lastC)?NaN:lastC-Rtrue[T];
+    if(isNaN(errN)){el('verdict').innerHTML='&nbsp;';}
+    else{
+      const dirN = errN<-0.04?'below':errN>0.04?'above':'on';
+      el('verdict').innerHTML = 'At the leading edge the naive fit sits <b>'+
+        (dirN==='on'?'on':Math.abs(errN).toFixed(2)+' '+dirN)+'</b> the truth'+
+        (isNaN(errC)?', and the corrected estimate declines to report &mdash; the delay distribution has not delivered enough of the recent record to support one.'
+          : ', the corrected one <b>'+(Math.abs(errC)<0.06?'on it':Math.abs(errC).toFixed(2)+' '+(errC<0?'below':'above'))+'</b>.')+
+        ' The gap is the correction.';
+    }
+  }
+
+  function frame(ts){
+    if(!last) last=ts;
+    const dt=Math.min(0.05,(ts-last)/1000); last=ts;
+    if(playing){
+      acc+=dt*14;
+      while(acc>=1){acc-=1; if(T<D-1)T++; else {playing=false;el('play').textContent='Play';el('play').classList.remove('on');}}
+      render();
+    }
+    requestAnimationFrame(frame);
+  }
+  el('play').addEventListener('click',()=>{
+    if(T>=D-1){T=10;}
+    playing=!playing;
+    el('play').textContent=playing?'Pause':'Play';
+    el('play').classList.toggle('on',playing);render();});
+  el('reset').addEventListener('click',()=>{T=10;acc=0;playing=false;
+    el('play').textContent='Play';el('play').classList.remove('on');render();});
+  el('dly').addEventListener('input',e=>{
+    meanDelay=Number(e.target.value); el('dlyv').textContent=meanDelay+' d';
+    rebuildDelays(); render();});
+  window.addEventListener('resize',render);
+
+  render();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Interactive demonstrations of the methods behind Meridian's research directions, each labelled with what is measured and what is simulated.">
+<title>Method Demonstrations</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{
+  --paper:#faf8f4;--ink:#1c1c2e;--ink-2:#46465e;--ink-3:#8888a0;
+  --rule:#dedad0;--hair:rgba(28,28,46,0.08);
+  --amber:#b8832a;--amber-soft:rgba(184,131,42,0.13);
+  --teal:#1b7f8c;--flag:#bf4f68;
+  --display:"Cormorant Garamond",Georgia,serif;
+  --sans:"DM Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:15px;font-weight:300;line-height:1.75;-webkit-font-smoothing:antialiased}
+.sitenav{max-width:780px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:22px 0;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.sitenav span{display:flex;gap:20px;flex-wrap:wrap}
+.sitenav a{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);text-decoration:none}
+.sitenav a:hover{color:var(--amber)}
+.page{max-width:780px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 80px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 14px}
+h1{font-family:var(--display);font-weight:300;font-size:clamp(27px,4.4vw,38px);line-height:1.2;
+  margin:0 0 18px;text-wrap:balance}
+.intro{color:var(--ink-2);max-width:60ch;margin:0 0 14px}
+.intro em{font-style:normal;color:var(--ink)}
+
+.card{display:block;text-decoration:none;color:inherit;border-top:1px solid var(--rule);
+  padding:26px 0;transition:background .15s}
+.card:hover{background:var(--hair)}
+.card:last-of-type{border-bottom:1px solid var(--rule)}
+.card h2{font-family:var(--display);font-weight:400;font-size:21px;margin:0 0 7px;line-height:1.3}
+.card:hover h2{color:var(--amber)}
+.card p{margin:0 0 12px;color:var(--ink-2);font-size:14.5px;max-width:62ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.tag{font-family:var(--mono);font-size:9px;letter-spacing:.13em;text-transform:uppercase;
+  border:1px solid var(--rule);border-radius:100px;padding:3px 10px;color:var(--ink-3)}
+.tag.sim{color:var(--flag);border-color:rgba(191,79,104,.4)}
+.tag.live{color:var(--amber);border-color:var(--amber);background:var(--amber-soft)}
+.tag.lang{color:var(--teal);border-color:rgba(27,127,140,.35)}
+
+.foot{margin-top:40px;color:var(--ink-2);max-width:64ch;font-size:14px}
+.foot strong{color:var(--ink);font-weight:500}
+</style>
+</head>
+<body>
+
+<nav class="sitenav">
+  <a href="index.html">&larr; Meridian Institute</a>
+  <span><a href="program.html">Research programme</a><a href="tree.html">Research phylogeny</a></span>
+</nav>
+
+<div class="page">
+  <p class="eyebrow">Methods</p>
+  <h1>Four demonstrations, each saying what it knows.</h1>
+  <p class="intro">A method is easier to argue with when you can move it. These are interactive demonstrations of the machinery behind the research directions &mdash; not results. <em>Every one runs on simulated data</em>, and each page states that in its own header as well as here, because a figure separated from its caption is how a simulation becomes a claim.</p>
+  <p class="intro">The tag on each card says how far the underlying method has actually got.</p>
+
+  <a class="card" href="demo-delay.html">
+    <h2>The last two weeks are always wrong</h2>
+    <p>Sequences arrive after the cases they came from, so the recent end of the genomic record is systematically incomplete. A birth&ndash;death skyline with a constant sampling proportion reads that as a fall in transmission and pushes R(t) down exactly where it matters. Move the delay slider and the bias moves with it.</p>
+    <div class="meta">
+      <span class="tag sim">Simulated</span>
+      <span class="tag live">Method at submission</span>
+      <span class="tag">D2</span>
+    </div>
+  </a>
+
+  <a class="card" href="demo-amortised.html">
+    <h2>Pay once, then infer for free</h2>
+    <p>One sampler run per surveillance unit per week does not scale to a hundred and fifty national centres. Amortised inference moves the cost up front: simulate once, train once, and every dataset afterwards is a forward pass. The second panel shows the price &mdash; an estimator asked about data outside its training support answers just as fast and just as confidently, and can be wrong.</p>
+    <div class="meta">
+      <span class="tag sim">Illustrative cost model</span>
+      <span class="tag">Design gate passed</span>
+      <span class="tag">Delay-NPE</span>
+    </div>
+  </a>
+
+  <a class="card" href="demo-valley.html">
+    <h2>Why lesions multiply instead of adding</h2>
+    <p>Reversion means crossing a fitness valley, and crossings are rare events whose rate depends on barrier height exponentially rather than linearly. A thousand lineages diffuse in the well; the second panel measures the escape rate from the simulation and plots it on a log axis, where an exponential is a straight line.</p>
+    <div class="meta">
+      <span class="tag sim">Textbook mathematics, simulated</span>
+      <span class="tag">No calibration run</span>
+    </div>
+  </a>
+
+  <a class="card" href="reduction.html">
+    <h2>How much diversity survives, and where it is lost</h2>
+    <p>Reducing a genome corpus to cluster representatives invites one question: why that threshold? A decay curve answers how much tree length survives and cannot answer where. The ring around the tree records what each sector kept, and the date strip records whether the time span survived too.</p>
+    <div class="meta">
+      <span class="tag sim">Simulated</span>
+      <span class="tag lang">&#32321;&#20307; &middot; &#31616;&#20307;</span>
+    </div>
+  </a>
+
+  <p class="foot"><strong>What is missing from all four:</strong> real data. Each becomes an argument about the world rather than about a method on the day it runs on the corpus or the surveillance record it was built for, and each page says which inputs that would take. Until then they demonstrate mechanisms, which is a smaller claim and the only one they support.</p>
+</div>
+</body>
+</html>

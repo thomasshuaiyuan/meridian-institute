@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="子午研究院各研究方向背後方法的互動演示；每一項均註明何者為實測、何者為模擬。">
+<title>方法演示</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400&family=Noto+Sans+SC:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{
+  --paper:#faf8f4;--ink:#1c1c2e;--ink-2:#46465e;--ink-3:#8888a0;
+  --rule:#dedad0;--hair:rgba(28,28,46,0.08);
+  --amber:#b8832a;--amber-soft:rgba(184,131,42,0.13);
+  --teal:#1b7f8c;--flag:#bf4f68;
+  --display:"Noto Serif SC",Georgia,serif;
+  --sans:"Noto Sans SC",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:15px;font-weight:300;line-height:1.95;-webkit-font-smoothing:antialiased}
+.sitenav{max-width:780px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:22px 0;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.sitenav span{display:flex;gap:20px;flex-wrap:wrap}
+.sitenav a{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);text-decoration:none}
+.sitenav a:hover{color:var(--amber)}
+.page{max-width:780px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:40px 80px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 14px}
+h1{font-family:var(--display);font-weight:300;font-size:clamp(27px,4.4vw,38px);line-height:1.2;
+  margin:0 0 18px;text-wrap:balance}
+.intro{color:var(--ink-2);max-width:60ch;margin:0 0 14px}
+.intro em{font-style:normal;color:var(--ink)}
+
+.card{display:block;text-decoration:none;color:inherit;border-top:1px solid var(--rule);
+  padding:26px 0;transition:background .15s}
+.card:hover{background:var(--hair)}
+.card:last-of-type{border-bottom:1px solid var(--rule)}
+.card h2{font-family:var(--display);font-weight:400;font-size:21px;margin:0 0 7px;line-height:1.3}
+.card:hover h2{color:var(--amber)}
+.card p{margin:0 0 12px;color:var(--ink-2);font-size:14.5px;max-width:62ch}
+.meta{display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center}
+.tag{font-family:var(--mono);font-size:9px;letter-spacing:.13em;text-transform:uppercase;
+  border:1px solid var(--rule);border-radius:100px;padding:3px 10px;color:var(--ink-3)}
+.tag.sim{color:var(--flag);border-color:rgba(191,79,104,.4)}
+.tag.live{color:var(--amber);border-color:var(--amber);background:var(--amber-soft)}
+.tag.lang{color:var(--teal);border-color:rgba(27,127,140,.35)}
+
+.foot{margin-top:40px;color:var(--ink-2);max-width:64ch;font-size:14px}
+.foot strong{color:var(--ink);font-weight:500}
+</style>
+</head>
+<body>
+
+<nav class="sitenav">
+  <a href="zh.html">&larr; 子午研究院</a>
+  <span><a href="program-zh.html">研究綱領</a><a href="tree.html">研究譜系</a><a href="methods-cn.html">简</a><a href="methods.html">EN</a></span>
+</nav>
+
+<div class="page">
+  <p class="eyebrow">方法</p>
+  <h1>四項演示，各自說明自己知道甚麼。</h1>
+  <p class="intro">一個方法，能動手撥弄時才好與之爭辯。以下是各研究方向背後機制的互動演示——不是結果。<em>每一項都運行在模擬數據之上</em>，各頁自身的標頭亦如此聲明，因為圖與說明一旦分離，模擬就會變成主張。</p>
+  <p class="intro">每張卡片上的標籤，說明其背後的方法實際走到了哪一步。</p>
+
+  <a class="card" href="demo-delay.html">
+    <h2>最近兩週總是錯的</h2>
+    <p>序列的到達晚於其來源病例，因此基因組記錄的近端是系統性不完整的。採用固定採樣比例的出生—死亡天際線模型，會把這種缺口讀成傳播的真實下降，於是恰好在最要緊的位置把 R(t) 壓低。拖動延遲滑桿，偏差隨之而動。</p>
+    <div class="meta">
+      <span class="tag sim">模擬</span>
+      <span class="tag live">方法已投稿</span>
+      <span class="tag">D2</span>
+      <span class="tag">英文</span>
+    </div>
+  </a>
+
+  <a class="card" href="demo-amortised.html">
+    <h2>一次付清，此後推斷免費</h2>
+    <p>每個監測單位每週跑一次採樣器，擴展不到一百五十個國家中心。攤銷式推斷把成本前置：模擬一次、訓練一次，此後每一個數據集都只是一次前向傳遞。第二個面板呈現其代價——當被問及訓練支撐範圍之外的數據時，估計器回答得同樣快、同樣篤定，而且可能是錯的。</p>
+    <div class="meta">
+      <span class="tag sim">示意性成本模型</span>
+      <span class="tag">已通過設計關卡</span>
+      <span class="tag">Delay-NPE</span>
+      <span class="tag">英文</span>
+    </div>
+  </a>
+
+  <a class="card" href="demo-valley.html">
+    <h2>為甚麼缺失是相乘而非相加</h2>
+    <p>回覆突變意味着穿越一道適應度低谷，而穿越是罕見事件——其發生率對障礙高度的依賴是指數的，而非線性的。一千個譜系在井中擴散；第二個面板自模擬中測量逃逸速率，並繪於對數軸上，指數關係在此呈現為一條直線。</p>
+    <div class="meta">
+      <span class="tag sim">教科書數學，模擬運行</span>
+      <span class="tag">尚未校準</span>
+      <span class="tag">英文</span>
+    </div>
+  </a>
+
+  <a class="card" href="reduction-zh.html">
+    <h2>有多少多樣性存活下來，又是在哪裏失去的</h2>
+    <p>把基因組集縮減為毒株簇代表序列，必然引出一個問題：為甚麼是這個閾值？衰減曲線回答樹長存活了多少，卻回答不了失去在哪裏。樹外的環記錄每個扇區保住了甚麼，而日期條則記錄時間跨度是否同樣存活。</p>
+    <div class="meta">
+      <span class="tag sim">模擬</span>
+      <span class="tag lang">繁體 &middot; 简体</span>
+    </div>
+  </a>
+
+  <p class="foot"><strong>四項演示共同缺少的，是真實數據。</strong>當任何一項跑在它本來為之而建的基因組集或監測記錄上，它才從關於方法的論證變成關於世界的論證；各頁均已註明那需要哪些輸入。在此之前，它們演示的是機制——這是一個更小的主張，也是它們唯一撐得起的主張。</p>
+</div>
+</body>
+</html>

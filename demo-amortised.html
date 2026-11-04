@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Why amortised inference changes what is possible at surveillance scale, and the failure mode it introduces.">
+<title>Amortised Inference</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{
+  --paper:#faf8f4;--ink:#1c1c2e;--ink-2:#46465e;--ink-3:#8888a0;
+  --rule:#dedad0;--hair:rgba(28,28,46,0.08);
+  --amber:#b8832a;--amber-soft:rgba(184,131,42,0.13);
+  --teal:#1b7f8c;--flag:#bf4f68;--ghost:rgba(28,28,46,0.13);
+  --display:"Cormorant Garamond",Georgia,serif;
+  --sans:"DM Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;--ghost:rgba(228,224,216,0.14);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;--ghost:rgba(228,224,216,0.14);color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:15px;font-weight:300;line-height:1.75;-webkit-font-smoothing:antialiased}
+.page{max-width:780px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:48px 76px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 14px}
+h1{font-family:var(--display);font-weight:300;font-size:clamp(27px,4.4vw,38px);line-height:1.2;
+  margin:0 0 18px;text-wrap:balance}
+.intro{color:var(--ink-2);max-width:60ch;margin:0 0 14px}
+.intro em{font-style:normal;color:var(--ink)}
+.note{font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:var(--ink-3);
+  line-height:1.9;margin:0 0 34px}
+.controls{display:flex;flex-wrap:wrap;gap:9px 12px;align-items:center;margin-bottom:22px}
+button{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  background:none;border:1px solid var(--rule);border-radius:100px;color:var(--ink-2);
+  padding:6px 15px;cursor:pointer;transition:color .15s,border-color .15s,background .15s}
+button:hover{color:var(--ink);border-color:var(--ink-3)}
+button.on{background:var(--amber-soft);border-color:transparent;color:var(--amber)}
+button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.sl{display:flex;align-items:center;gap:10px}
+.sl label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.sl output{font-family:var(--mono);font-size:11px;color:var(--ink)}
+input[type=range]{width:116px;accent-color:var(--amber)}
+.sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);border-top:1px solid var(--rule);padding-top:18px;margin:34px 0 8px}
+canvas{display:block;width:100%}
+#cost{height:260px}#supp{height:280px}
+.stats{display:flex;flex-wrap:wrap;gap:26px 40px;border-top:1px solid var(--rule);
+  padding-top:20px;margin-top:26px}
+.stat .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);display:block;margin-bottom:5px}
+.stat .v{font-family:var(--display);font-size:27px;line-height:1;font-weight:300}
+.v.t{color:var(--teal)}.v.a{color:var(--amber)}.v.f{color:var(--flag)}
+.verdict{color:var(--ink-2);max-width:62ch;margin:22px 0 0}
+.verdict b{color:var(--ink);font-weight:500}
+.caveat{border:1px solid var(--rule);border-left:2px solid var(--flag);border-radius:2px;
+  padding:16px 20px;margin:30px 0 0;background:var(--hair)}
+.caveat p{margin:0;font-size:13.5px;color:var(--ink-2)}
+.caveat b{color:var(--ink);font-weight:500}
+.foot{margin-top:38px;border-top:1px solid var(--rule);padding-top:20px;
+  color:var(--ink-2);max-width:64ch;font-size:14.5px}
+.foot strong{color:var(--ink);font-weight:500}
+
+.sitenav {
+  max-width: 780px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 22px 0;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.sitenav span { display: flex; gap: 20px; flex-wrap: wrap; }
+.sitenav a {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-3); text-decoration: none;
+}
+.sitenav a:hover { color: var(--amber); }
+.page { padding-block: 34px 76px; }
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <a href="methods.html">&larr; Method demonstrations</a>
+  <span><a href="index.html">Meridian Institute</a><a href="program.html">Research programme</a></span>
+</nav>
+
+
+<div class="page">
+  <p class="eyebrow">Delay-NPE &middot; illustrative</p>
+  <h1>Pay once, then infer for free.</h1>
+  <p class="intro">Fitting a delay-aware model separately to every surveillance unit does not scale. One national centre, one week, one sampler run &mdash; multiply by a hundred and fifty centres and fifty-two weeks and the arithmetic stops working, which is what keeps delay-aware inference a per-study exercise rather than a running system.</p>
+  <p class="intro">Amortised inference moves the cost. Simulate from the model once, train an estimator that maps data straight to a posterior, and every dataset afterwards is <em>a forward pass</em>. The expense is paid up front and never again.</p>
+  <p class="note">Illustrative cost model &middot; units are arbitrary &middot; not measured from any implementation<br>Both the training budget and the per-fit cost are yours to set below</p>
+
+  <div class="controls">
+    <button id="play" class="on">Play</button>
+    <button id="reset">Reset</button>
+    <span class="sl"><label for="fit">Per-fit cost</label><input id="fit" type="range" min="4" max="60" step="1" value="25"><output id="fitv">2.5</output></span>
+    <span class="sl"><label for="tr">Training</label><input id="tr" type="range" min="100" max="1500" step="50" value="600"><output id="trv">600</output></span>
+  </div>
+
+  <p class="sub">Cumulative cost as surveillance units arrive</p>
+  <canvas id="cost"></canvas>
+
+  <div class="stats">
+    <span class="stat"><span class="k">Datasets fitted</span><span class="v" id="n">0</span></span>
+    <span class="stat"><span class="k">Per-dataset total</span><span class="v f" id="cSep">0</span></span>
+    <span class="stat"><span class="k">Amortised total</span><span class="v a" id="cAmo">0</span></span>
+    <span class="stat"><span class="k">Break-even at</span><span class="v t" id="be">&mdash;</span></span>
+  </div>
+  <p class="verdict" id="verdict">&nbsp;</p>
+
+  <p class="sub">Where the trained estimator is entitled to answer</p>
+  <canvas id="supp"></canvas>
+
+  <div class="caveat">
+    <p><b>The failure mode is not slowness, it is confidence.</b> A sampler run on a dataset the model fits badly tends to show it &mdash; poor mixing, wide intervals, divergences. An amortised estimator asked about data outside its training distribution returns a posterior just as quickly and just as narrowly as for any other input, and that posterior can be wrong. The rose points are datasets outside the simulated support; nothing in the forward pass flags them, so the check has to be built, not assumed.</p>
+  </div>
+
+  <p class="foot">This is the design decision behind Delay-NPE, which cleared its design gate on 3 November 2026 and is <strong>blocked before Phase 0</strong> on a definition rather than on compute: what the bins are indexed by. Fitting a prior on one axis for a target on another is the grid-mismatch failure that already cost one run, and it is cheaper to settle in a sentence than in a simulation.</p>
+</div>
+
+<script>
+(function(){
+  let s=99173>>>0;
+  const rnd=()=>(s=(Math.imul(s,1664525)+1013904223)>>>0)/4294967296;
+  const gauss=()=>{let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();
+    return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};
+
+  const NMAX=420;
+  let perFit=2.5, train=600;
+  const amoPer=0.004;
+
+  // ---- training support: a blob in (sampling fraction, mean delay) ----
+  const TRAIN=[];
+  for(let i=0;i<340;i++){
+    const a=rnd()*Math.PI*2, r=Math.sqrt(rnd());
+    TRAIN.push({x:0.5+0.33*r*Math.cos(a)*1.05, y:0.46+0.30*r*Math.sin(a)});
+  }
+  const inSupport=(x,y)=>{
+    const dx=(x-0.5)/(0.33*1.05), dy=(y-0.46)/0.30; return dx*dx+dy*dy<=1;
+  };
+  // ---- arriving datasets: most inside the simulated support, some not ----
+  const DATA=[];
+  for(let i=0;i<NMAX;i++){
+    let x,y;
+    if(rnd()<0.88){ const a=rnd()*Math.PI*2,r=Math.sqrt(rnd())*0.93;
+      x=0.5+0.33*r*Math.cos(a)*1.05; y=0.46+0.30*r*Math.sin(a); }
+    else { x=0.08+rnd()*0.86; y=0.06+rnd()*0.86; }
+    DATA.push({x,y,ok:inSupport(x,y)});
+  }
+
+  const dc=document.getElementById('cost'), sc=document.getElementById('supp');
+  const cx=dc.getContext('2d'), sx=sc.getContext('2d');
+  let C={};
+  function pal(){const cs=getComputedStyle(document.documentElement);const g=n=>cs.getPropertyValue(n).trim();
+    C={ink:g('--ink'),ink2:g('--ink-2'),ink3:g('--ink-3'),rule:g('--rule'),hair:g('--hair'),
+       amber:g('--amber'),teal:g('--teal'),flag:g('--flag'),ghost:g('--ghost'),paper:g('--paper')};}
+  pal();
+  const mq=window.matchMedia('(prefers-color-scheme: dark)');
+  mq.addEventListener&&mq.addEventListener('change',()=>{pal();render();});
+  function fit2(cv,ctx){const r=cv.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);
+    cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);return{w:r.width,h:r.height};}
+  const al=(hex,a)=>{const m=hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+    return m?`rgba(${parseInt(m[1],16)},${parseInt(m[2],16)},${parseInt(m[3],16)},${a})`:hex;};
+
+  const breakEven=()=>train/(perFit-amoPer);
+
+  function drawCost(n){
+    const {w,h}=fit2(dc,cx); cx.clearRect(0,0,w,h);
+    const pL=46,pR=76,pT=14,pB=30;
+    const yMax=Math.max(perFit*NMAX, train+amoPer*NMAX)*1.06;
+    const X=i=>pL+(i/NMAX)*(w-pL-pR), Y=v=>pT+(1-v/yMax)*(h-pT-pB);
+    cx.font='10px "IBM Plex Mono",monospace';
+    cx.strokeStyle=C.hair;cx.lineWidth=1;
+    for(let k=0;k<=4;k++){const v=yMax*k/4;cx.beginPath();cx.moveTo(pL,Y(v));cx.lineTo(w-pR,Y(v));cx.stroke();}
+    cx.fillStyle=C.ink3;cx.textAlign='right';
+    for(let k=0;k<=4;k++){const v=yMax*k/4;cx.fillText(Math.round(v),pL-7,Y(v)+3);}
+    cx.textAlign='center';
+    for(let i=0;i<NMAX;i+=100) cx.fillText(i,X(i),h-pB+16);
+    cx.fillText('surveillance units fitted',(pL+w-pR)/2,h-pB+28);
+
+    // break-even marker
+    const be=breakEven();
+    if(be<NMAX){
+      cx.setLineDash([2,4]);cx.strokeStyle=al(C.teal,0.8);cx.beginPath();
+      cx.moveTo(X(be),pT);cx.lineTo(X(be),h-pB);cx.stroke();cx.setLineDash([]);
+      cx.fillStyle=C.teal;cx.textAlign='center';cx.fillText('break-even',X(be),pT-2);
+    }
+    const line=(f,st,lw)=>{cx.strokeStyle=st;cx.lineWidth=lw;cx.beginPath();
+      for(let i=0;i<=NMAX;i++){const x=X(i),y=Y(Math.min(yMax,f(i)));i?cx.lineTo(x,y):cx.moveTo(x,y);}cx.stroke();};
+    line(i=>perFit*i, al(C.flag,0.28),1.6);
+    line(i=>train+amoPer*i, al(C.amber,0.28),1.6);
+    const prog=(f,st,lw)=>{cx.strokeStyle=st;cx.lineWidth=lw;cx.lineJoin='round';cx.beginPath();
+      for(let i=0;i<=n;i++){const x=X(i),y=Y(Math.min(yMax,f(i)));i?cx.lineTo(x,y):cx.moveTo(x,y);}cx.stroke();};
+    prog(i=>perFit*i, C.flag,2.1);
+    prog(i=>train+amoPer*i, C.amber,2.1);
+
+    cx.textAlign='left';
+    cx.fillStyle=C.flag;cx.fillText('one fit each',w-pR+7,Y(Math.min(yMax,perFit*NMAX))+3);
+    cx.fillStyle=C.amber;cx.fillText('amortised',w-pR+7,Y(Math.min(yMax,train+amoPer*NMAX))+3);
+  }
+
+  function drawSupport(n){
+    const {w,h}=fit2(sc,sx); sx.clearRect(0,0,w,h);
+    const pL=46,pR=16,pT=16,pB=34;
+    const X=v=>pL+v*(w-pL-pR), Y=v=>pT+(1-v)*(h-pT-pB);
+    sx.font='10px "IBM Plex Mono",monospace';
+    // support ellipse
+    sx.save();
+    sx.strokeStyle=al(C.teal,0.55);sx.lineWidth=1.2;sx.setLineDash([3,3]);
+    sx.beginPath();
+    sx.ellipse(X(0.5),Y(0.46),0.33*1.05*(w-pL-pR),0.30*(h-pT-pB),0,0,Math.PI*2);
+    sx.stroke();sx.setLineDash([]);
+    sx.restore();
+    // training sims
+    sx.fillStyle=al(C.teal,0.18);
+    for(const t of TRAIN){sx.beginPath();sx.arc(X(t.x),Y(t.y),2.1,0,6.2832);sx.fill();}
+    // arrived datasets
+    let bad=0;
+    for(let i=0;i<n&&i<NMAX;i++){
+      const d=DATA[i]; if(!d.ok) bad++;
+      sx.fillStyle = d.ok ? al(C.amber,0.85) : C.flag;
+      sx.beginPath();sx.arc(X(d.x),Y(d.y), d.ok?2.4:3.4, 0,6.2832);sx.fill();
+    }
+    sx.strokeStyle=C.hair;sx.lineWidth=1;
+    sx.beginPath();sx.moveTo(pL,h-pB+.5);sx.lineTo(w-pR,h-pB+.5);sx.stroke();
+    sx.beginPath();sx.moveTo(pL-.5,pT);sx.lineTo(pL-.5,h-pB);sx.stroke();
+    sx.fillStyle=C.ink3;sx.textAlign='center';
+    sx.fillText('sampling fraction',(pL+w-pR)/2,h-pB+18);
+    sx.save();sx.translate(14,(pT+h-pB)/2);sx.rotate(-Math.PI/2);
+    sx.fillText('mean deposition delay',0,0);sx.restore();
+    sx.textAlign='left';
+    sx.fillStyle=al(C.teal,0.75);sx.fillText('simulated support',pL+6,pT+10);
+    sx.fillStyle=C.flag;sx.fillText('outside it',pL+6,pT+24);
+    return bad;
+  }
+
+  const el=id=>document.getElementById(id);
+  let n=0, playing=true, last=0, acc=0;
+
+  function render(){
+    drawCost(n);
+    const bad=drawSupport(n);
+    const cs=perFit*n, ca=train+amoPer*n, be=breakEven();
+    el('n').textContent=n;
+    el('cSep').textContent=Math.round(cs);
+    el('cAmo').textContent=Math.round(ca);
+    el('be').textContent=be<NMAX?Math.round(be):'>'+NMAX;
+    if(n<5){el('verdict').innerHTML='&nbsp;';return;}
+    const ahead = cs>ca;
+    el('verdict').innerHTML = ahead
+      ? 'Past break-even: fitting each unit separately has now cost <b>'+Math.round(cs)+
+        '</b> against <b>'+Math.round(ca)+'</b> amortised, and the gap widens with every unit added. '+
+        (bad?'<b>'+bad+'</b> of the '+n+' fell outside the simulated support.':'')
+      : 'Still behind: the training budget of <b>'+Math.round(train)+
+        '</b> has not yet been repaid &mdash; separate fits stand at <b>'+Math.round(cs)+
+        '</b>. Amortisation is a bad trade for a single study and a good one for a running system.';
+  }
+
+  function frame(ts){
+    if(!last) last=ts;
+    const dt=Math.min(0.05,(ts-last)/1000); last=ts;
+    if(playing){
+      acc+=dt*46;
+      while(acc>=1){acc-=1; if(n<NMAX)n++; else {playing=false;el('play').textContent='Play';el('play').classList.remove('on');}}
+      render();
+    }
+    requestAnimationFrame(frame);
+  }
+  el('play').addEventListener('click',()=>{
+    if(n>=NMAX)n=0;
+    playing=!playing;el('play').textContent=playing?'Pause':'Play';
+    el('play').classList.toggle('on',playing);render();});
+  el('reset').addEventListener('click',()=>{n=0;acc=0;playing=false;
+    el('play').textContent='Play';el('play').classList.remove('on');render();});
+  el('fit').addEventListener('input',e=>{perFit=Number(e.target.value)/10;
+    el('fitv').textContent=perFit.toFixed(1);render();});
+  el('tr').addEventListener('input',e=>{train=Number(e.target.value);
+    el('trv').textContent=train;render();});
+  window.addEventListener('resize',render);
+
+  render(); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

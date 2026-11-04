@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="A simulation that measures its own escape-rate law: why reversion rate falls exponentially in barrier height.">
+<title>Escape From A Valley</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{
+  --paper:#faf8f4;--ink:#1c1c2e;--ink-2:#46465e;--ink-3:#8888a0;
+  --rule:#dedad0;--hair:rgba(28,28,46,0.08);
+  --amber:#b8832a;--amber-soft:rgba(184,131,42,0.13);
+  --teal:#1b7f8c;--flag:#bf4f68;--ghost:rgba(28,28,46,0.13);
+  --display:"Cormorant Garamond",Georgia,serif;
+  --sans:"DM Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;--ghost:rgba(228,224,216,0.14);color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;--ghost:rgba(228,224,216,0.14);color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:15px;font-weight:300;line-height:1.75;-webkit-font-smoothing:antialiased}
+.page{max-width:780px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:48px 76px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 14px}
+h1{font-family:var(--display);font-weight:300;font-size:clamp(27px,4.4vw,38px);line-height:1.2;
+  margin:0 0 18px;text-wrap:balance}
+.intro{color:var(--ink-2);max-width:60ch;margin:0 0 14px}
+.intro em{font-style:normal;color:var(--ink)}
+.note{font-family:var(--mono);font-size:10px;letter-spacing:.04em;color:var(--ink-3);
+  line-height:1.9;margin:0 0 32px}
+.controls{display:flex;flex-wrap:wrap;gap:9px 14px;align-items:center;margin-bottom:20px}
+button{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  background:none;border:1px solid var(--rule);border-radius:100px;color:var(--ink-2);
+  padding:6px 15px;cursor:pointer;transition:color .15s,border-color .15s,background .15s}
+button:hover{color:var(--ink);border-color:var(--ink-3)}
+button.on{background:var(--amber-soft);border-color:transparent;color:var(--amber)}
+button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+.sl{display:flex;align-items:center;gap:10px}
+.sl label{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.sl output{font-family:var(--mono);font-size:11px;color:var(--amber)}
+input[type=range]{width:130px;accent-color:var(--amber)}
+.sub{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);border-top:1px solid var(--rule);padding-top:18px;margin:32px 0 8px}
+canvas{display:block;width:100%}
+#well{height:300px}#rate{height:260px}
+.stats{display:flex;flex-wrap:wrap;gap:26px 40px;border-top:1px solid var(--rule);
+  padding-top:20px;margin-top:24px}
+.stat .k{font-family:var(--mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);display:block;margin-bottom:5px}
+.stat .v{font-family:var(--display);font-size:27px;line-height:1;font-weight:300}
+.v.a{color:var(--amber)}.v.f{color:var(--flag)}.v.t{color:var(--teal)}
+.verdict{color:var(--ink-2);max-width:62ch;margin:22px 0 0}
+.verdict b{color:var(--ink);font-weight:500}
+.caveat{border:1px solid var(--rule);border-left:2px solid var(--flag);border-radius:2px;
+  padding:16px 20px;margin:30px 0 0;background:var(--hair)}
+.caveat p{margin:0;font-size:13.5px;color:var(--ink-2)}
+.caveat b{color:var(--ink);font-weight:500}
+.foot{margin-top:38px;border-top:1px solid var(--rule);padding-top:20px;
+  color:var(--ink-2);max-width:64ch;font-size:14.5px}
+.foot strong{color:var(--ink);font-weight:500}
+
+.sitenav {
+  max-width: 780px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 22px 0;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.sitenav span { display: flex; gap: 20px; flex-wrap: wrap; }
+.sitenav a {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-3); text-decoration: none;
+}
+.sitenav a:hover { color: var(--amber); }
+.page { padding-block: 34px 76px; }
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <a href="methods.html">&larr; Method demonstrations</a>
+  <span><a href="index.html">Meridian Institute</a><a href="program.html">Research programme</a></span>
+</nav>
+
+
+<div class="page">
+  <p class="eyebrow">Fitness-valley escape &middot; simulated</p>
+  <h1>Why lesions multiply instead of adding.</h1>
+  <p class="intro">An attenuated construct sits in a fitness well. Reversion means crossing a valley: intermediate genotypes are less fit than either end, so most attempts fall back. Escape is not a typical event, it is a <em>rare</em> one &mdash; and rare events have a rate that depends on barrier height exponentially rather than linearly.</p>
+  <p class="intro">Below, several hundred lineages diffuse under selection and drift. Deepen the valley by one lesion and watch the crossings thin out. The second panel does not assert the law &mdash; it <em>measures</em> it from the simulation and plots it on a log axis, where an exponential becomes a straight line.</p>
+  <p class="note">Overdamped Langevin dynamics in a double well &middot; textbook escape-rate mathematics, not a Meridian result<br>No calibration to passage data has been run; direction 1 proposes that calibration, it has not happened</p>
+
+  <div class="controls">
+    <button id="play" class="on">Pause</button>
+    <button id="clear">Clear measurements</button>
+    <span class="sl"><label for="m">Lesions</label><input id="m" type="range" min="1" max="5" step="1" value="2"><output id="mv">2</output></span>
+  </div>
+
+  <p class="sub">Lineages in the well</p>
+  <canvas id="well"></canvas>
+
+  <div class="stats">
+    <span class="stat"><span class="k">Barrier</span><span class="v a" id="bar">&mdash;</span></span>
+    <span class="stat"><span class="k">Escapes seen</span><span class="v f" id="esc">0</span></span>
+    <span class="stat"><span class="k">Measured rate</span><span class="v" id="rate">&mdash;</span></span>
+    <span class="stat"><span class="k">Per lesion</span><span class="v t" id="fold">&mdash;</span></span>
+  </div>
+  <p class="verdict" id="verdict">&nbsp;</p>
+
+  <p class="sub">Measured escape rate against barrier height &mdash; log scale</p>
+  <canvas id="rate2"></canvas>
+
+  <div class="caveat">
+    <p><b>What the straight line is, and is not.</b> It is a property of the dynamics: in a log plot, exponential dependence on barrier height appears as a line, and its slope is set by how noisy the process is relative to the barrier. That is mathematics and it holds here by construction. <b>What it is not</b> is evidence about any real construct. Turning this into a usable quantity means estimating a real fitness landscape from passage data and showing that measured reversion frequencies follow the same line &mdash; and that is the part that has not been done.</p>
+  </div>
+
+  <p class="foot">The reason the picture matters for vaccine design: if reversion rate falls exponentially in barrier height, then <strong>architecture dominates count</strong>. Two lesions that each contribute a deep, independent barrier are worth far more than four shallow ones sharing a route back, and the regulatory habit of counting attenuating sites rather than measuring the barrier between them is exactly what the exponent would replace.</p>
+</div>
+
+<script>
+(function(){
+  let s=771103>>>0;
+  const rnd=()=>(s=(Math.imul(s,1664525)+1013904223)>>>0)/4294967296;
+  const gauss=()=>{let u=0,v=0;while(!u)u=rnd();while(!v)v=rnd();
+    return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v);};
+
+  const N=1000, D=0.045, TILT=0.30;
+  let m=2;
+  const heightFor=mm=>TILT + D*(1.2 + 1.65*mm);   // U(0)-U(-1) = h - TILT
+  let h=heightFor(m);
+  const barrier=()=>h-TILT;
+
+  const U =x=>h*Math.pow(x*x-1,2)-TILT*x;
+  const dU=x=>4*h*x*(x*x-1)-TILT;
+
+  const px=new Float64Array(N);
+  const reset=()=>{for(let i=0;i<N;i++)px[i]=-1+0.12*gauss();};
+  reset();
+
+  let escapes=0, simTime=0, flash=[], warm=0;
+  const measured=new Map();        // barrier -> {esc, time}
+
+  const dt=0.0016, SUB=44;
+  function step(){
+    const key=barrier().toFixed(4);
+    let rec=measured.get(key); if(!rec){rec={esc:0,time:0};measured.set(key,rec);}
+    const counting = warm > 0.45;
+    for(let k=0;k<SUB;k++){
+      for(let i=0;i<N;i++){
+        px[i]+= -dU(px[i])*dt + Math.sqrt(2*D*dt)*gauss();
+        if(px[i]>0.45){ if(counting){escapes++; rec.esc++;} flash.push({x:px[i],t:0}); px[i]=-1+0.12*gauss(); }
+        else if(px[i]<-2.2) px[i]=-1;
+      }
+      simTime+=dt; warm+=dt; if(counting) rec.time+=dt;
+    }
+    flash=flash.filter(f=>(f.t+=0.016)<0.7);
+  }
+
+  const wc=document.getElementById('well'), rc=document.getElementById('rate2');
+  const wx=wc.getContext('2d'), rx=rc.getContext('2d');
+  let C={};
+  function pal(){const cs=getComputedStyle(document.documentElement);const g=n=>cs.getPropertyValue(n).trim();
+    C={ink:g('--ink'),ink2:g('--ink-2'),ink3:g('--ink-3'),rule:g('--rule'),hair:g('--hair'),
+       amber:g('--amber'),teal:g('--teal'),flag:g('--flag'),ghost:g('--ghost'),paper:g('--paper')};}
+  pal();
+  const mq=window.matchMedia('(prefers-color-scheme: dark)');
+  mq.addEventListener&&mq.addEventListener('change',()=>{pal();draw();});
+  function fitc(cv,ctx){const r=cv.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2);
+    cv.width=Math.round(r.width*dpr);cv.height=Math.round(r.height*dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);return{w:r.width,h:r.height};}
+  const al=(hex,a)=>{const mm=hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+    return mm?`rgba(${parseInt(mm[1],16)},${parseInt(mm[2],16)},${parseInt(mm[3],16)},${a})`:hex;};
+
+  function drawWell(){
+    const {w,hh}=(()=>{const r=fitc(wc,wx);return{w:r.w,hh:r.h};})();
+    wx.clearRect(0,0,w,hh);
+    const pL=30,pR=20,pT=22,pB=34;
+    const X=x=>pL+((x+1.7)/3.4)*(w-pL-pR);
+    const Umax=heightFor(5)*1.0+0.45, Umin=-0.75;
+    const Y=u=>pT+(1-(u-Umin)/(Umax-Umin))*(hh-pT-pB);
+    // ghost of the deepest well for scale
+    wx.strokeStyle=C.ghost;wx.lineWidth=1;wx.beginPath();
+    for(let i=0;i<=240;i++){const x=-1.7+3.4*i/240, hs=heightFor(5);
+      const u=hs*Math.pow(x*x-1,2)-TILT*x; const y=Y(u);
+      i?wx.lineTo(X(x),y):wx.moveTo(X(x),y);}
+    wx.stroke();
+    // current potential
+    wx.strokeStyle=al(C.ink,0.55);wx.lineWidth=1.5;wx.beginPath();
+    for(let i=0;i<=240;i++){const x=-1.7+3.4*i/240,y=Y(U(x));i?wx.lineTo(X(x),y):wx.moveTo(X(x),y);}
+    wx.stroke();
+    // barrier bracket
+    const xs=0, xl=-1;
+    wx.strokeStyle=al(C.amber,0.75);wx.lineWidth=1;wx.setLineDash([2,3]);
+    wx.beginPath();wx.moveTo(X(xs),Y(U(xs)));wx.lineTo(X(xs),Y(U(xl)));wx.stroke();wx.setLineDash([]);
+    wx.font='10px "IBM Plex Mono",monospace';wx.fillStyle=C.amber;wx.textAlign='left';
+    wx.fillText('barrier',X(xs)+6,(Y(U(xs))+Y(U(xl)))/2);
+    // particles
+    wx.fillStyle=al(C.teal,0.55);
+    for(let i=0;i<N;i++){const x=px[i];
+      wx.beginPath();wx.arc(X(x),Y(U(x))-3.2,1.9,0,6.2832);wx.fill();}
+    // escape flashes
+    for(const f of flash){const a=1-f.t/0.7;
+      wx.strokeStyle=al(C.flag,a);wx.lineWidth=1.4;
+      wx.beginPath();wx.arc(X(f.x),Y(U(f.x))-3.2,3+10*f.t,0,6.2832);wx.stroke();}
+    wx.fillStyle=C.ink3;wx.textAlign='center';
+    wx.fillText('attenuated',X(-1),hh-pB+18);
+    wx.fillText('wild type',X(1),hh-pB+18);
+    wx.textAlign='left';
+    wx.fillStyle=al(C.teal,0.8);wx.fillText('lineages',pL,pT-6);
+    wx.fillStyle=C.flag;wx.fillText('escape',pL+62,pT-6);
+  }
+
+  function drawRate(){
+    const r=fitc(rc,rx), w=r.w, hh=r.h;
+    rx.clearRect(0,0,w,hh);
+    const pL=50,pR=18,pT=16,pB=34;
+    const bMin=heightFor(1)-TILT, bMax=heightFor(5)-TILT;
+    const X=b=>pL+((b-bMin)/(bMax-bMin))*(w-pL-pR);
+    const lo=-4.2, hi=-0.2;                      // log10 rate per unit time per lineage
+    const Y=l=>pT+(1-(l-lo)/(hi-lo))*(hh-pT-pB);
+    rx.font='10px "IBM Plex Mono",monospace';
+    rx.strokeStyle=C.hair;rx.lineWidth=1;
+    for(let l=-4;l<=0;l++){rx.beginPath();rx.moveTo(pL,Y(l));rx.lineTo(w-pR,Y(l));rx.stroke();}
+    rx.fillStyle=C.ink3;rx.textAlign='right';
+    for(let l=-4;l<=0;l++) rx.fillText('10'+String(l).replace('-','⁻').replace(/[0-4]/g,d=>'⁰¹²³⁴'[+d]),pL-7,Y(l)+3);
+    rx.textAlign='center';
+    for(let k=1;k<=5;k++){const b=heightFor(k)-TILT;rx.fillText(k,X(b),hh-pB+16);}
+    rx.fillText('lesions',(pL+w-pR)/2,hh-pB+28);
+    // theory: rate ∝ exp(-barrier/D)
+    rx.strokeStyle=al(C.ink3,0.8);rx.setLineDash([3,3]);rx.lineWidth=1.2;rx.beginPath();
+    const c0=-0.30;
+    for(let i=0;i<=60;i++){const b=bMin+(bMax-bMin)*i/60;
+      const l=c0-(b-bMin)/D/Math.LN10; const y=Y(Math.max(lo,Math.min(hi,l)));
+      i?rx.lineTo(X(b),y):rx.moveTo(X(b),y);}
+    rx.stroke();rx.setLineDash([]);
+    rx.textAlign='left';rx.fillStyle=C.ink3;
+    rx.fillText('exp(−barrier / noise)',pL+8,pT+10);
+    // measured points
+    const pts=[];
+    measured.forEach((v,k)=>{ if(v.time>0.9 && v.esc>2){
+      const b=parseFloat(k), rate=v.esc/(v.time*N);
+      pts.push({b,l:Math.log10(rate)});}});
+    pts.sort((a,b)=>a.b-b.b);
+    rx.strokeStyle=al(C.amber,0.55);rx.lineWidth=1.4;rx.beginPath();
+    pts.forEach((p,i)=>{const x=X(p.b),y=Y(Math.max(lo,Math.min(hi,p.l)));i?rx.lineTo(x,y):rx.moveTo(x,y);});
+    rx.stroke();
+    for(const p of pts){const x=X(p.b),y=Y(Math.max(lo,Math.min(hi,p.l)));
+      rx.fillStyle=C.paper;rx.beginPath();rx.arc(x,y,5,0,6.2832);rx.fill();
+      rx.fillStyle=C.amber;rx.beginPath();rx.arc(x,y,3.2,0,6.2832);rx.fill();}
+    rx.textAlign='left';rx.fillStyle=C.amber;
+    if(pts.length) rx.fillText('measured',pL+8,pT+24);
+    return pts;
+  }
+
+  const el=id=>document.getElementById(id);
+  let playing=true;
+
+  function draw(){
+    drawWell();
+    const pts=drawRate();
+    el('bar').textContent=barrier().toFixed(2);
+    el('esc').textContent=escapes;
+    const key=barrier().toFixed(4), rec=measured.get(key);
+    const rate = rec&&rec.time>0.4 ? rec.esc/(rec.time*N) : NaN;
+    el('rate').textContent=isNaN(rate)||rate<=0?'—':rate<0.001?rate.toExponential(1):rate.toFixed(4);
+    if(pts.length>=2){
+      const a=pts[0], b=pts[pts.length-1];
+      const perLesion=(b.l-a.l)/((b.b-a.b)/(heightFor(2)-heightFor(1)));
+      el('fold').textContent='×'+Math.pow(10,perLesion).toFixed(2);
+      el('verdict').innerHTML='Across the barriers measured so far, each additional lesion multiplies the escape rate by about <b>'+
+        Math.pow(10,perLesion).toFixed(2)+'</b> &mdash; roughly <b>'+Math.abs(perLesion).toFixed(1)+
+        '</b> orders of magnitude per lesion. Counting lesions is linear; what they buy is not.';
+    } else {
+      el('fold').textContent='—';
+      el('verdict').innerHTML='Move the lesion slider and let each setting run for a few seconds &mdash; a second measured point is what makes the comparison.';
+    }
+  }
+
+  function frame(){
+    if(playing) step();
+    draw();
+    requestAnimationFrame(frame);
+  }
+  el('play').addEventListener('click',()=>{playing=!playing;
+    el('play').textContent=playing?'Pause':'Play';el('play').classList.toggle('on',playing);});
+  el('clear').addEventListener('click',()=>{measured.clear();escapes=0;simTime=0;warm=0;reset();draw();});
+  el('m').addEventListener('input',e=>{m=Number(e.target.value);el('mv').textContent=m;
+    h=heightFor(m);reset();warm=0;draw();});
+  window.addEventListener('resize',draw);
+
+  draw(); requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
