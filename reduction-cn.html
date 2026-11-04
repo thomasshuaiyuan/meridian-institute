@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-Hans-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="语料库缩减的模拟演示：将基因组集缩减为毒株簇代表序列后，有多少系统发育多样性存活下来，又是在哪里失去的。">
+<title>多样性去了哪里</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400&family=Noto+Sans+SC:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root {
+  --paper:   #faf8f4;
+  --ink:     #1c1c2e;
+  --ink-2:   #46465e;
+  --ink-3:   #8888a0;
+  --rule:    #dedad0;
+  --hair:    rgba(28,28,46,0.07);
+  --accent:  #1b7f8c;
+  --accent-soft: rgba(27,127,140,0.14);
+  --base:    #b5811f;
+  --flag:    #bf4f68;
+  --branch:  rgba(28,28,46,0.62);
+  --ghost:   rgba(28,28,46,0.10);
+  --display: "Noto Serif SC", Georgia, serif;
+  --sans:    "Noto Sans SC", system-ui, sans-serif;
+  --mono:    "IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper:  #0f1621;
+    --ink:    #e4e0d8;
+    --ink-2:  #a8a4a0;
+    --ink-3:  #686878;
+    --rule:   #252e3e;
+    --hair:   rgba(228,224,216,0.09);
+    --accent: #56c9d8;
+    --accent-soft: rgba(86,201,216,0.16);
+    --base:   #d2a44f;
+    --flag:   #e0738d;
+    --branch: rgba(228,224,216,0.66);
+    --ghost:  rgba(228,224,216,0.11);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper:  #0f1621; --ink: #e4e0d8; --ink-2: #a8a4a0; --ink-3: #686878;
+  --rule:   #252e3e; --hair: rgba(228,224,216,0.09);
+  --accent: #56c9d8; --accent-soft: rgba(86,201,216,0.16);
+  --base:   #d2a44f; --flag: #e0738d;
+  --branch: rgba(228,224,216,0.66); --ghost: rgba(228,224,216,0.11);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--paper); color: var(--ink);
+  font-family: var(--sans); font-size: 15px; font-weight: 300; line-height: 1.95;
+  -webkit-font-smoothing: antialiased;
+}
+.page {
+  max-width: 760px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 52px 72px;
+}
+.eyebrow {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-3); margin: 0 0 16px;
+}
+h1 {
+  font-family: var(--display); font-size: clamp(28px, 4.6vw, 40px);
+  font-weight: 300; line-height: 1.2; margin: 0 0 20px; text-wrap: balance;
+  letter-spacing: -0.005em;
+}
+.intro { color: var(--ink-2); max-width: 60ch; margin: 0 0 14px; }
+.intro em { font-style: normal; color: var(--ink); }
+.note {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.04em;
+  color: var(--ink-3); line-height: 1.9; margin: 0 0 40px; max-width: 70ch;
+}
+
+.controls {
+  display: flex; flex-wrap: wrap; gap: 8px 10px; align-items: center;
+  padding-bottom: 20px; margin-bottom: 4px;
+}
+button {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+  background: none; border: 1px solid var(--rule); border-radius: 100px;
+  color: var(--ink-2); padding: 6px 15px; cursor: pointer;
+  transition: color .15s, border-color .15s, background .15s;
+}
+button:hover { color: var(--ink); border-color: var(--ink-3); }
+button.on { background: var(--accent-soft); border-color: transparent; color: var(--accent); }
+button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sp { display: flex; align-items: center; gap: 10px; margin-left: 4px; }
+.sp label { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); }
+input[type=range] { width: 96px; accent-color: var(--accent); }
+
+#tree { display: block; width: 100%; height: min(72vw, 540px); min-height: 320px; }
+
+.stats {
+  display: flex; flex-wrap: wrap; gap: 30px 44px;
+  border-top: 1px solid var(--rule); padding-top: 22px; margin-top: 10px;
+}
+.stat .k {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.13em;
+  text-transform: uppercase; color: var(--ink-3); display: block; margin-bottom: 6px;
+}
+.stat .v { font-family: var(--display); font-size: 30px; line-height: 1; font-weight: 300; }
+.v.accent { color: var(--accent); }
+.v.base { color: var(--base); }
+.v.flag  { color: var(--flag); }
+
+.verdict { color: var(--ink-2); max-width: 62ch; margin: 26px 0 0; }
+.verdict b { color: var(--ink); font-weight: 500; }
+.verdict .tag {
+  display: inline-block; font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.1em;
+  text-transform: uppercase; padding: 2px 9px; border-radius: 100px; margin-right: 8px;
+  vertical-align: 1px;
+}
+.tag.even { color: var(--accent); background: var(--accent-soft); }
+.tag.uneven { color: var(--flag); background: rgba(191,79,104,0.12); }
+
+#curve { display: block; width: 100%; height: 240px; margin-top: 10px; }
+#dates { display: block; width: 100%; height: 150px; margin-top: 10px; }
+.sub {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.13em; text-transform: uppercase;
+  color: var(--ink-3); border-top: 1px solid var(--rule); padding-top: 20px; margin: 46px 0 0;
+}
+
+.foot {
+  margin-top: 46px; border-top: 1px solid var(--rule); padding-top: 22px;
+  color: var(--ink-2); max-width: 64ch; font-size: 14.5px;
+}
+.foot strong { color: var(--ink); font-weight: 500; }
+
+.sitenav {
+  max-width: 760px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 22px 0;
+  display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;
+}
+.sitenav span { display: flex; gap: 20px; flex-wrap: wrap; }
+.sitenav a {
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em;
+  text-transform: uppercase; color: var(--ink-3); text-decoration: none;
+}
+.sitenav a:hover { color: var(--accent); }
+.page { padding-block: 34px 72px; }
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <a href="cn.html">&larr; 子午研究院</a>
+  <span><a href="program-cn.html">研究纲领</a><a href="tree.html">研究谱系</a><a href="reduction-zh.html">繁</a><a href="reduction.html">EN</a></span>
+</nav>
+
+<div class="page">
+  <p class="eyebrow">语料库缩减 &middot; 模拟</p>
+  <h1>有多少多样性存活下来，又是在哪里失去的。</h1>
+  <p class="intro">把基因组集缩减为毒株簇代表序列，必然引出一个问题：为甚么是这个阈值？衰减曲线回答的是树长<em>存活了多少</em>，却回答不了<em>失去在哪里</em>。一次保留了九成总多样性、却清空了某一个支系的缩减，是一次糟糕的缩减——而曲线会把它评为良好。</p>
+  <p class="intro">因此末端保留其原本的角度位置——出现空隙即为真实的损失——而外环逐扇区记录：每个区域还剩下多少。</p>
+  <p class="note">模拟聚合树 · 240 个末端 · 固定随机种子 · 非真实数据<br>修剪规则：取距离最近的姊妹对，移除其中末端枝较短的一个</p>
+
+  <div class="controls">
+    <button id="play" class="on">播放</button>
+    <button id="reset">重设</button>
+    <button id="knee">拐点</button>
+    <button id="end">终点</button>
+    <span class="sp"><label for="sp">速度</label><input id="sp" type="range" min="1" max="40" value="8"></span>
+  </div>
+
+  <canvas id="tree"></canvas>
+
+  <div class="stats">
+    <span class="stat"><span class="k">保留末端</span><span class="v" id="nTips">240</span></span>
+    <span class="stat"><span class="k">已移除</span><span class="v" id="nCut">0</span></span>
+    <span class="stat"><span class="k">保留的多样性</span><span class="v accent" id="rtl">1.000</span></span>
+    <span class="stat"><span class="k">若随机移除</span><span class="v base" id="rtlR">1.000</span></span>
+    <span class="stat"><span class="k">最弱扇区</span><span class="v flag" id="minSec">100%</span></span>
+    <span class="stat"><span class="k">仍覆盖的季度</span><span class="v" id="cov">100%</span></span>
+  </div>
+
+  <p class="verdict" id="verdict">尚未移除任何末端。</p>
+
+  <p class="sub">采样日期 &middot; 保留与原始对照</p>
+  <canvas id="dates"></canvas>
+
+  <p class="sub">相对树长</p>
+  <canvas id="curve"></canvas>
+
+  <p class="foot">规则一句话说得完：在可加性树上，最小的两两距离必定出现在一对姊妹末端之间，因此每一步取距离最近的姊妹对，移除其中末端枝较短的那一个。<strong>随机移除所损失的多样性大致与移除比例成正比；定向修剪则不然。</strong>两条线之间的差距，正是缩减后的基因组集仍能承载大部分原始信号的原因。而外环，是你用来证明这种缩减在各处同样成立的方式——这才是审稿人真正会去检验的那个主张。</p>
+</div>
+
+<script>
+(function () {
+  let s = 20261103 >>> 0;
+  const rand = () => (s = (Math.imul(s, 1664525) + 1013904223) >>> 0) / 4294967296;
+  const het = () => Math.exp((rand() + rand() + rand() - 1.5) * 0.6);
+  const TAU = Math.PI * 2, N = 240, SECTORS = 48;
+
+  // ---- simulated coalescent tree -----------------------------------------
+  const nodes = [];
+  const mk = o => { o.id = nodes.length; o.children = o.children || []; nodes.push(o); return o; };
+  let act = [];
+  for (let i = 0; i < N; i++) act.push(mk({ parent: null, h: 0, brlen: 0, leaf: true }));
+  let T = 0;
+  while (act.length > 1) {
+    const k = act.length;
+    T += -Math.log(1 - rand()) / (k * (k - 1) / 2);
+    const i = Math.floor(rand() * act.length);
+    let j = Math.floor(rand() * (act.length - 1)); if (j >= i) j++;
+    const a = act[i], b = act[j];
+    a.brlen = Math.max(1e-6, (T - a.h) * het());
+    b.brlen = Math.max(1e-6, (T - b.h) * het());
+    const p = mk({ parent: null, h: T, brlen: 0, leaf: false, children: [a, b] });
+    a.parent = p; b.parent = p;
+    act = act.filter(x => x !== a && x !== b); act.push(p);
+  }
+  const ROOT = act[0];
+
+  const slot = new Map();
+  (function order(n) { if (n.leaf) { slot.set(n.id, slot.size); return; } order(n.children[0]); order(n.children[1]); })(ROOT);
+  const sectorOf = id => Math.floor(slot.get(id) / N * SECTORS);
+  const orig = new Array(SECTORS).fill(0);
+  nodes.forEach(n => { if (n.leaf) orig[sectorOf(n.id)]++; });
+  const TOTAL = nodes.reduce((a, n) => a + n.brlen, 0);
+
+  // ---- simulated collection dates, clustered by clade --------------------
+  // Sampling is never uniform: clades are collected in bursts. Dates drift
+  // down the tree so that a reduction can quietly collapse the time span.
+  const Y0 = 2014, YEARS = 12, MONTHS = YEARS * 12, BINS = YEARS * 4;
+  const month = new Float64Array(nodes.length);
+  (function dates(n, m, d) {
+    const drift = Math.max(2, 44 / Math.pow(1.55, d));
+    const mm = m + (rand() * 2 - 1) * drift;
+    if (n.leaf) { month[n.id] = Math.min(MONTHS - 1, Math.max(0, mm + (rand() * 2 - 1) * 4)); return; }
+    for (const c of n.children) dates(c, mm, d + 1);
+  })(ROOT, MONTHS / 2, 0);
+  // stretch the realised span across the window: the drift at the root would
+  // otherwise decide where the whole corpus sits, leaving half the axis empty
+  (function rescale() {
+    let lo = Infinity, hi = -Infinity;
+    nodes.forEach(n => { if (n.leaf) { lo = Math.min(lo, month[n.id]); hi = Math.max(hi, month[n.id]); } });
+    const span = Math.max(1, hi - lo);
+    nodes.forEach(n => { if (n.leaf) month[n.id] = (month[n.id] - lo) / span * (MONTHS - 1); });
+  })();
+  const binOf = id => Math.min(BINS - 1, Math.floor(month[id] / 3));
+  const origHist = new Array(BINS).fill(0);
+  nodes.forEach(n => { if (n.leaf) origHist[binOf(n.id)]++; });
+
+  const fresh = () => {
+    const par = new Int32Array(nodes.length).fill(-1);
+    const ch = nodes.map(n => n.children.map(c => c.id));
+    const bl = new Float64Array(nodes.length), dead = new Uint8Array(nodes.length);
+    nodes.forEach(n => { bl[n.id] = n.brlen; if (n.parent) par[n.id] = n.parent.id; });
+    return { par, ch, bl, dead, root: ROOT.id, leaf: nodes.map(n => !!n.leaf) };
+  };
+  const len = st => { let L = 0; for (let i = 0; i < st.bl.length; i++) if (!st.dead[i] && i !== st.root) L += st.bl[i]; return L; };
+  function cut(st, id) {
+    st.dead[id] = 1;
+    const p = st.par[id]; if (p < 0) return;
+    st.ch[p] = st.ch[p].filter(c => c !== id);
+    if (st.ch[p].length === 1) {
+      const kid = st.ch[p][0], g = st.par[p];
+      st.bl[kid] += st.bl[p]; st.dead[p] = 1; st.par[kid] = g;
+      if (g < 0) st.root = kid; else st.ch[g] = st.ch[g].map(c => (c === p ? kid : c));
+    }
+  }
+  let MAXR = 0;
+  function snap(st) {
+    const pos = new Map(), edges = [], tips = [];
+    (function walk(id, r0) {
+      const r = r0 + (id === st.root ? 0 : st.bl[id]);
+      if (r > MAXR) MAXR = r;
+      if (st.leaf[id]) { const a = slot.get(id) / N * TAU; pos.set(id, { a, r }); tips.push(id); return a; }
+      let sum = 0;
+      for (const c of st.ch[id]) sum += walk(c, r);
+      const a = sum / st.ch[id].length;
+      pos.set(id, { a, r });
+      for (const c of st.ch[id]) edges.push([c, id]);
+      return a;
+    })(st.root, 0);
+    const per = new Array(SECTORS).fill(0), hist = new Array(BINS).fill(0);
+    tips.forEach(t => { per[sectorOf(t)]++; hist[binOf(t)]++; });
+    return { pos, edges, tips, per, hist, rtl: len(st) / TOTAL };
+  }
+  function sequence(pick) {
+    const st = fresh(), out = [snap(st)];
+    let alive = []; for (let i = 0; i < nodes.length; i++) if (st.leaf[i]) alive.push(i);
+    while (alive.length > 4) { const v = pick(st, alive); cut(st, v); alive = alive.filter(x => x !== v); out.push(snap(st)); }
+    return out;
+  }
+  const pickCherry = (st, alive) => {
+    let best = null, bd = Infinity; const seen = new Set();
+    for (const l of alive) {
+      const p = st.par[l]; if (p < 0 || seen.has(p)) continue; seen.add(p);
+      const k = st.ch[p]; if (k.length !== 2 || !k.every(x => st.leaf[x])) continue;
+      const d = st.bl[k[0]] + st.bl[k[1]];
+      if (d < bd) { bd = d; best = st.bl[k[0]] <= st.bl[k[1]] ? k[0] : k[1]; }
+    }
+    return best !== null ? best : alive[Math.floor(rand() * alive.length)];
+  };
+  const F = sequence(pickCherry);
+  const R = sequence((st, a) => a[Math.floor(rand() * a.length)]).map(f => f.rtl);
+  const LAST = F.length - 1;
+  const KNEE = (() => {
+    const y0 = F[0].rtl, y1 = F[LAST].rtl; let bi = 0, bd = -1;
+    for (let i = 0; i <= LAST; i++) {
+      const d = Math.abs((y1 - y0) * (i / LAST) - F[i].rtl + y0);
+      if (d > bd) { bd = d; bi = i; }
+    }
+    return bi;
+  })();
+
+  // ---- palette from CSS tokens, so both themes are honoured ---------------
+  let C = {};
+  function palette() {
+    const cs = getComputedStyle(document.documentElement);
+    const g = n => cs.getPropertyValue(n).trim();
+    C = {
+      ink: g('--ink'), ink2: g('--ink-2'), ink3: g('--ink-3'),
+      accent: g('--accent'), base: g('--base'), flag: g('--flag'),
+      branch: g('--branch'), ghost: g('--ghost'), hair: g('--hair'), paper: g('--paper')
+    };
+  }
+  palette();
+  const mq = window.matchMedia('(prefers-color-scheme: dark)');
+  mq.addEventListener && mq.addEventListener('change', () => { palette(); render(); });
+
+  const tc = document.getElementById('tree'), cc = document.getElementById('curve'), dc = document.getElementById('dates');
+  const tx = tc.getContext('2d'), cx = cc.getContext('2d'), dx = dc.getContext('2d');
+  function fit(cv, ctx) {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const r = cv.getBoundingClientRect();
+    cv.width = Math.max(1, Math.round(r.width * dpr));
+    cv.height = Math.max(1, Math.round(r.height * dpr));
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return { w: r.width, h: r.height };
+  }
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const alpha = (hex, a) => {
+    const m = hex.match(/^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i);
+    if (!m) return hex;
+    return 'rgba(' + parseInt(m[1], 16) + ',' + parseInt(m[2], 16) + ',' + parseInt(m[3], 16) + ',' + a + ')';
+  };
+  function P(i, t, id) {
+    const A = F[i].pos.get(id); if (!A) return null;
+    const B = i < LAST ? F[i + 1].pos.get(id) : null;
+    if (!B) return { a: A.a, r: A.r, al: 1 - t };
+    return { a: lerp(A.a, B.a, t), r: lerp(A.r, B.r, t), al: 1 };
+  }
+
+  function drawTree(i, t) {
+    const { w, h } = fit(tc, tx);
+    tx.clearRect(0, 0, w, h);
+    const ox = w / 2, oy = h / 2;
+    const ringW = 7, gap = 16;
+    const rad = Math.max(40, Math.min(w, h) / 2 - ringW - gap - 10);
+    const sr = v => (v / MAXR) * rad;
+    const XY = p => [ox + Math.cos(p.a - Math.PI / 2) * sr(p.r), oy + Math.sin(p.a - Math.PI / 2) * sr(p.r)];
+    const edge = (C1, P1, stroke, lw) => {
+      tx.strokeStyle = stroke; tx.lineWidth = lw; tx.beginPath();
+      tx.arc(ox, oy, sr(P1.r), P1.a - Math.PI / 2, C1.a - Math.PI / 2, C1.a < P1.a);
+      const [x, y] = XY(C1); tx.lineTo(x, y); tx.stroke();
+    };
+
+    tx.lineCap = 'round';
+    for (const [c, p] of F[0].edges) edge(F[0].pos.get(c), F[0].pos.get(p), C.ghost, 0.9);
+    const cur = F[i];
+    for (const [c, p] of cur.edges) {
+      const A = P(i, t, c), B = P(i, t, p); if (!A || !B) continue;
+      const al = Math.min(A.al, B.al);
+      edge(A, B, al < 1 ? alpha(C.flag, 0.5 * al) : C.branch, 1.05);
+    }
+    for (const id of cur.tips) {
+      const p = P(i, t, id); if (!p) continue;
+      const [x, y] = XY(p);
+      tx.fillStyle = p.al < 1 ? alpha(C.flag, p.al) : C.accent;
+      tx.beginPath(); tx.arc(x, y, p.al < 1 ? 3 : 1.7, 0, TAU); tx.fill();
+    }
+
+    // retention ring: one hue, light to dark — sequential, because it is magnitude
+    const per = cur.per, nxt = i < LAST ? F[i + 1].per : per;
+    let minS = 1, maxS = 0, minI = 0;
+    for (let k = 0; k < SECTORS; k++) {
+      const f = lerp(per[k], nxt[k], t) / Math.max(1, orig[k]);
+      if (f < minS) { minS = f; minI = k; }
+      if (f > maxS) maxS = f;
+    }
+    const r0 = rad + gap, r1 = r0 + ringW;
+    for (let k = 0; k < SECTORS; k++) {
+      const f = lerp(per[k], nxt[k], t) / Math.max(1, orig[k]);
+      const a0 = k / SECTORS * TAU - Math.PI / 2, a1 = (k + 1) / SECTORS * TAU - Math.PI / 2 - 0.004;
+      tx.beginPath();
+      tx.arc(ox, oy, r1, a0, a1); tx.arc(ox, oy, r0, a1, a0, true); tx.closePath();
+      tx.fillStyle = (k === minI && minS < 0.999)
+        ? alpha(C.flag, 0.85)
+        : alpha(C.accent, 0.08 + 0.72 * f);
+      tx.fill();
+    }
+    return { minS, maxS };
+  }
+
+  function drawCurve(i, t) {
+    const { w, h } = fit(cc, cx);
+    cx.clearRect(0, 0, w, h);
+    const pL = 34, pR = 68, pT = 12, pB = 32;
+    const sx = f => pL + f * (w - pL - pR), sy = v => pT + (1 - v) * (h - pT - pB);
+    cx.font = '10px "Noto Sans SC", "IBM Plex Mono", monospace';
+
+    cx.strokeStyle = C.hair; cx.lineWidth = 1;
+    [0, 0.5, 1].forEach(v => { cx.beginPath(); cx.moveTo(pL, sy(v)); cx.lineTo(w - pR, sy(v)); cx.stroke(); });
+    cx.fillStyle = C.ink3; cx.textAlign = 'right';
+    [0, 0.5, 1].forEach(v => cx.fillText(v.toFixed(1), pL - 8, sy(v) + 3));
+    cx.textAlign = 'center';
+    [0, 0.5, 1].forEach(f => cx.fillText(f.toFixed(1), sx(f), h - pB + 16));
+    cx.fillText('已移除末端的比例', (pL + w - pR) / 2, h - pB + 28);
+
+    const line = (vals, stroke, lw) => {
+      cx.strokeStyle = stroke; cx.lineWidth = lw; cx.lineJoin = 'round'; cx.beginPath();
+      vals.forEach((v, k) => { const X = sx(k / LAST), Y = sy(v); k ? cx.lineTo(X, Y) : cx.moveTo(X, Y); });
+      cx.stroke();
+    };
+    line(R, alpha(C.base, 0.85), 1.6);
+    line(F.map(f => f.rtl), alpha(C.accent, 0.22), 1.6);
+
+    // direct labels, no legend box
+    cx.textAlign = 'left'; cx.fillStyle = C.accent;
+    cx.fillText('定向缩减', w - pR + 8, sy(F[LAST].rtl) + 3);
+    cx.fillStyle = C.base;
+    cx.fillText('随机移除', w - pR + 8, sy(R[LAST]) + 3);
+
+    const prog = (i + t) / LAST;
+    const now = i < LAST ? lerp(F[i].rtl, F[i + 1].rtl, t) : F[i].rtl;
+    cx.strokeStyle = C.accent; cx.lineWidth = 2.2; cx.lineJoin = 'round'; cx.beginPath();
+    for (let k = 0; k <= i; k++) { const X = sx(k / LAST), Y = sy(F[k].rtl); k ? cx.lineTo(X, Y) : cx.moveTo(X, Y); }
+    if (i < LAST) cx.lineTo(sx(prog), sy(now));
+    cx.stroke();
+
+    const kx = sx(KNEE / LAST);
+    cx.setLineDash([2, 4]); cx.strokeStyle = alpha(C.ink3, 0.8);
+    cx.beginPath(); cx.moveTo(kx, pT); cx.lineTo(kx, h - pB); cx.stroke(); cx.setLineDash([]);
+    cx.fillStyle = C.ink3; cx.textAlign = 'center'; cx.fillText('拐点', kx, pT - 1);
+
+    cx.fillStyle = C.paper; cx.beginPath(); cx.arc(sx(prog), sy(now), 4.6, 0, TAU); cx.fill();
+    cx.fillStyle = C.accent; cx.beginPath(); cx.arc(sx(prog), sy(now), 3.1, 0, TAU); cx.fill();
+  }
+
+  function drawDates(i, t) {
+    const { w, h } = fit(dc, dx);
+    dx.clearRect(0, 0, w, h);
+    const pL = 34, pR = 68, pT = 12, pB = 26;
+    const bw = (w - pL - pR) / BINS, base = h - pB;
+    const maxO = Math.max(1, ...origHist);
+    const cur = F[i].hist, nxt = i < LAST ? F[i + 1].hist : cur;
+
+    for (let k = 0; k < BINS; k++) {
+      const hh = (origHist[k] / maxO) * (base - pT);
+      dx.fillStyle = C.ghost;
+      dx.fillRect(pL + k * bw + 0.5, base - hh, Math.max(1, bw - 1), hh);
+    }
+    let covered = 0, occupied = 0;
+    for (let k = 0; k < BINS; k++) {
+      const v = lerp(cur[k], nxt[k], t);
+      if (origHist[k] > 0) { occupied++; if (v >= 0.5) covered++; }
+      const hh = (v / maxO) * (base - pT);
+      dx.fillStyle = alpha(C.accent, 0.85);
+      dx.fillRect(pL + k * bw + 0.5, base - hh, Math.max(1, bw - 1), hh);
+    }
+    dx.strokeStyle = C.hair; dx.lineWidth = 1;
+    dx.beginPath(); dx.moveTo(pL, base + 0.5); dx.lineTo(w - pR, base + 0.5); dx.stroke();
+    dx.font = '10px "Noto Sans SC", "IBM Plex Mono", monospace'; dx.fillStyle = C.ink3; dx.textAlign = 'center';
+    for (let y = 0; y <= YEARS; y += 3) dx.fillText(String(Y0 + y), pL + (y / YEARS) * (w - pL - pR), h - pB + 16);
+    dx.textAlign = 'left';
+    dx.fillStyle = C.accent; dx.fillText('保留', w - pR + 8, pT + 10);
+    dx.fillStyle = C.ink3; dx.fillText('原始', w - pR + 8, pT + 24);
+    return occupied ? covered / occupied : 1;
+  }
+
+  const el = id => document.getElementById(id);
+  let i = 0, t = 0, playing = true, last = 0;
+
+  function render() {
+    const { minS, maxS } = drawTree(i, t);
+    drawCurve(i, t);
+    const cov = drawDates(i, t);
+    el('cov').textContent = Math.round(cov * 100) + '%';
+    const cutN = Math.round(i + t);
+    el('nTips').textContent = N - cutN;
+    el('nCut').textContent = cutN;
+    el('rtl').textContent = (i < LAST ? lerp(F[i].rtl, F[i + 1].rtl, t) : F[i].rtl).toFixed(3);
+    el('rtlR').textContent = (i < LAST ? lerp(R[i], R[i + 1], t) : R[i]).toFixed(3);
+    el('minSec').textContent = Math.round(minS * 100) + '%';
+    const evenTree = (maxS - minS) < 0.34, evenTime = cov >= 0.75;
+    const ok = evenTree && evenTime;
+    let body;
+    if (ok) {
+      body = '每个扇区都保留了相当比例的末端，原本采样过的季度仍有 <b>' + Math.round(cov * 100) +
+             '%</b> 有代表序列。这次缩减在广度与时间上同样成立，而不只是在总树长上。';
+    } else if (!evenTree && !evenTime) {
+      body = '最弱扇区已降至 <b>' + Math.round(minS * 100) + '%</b>，而最强扇区仍有 <b>' +
+             Math.round(maxS * 100) + '%</b>；采样季度亦仅剩 <b>' + Math.round(cov * 100) +
+             '%</b>。这个基因组集在树上与在时间上同时收窄了。';
+    } else if (!evenTree) {
+      body = '时间维度没有问题——仍覆盖 <b>' + Math.round(cov * 100) + '%</b> 的季度——但树上有问题：最弱扇区只剩 <b>' +
+             Math.round(minS * 100) + '%</b>，而最强扇区有 <b>' + Math.round(maxS * 100) + '%</b>。';
+    } else {
+      body = '树上的缩减是均匀的，但原本采样过的季度仅剩 <b>' + Math.round(cov * 100) +
+             '%</b> 有代表序列。一个基因组集可以保住广度却失去时间跨度；下游任何带时间结构的分析都会卡在这里，而总树长对此只字不提。';
+    }
+    el('verdict').innerHTML = cutN === 0
+      ? '尚未移除任何末端。'
+      : '<span class="tag ' + (ok ? 'even' : 'uneven') + '">' + (ok ? '成立' : '已收窄') + '</span>' + body;
+  }
+
+  function frame(ts) {
+    if (!last) last = ts;
+    const dt = Math.min(0.05, (ts - last) / 1000); last = ts;
+    if (playing) {
+      t += dt * Number(el('sp').value);
+      while (t >= 1) { t -= 1; if (i < LAST) i++; else { t = 0; playing = false; el('play').textContent = '播放'; el('play').classList.remove('on'); } }
+      render();
+    }
+    requestAnimationFrame(frame);
+  }
+  const goto = k => { i = k; t = 0; playing = false; el('play').textContent = '播放'; el('play').classList.remove('on'); render(); };
+  el('play').addEventListener('click', () => {
+    if (i >= LAST) { i = 0; t = 0; }
+    playing = !playing;
+    el('play').textContent = playing ? '暂停' : '播放';
+    el('play').classList.toggle('on', playing);
+    render();
+  });
+  el('reset').addEventListener('click', () => goto(0));
+  el('knee').addEventListener('click', () => goto(KNEE));
+  el('end').addEventListener('click', () => goto(LAST));
+  window.addEventListener('resize', render);
+
+  render();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
