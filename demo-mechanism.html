@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="A genealogy becomes a trained surface, and the surface has an edge — the three steps behind amortised phylodynamic inference, drawn as geometry.">
+<title>Where the Training Set Ends</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{
+  --paper:#faf8f4;--ink:#1c1c2e;--ink-2:#46465e;--ink-3:#8888a0;
+  --rule:#dedad0;--hair:rgba(28,28,46,0.08);
+  --amber:#b8832a;--amber-soft:rgba(184,131,42,0.13);
+  --teal:#1b7f8c;--flag:#bf4f68;
+  --display:"Cormorant Garamond",Georgia,serif;
+  --sans:"DM Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:15px;font-weight:300;line-height:1.75;-webkit-font-smoothing:antialiased}
+.sitenav{max-width:780px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:22px 0;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.sitenav span{display:flex;gap:20px;flex-wrap:wrap}
+.sitenav a{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);text-decoration:none}
+.sitenav a:hover{color:var(--amber)}
+.page{max-width:780px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:34px 76px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 14px}
+h1{font-family:var(--display);font-weight:300;font-size:clamp(27px,4.4vw,38px);line-height:1.2;
+  margin:0 0 18px;text-wrap:balance}
+.intro{color:var(--ink-2);max-width:60ch;margin:0 0 14px}
+.intro em{font-style:normal;color:var(--ink)}
+.note{font-family:var(--mono);font-size:10.5px;line-height:1.85;letter-spacing:.04em;
+  color:var(--ink-3);margin:18px 0 22px;text-transform:uppercase}
+
+/* the plate: committed dark in both themes, so it reads as one object */
+.plate{background:#0b1119;border:1px solid #1b2430;border-radius:2px;overflow:hidden;
+  margin:0 0 14px}
+.plate canvas{display:block;width:100%;height:clamp(330px,54vw,470px)}
+.hud{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
+  padding:0 16px 14px;font-family:var(--mono);pointer-events:none;flex-wrap:wrap}
+.hud .mv{display:flex;align-items:baseline;gap:10px}
+.hud .rn{font-size:11px;letter-spacing:.2em;color:#4d6470}
+.hud .nm{font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:#d6e6e6}
+.hud .sb{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#4d6470;
+  text-align:right;max-width:40ch;line-height:1.7}
+
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 30px}
+.controls button{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  background:transparent;color:var(--ink-3);border:1px solid var(--rule);border-radius:100px;
+  padding:5px 13px;cursor:pointer;transition:all .15s}
+.controls button:hover{color:var(--amber);border-color:var(--amber)}
+.controls button.on{color:var(--paper);background:var(--ink);border-color:var(--ink)}
+.controls button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+.step{border-top:1px solid var(--rule);padding:22px 0 0;margin:0 0 22px}
+.step h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0 0 7px;line-height:1.3}
+.step h2 .ix{font-family:var(--mono);font-size:10px;letter-spacing:.2em;color:var(--ink-3);
+  margin-right:10px;vertical-align:middle}
+.step p{margin:0 0 10px;color:var(--ink-2);max-width:62ch;font-size:14.5px}
+.step p b{color:var(--ink);font-weight:500}
+
+.caveat{border-left:2px solid var(--flag);padding:2px 0 2px 16px;margin:28px 0 0}
+.caveat p{margin:0;color:var(--ink-2);max-width:62ch;font-size:14.5px}
+.caveat b{color:var(--ink);font-weight:500}
+.foot{margin-top:34px;color:var(--ink-2);max-width:64ch;font-size:14px;
+  border-top:1px solid var(--rule);padding-top:22px}
+.foot strong{color:var(--ink);font-weight:500}
+a.inl{color:var(--amber);text-decoration:none;border-bottom:1px solid var(--amber-soft)}
+a.inl:hover{border-bottom-color:var(--amber)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <a href="methods.html">&larr; Method demonstrations</a>
+  <span><a href="index.html">Meridian Institute</a><a href="program.html">Research programme</a></span>
+</nav>
+
+<div class="page">
+  <p class="eyebrow">Delay-NPE &middot; schematic</p>
+  <h1>Where the training set ends.</h1>
+  <p class="intro">Amortised inference is usually described in two steps &mdash; train once, then answer instantly. The description leaves out the step that decides whether the answer is worth anything, which is the boundary of what was trained on. These are the three steps as geometry: a genealogy, the surface learned from many of them, and the edge of that surface.</p>
+  <p class="intro">The shapes are the argument. <em>None of the three carries a number</em>, because the point each one makes is structural and survives without one.</p>
+  <p class="note">Schematic &middot; no data, measured or simulated<br>The tree is procedurally generated and the surface is drawn, not fitted</p>
+
+  <div class="plate">
+    <canvas id="st" aria-label="Three animated movements: a genealogy drawn with time as depth, its tips settling onto a learned surface, and probe points landing inside or outside the edge of that surface."></canvas>
+    <div class="hud">
+      <div class="mv"><span class="rn" id="rn">I</span><span class="nm" id="mn">Genealogy</span></div>
+      <div class="sb" id="sb">A sampled history, drawn with time as depth</div>
+    </div>
+  </div>
+  <div class="controls">
+    <button id="m0" class="on">I &middot; Genealogy</button>
+    <button id="m1">II &middot; Amortisation</button>
+    <button id="m2">III &middot; Detection</button>
+    <button id="lp">Loop</button>
+  </div>
+
+  <div class="step">
+    <h2><span class="ix">I</span>The data object is a shape</h2>
+    <p>Inference does not read sequences. It reads the tree they imply &mdash; the order in which lineages split and how long they waited &mdash; and everything downstream is a statement about that shape. Drawn with time as depth and turned slowly, the genealogy is visibly a three-dimensional object; the flat rectangular tree in every paper is one projection of it, chosen for printing.</p>
+    <p>The tips light as they are reached. Each is a sequence with a collection date, and the spacing between them in time is most of the signal.</p>
+  </div>
+
+  <div class="step">
+    <h2><span class="ix">II</span>Many trees become one surface</h2>
+    <p>Fitting a sampler to each dataset does not scale across a surveillance network. The alternative is to simulate a great many genealogies spanning the range of parameters you expect, and train once on that collection, so the estimator learns a map from tree shape to posterior.</p>
+    <p>What the training produces is a <b>surface over the parameter space</b>. The tips leaving the tree and settling onto it is that transfer: individual histories stop being separate fits and become positions on one learned object. Afterwards each new dataset is a single forward pass across it. The cost side of this trade is laid out in <a class="inl" href="demo-amortised.html">Pay once, then infer for free</a>.</p>
+  </div>
+
+  <div class="step">
+    <h2><span class="ix">III</span>The surface has an edge, and it is silent</h2>
+    <p>A query that lands on the surface gets an answer the training supports. A query that lands past its edge gets an answer too &mdash; <b>just as fast, and just as narrow</b>. Nothing in a forward pass hesitates. The estimator has no way to say that it is extrapolating, because the operation it performs is identical either way.</p>
+    <p>So the edge has to be found by something else. Teal probes land inside and settle. Rose probes stop short and flare: that flare is a detector firing, and in a deployed system it is the signal to route that query to a slower sampler instead of trusting the fast answer.</p>
+  </div>
+
+  <div class="caveat">
+    <p><b>The surface drawn here is a stand-in.</b> It is a smooth saddle chosen because it reads clearly when it turns, not a picture of any trained estimator's actual geometry. The claim the page makes is about the <em>structure</em> &mdash; that a trained estimator has a support, that queries outside it are answered anyway, and that the boundary must be detected explicitly. Nothing here shows where a real boundary lies.</p>
+  </div>
+
+  <p class="foot"><strong>What would make this a figure rather than a schematic:</strong> a trained Delay-NPE estimator and its real support, with the probe points drawn from the surveillance record instead of scattered. Then the edge in the picture would be the edge in the method, and its shape would be a finding. Until that runs, this documents a mechanism, which is the smaller claim and the only one it supports.</p>
+</div>
+
+<script>
+(function(){
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const cv=document.getElementById('st'), ctx=cv.getContext('2d');
+const TEAL=[86,201,216], ROSE=[224,115,141], BONE=[214,230,230];
+const rgba=(c,a)=>'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')';
+let W=0,H=0,S=1,CX=0,CY=0,DPR=1;
+
+function fit(){
+  DPR=Math.min(window.devicePixelRatio||1,2);
+  const r=cv.getBoundingClientRect();
+  W=r.width; H=r.height;
+  cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
+  S=Math.min(W*0.36,H*0.70); CX=W/2; CY=H*0.50;
+}
+
+function proj(p,a,el){
+  const ca=Math.cos(a), sa=Math.sin(a);
+  const x=p.x*ca-p.z*sa, z=p.x*sa+p.z*ca, y=p.y;
+  const ce=Math.cos(el), se=Math.sin(el);
+  const y2=y*ce-z*se, z2=y*se+z*ce;
+  const d=5.5, f=3.60, zz=Math.max(0.40,d+z2), s=f/zz;
+  return {x:CX+x*s*S, y:CY-y2*s*S, s:s};
+}
+
+const RAD=1.15, CURV=0.36;
+function surf(u,r){
+  const x=Math.cos(u)*r*RAD, z=Math.sin(u)*r*RAD;
+  return {x:x, y:CURV*(x*x-z*z), z:z};
+}
+
+const nodes=[], edges=[], tips=[];
+(function build(){
+  const nz=v=>{const m=Math.hypot(v.x,v.y,v.z)||1;return{x:v.x/m,y:v.y/m,z:v.z/m};};
+  const root={x:0,y:0,z:0,dep:0};
+  nodes.push(root);
+  let front=[{n:root,dir:{x:0,y:-1,z:0}}];
+  const MAXD=9;
+  for(let dep=0;dep<MAXD;dep++){
+    const next=[];
+    for(const f of front){
+      const k=(dep<2)?2:(Math.random()<0.88?2:1);
+      for(let i=0;i<k;i++){
+        const spread=0.86*Math.pow(0.92,dep);
+        const nd=nz({x:f.dir.x+(Math.random()-0.5)*spread,
+                     y:f.dir.y-0.14-Math.random()*0.10,
+                     z:f.dir.z+(Math.random()-0.5)*spread});
+        const len=0.40*Math.pow(0.90,dep)*(0.74+Math.random()*0.54);
+        const q={x:f.n.x+nd.x*len,y:f.n.y+nd.y*len,z:f.n.z+nd.z*len,dep:dep+1};
+        nodes.push(q); edges.push({a:f.n,b:q,dep:dep}); next.push({n:q,dir:nd});
+      }
+    }
+    front=next;
+  }
+  front.forEach(f=>tips.push(f.n));
+  let mnx=1e9,mxx=-1e9,mny=1e9,mxy=-1e9,mnz=1e9,mxz=-1e9;
+  for(const n of nodes){
+    mnx=Math.min(mnx,n.x);mxx=Math.max(mxx,n.x);
+    mny=Math.min(mny,n.y);mxy=Math.max(mxy,n.y);
+    mnz=Math.min(mnz,n.z);mxz=Math.max(mxz,n.z);
+  }
+  const cx=(mnx+mxx)/2, cy=(mny+mxy)/2, cz=(mnz+mxz)/2;
+  const ext=Math.max(mxx-mnx,mxy-mny,mxz-mnz)/2 || 1;
+  const k=1.05/ext;
+  for(const n of nodes){n.x=(n.x-cx)*k;n.y=(n.y-cy)*k;n.z=(n.z-cz)*k;}
+})();
+const MAXDEP=9;
+
+const cloud=tips.map(function(t){
+  const u=Math.random()*6.2832, r=Math.sqrt(Math.random());
+  return {from:t,to:surf(u,r),r:r,ph:Math.random()*6.2832};
+});
+
+const probes=[];
+for(let i=0;i<30;i++){
+  const out=Math.random()<0.37;
+  const u=Math.random()*6.2832, r=out?(1.20+Math.random()*0.22):(0.12+Math.random()*0.80);
+  const tgt=surf(u,Math.min(r,1.0));
+  if(out){tgt.x*=r; tgt.z*=r; tgt.y=CURV*(tgt.x*tgt.x-tgt.z*tgt.z)*0.55;}
+  probes.push({out:out,t:tgt,
+               s:{x:Math.cos(u)*3.2,y:1.9+Math.random()*1.1,z:Math.sin(u)*3.2},
+               d:(i/30)*0.72});
+}
+
+function gline(x1,y1,x2,y2,c,a,w){
+  ctx.strokeStyle=rgba(c,a*0.17); ctx.lineWidth=w*3.6;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  ctx.strokeStyle=rgba(c,a); ctx.lineWidth=w;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+}
+function gdot(x,y,r,c,a){
+  ctx.fillStyle=rgba(c,a*0.12);
+  ctx.beginPath();ctx.arc(x,y,r*4.0,0,6.2832);ctx.fill();
+  ctx.fillStyle=rgba(c,a);
+  ctx.beginPath();ctx.arc(x,y,r,0,6.2832);ctx.fill();
+}
+function mesh(a,el,al){
+  for(let k=1;k<=7;k++){
+    const rr=k/7; let pv=null;
+    for(let i=0;i<=64;i++){
+      const p=proj(surf(i/64*6.2832,rr),a,el);
+      if(pv) gline(pv.x,pv.y,p.x,p.y,TEAL,al,0.85);
+      pv=p;
+    }
+  }
+  for(let j=0;j<16;j++){
+    const u=j/16*6.2832; let pv=null;
+    for(let i=0;i<=16;i++){
+      const p=proj(surf(u,i/16),a,el);
+      if(pv) gline(pv.x,pv.y,p.x,p.y,TEAL,al*0.72,0.75);
+      pv=p;
+    }
+  }
+}
+
+const MOV=[
+  {n:'Genealogy',   s:'A sampled history, drawn with time as depth'},
+  {n:'Amortisation',s:'Many simulated histories, learned once as a surface'},
+  {n:'Detection',   s:'What the surface covers, and what falls outside it'}
+];
+const DUR=10.5, FADE=1.2;
+let t0=performance.now()/1000-5.0;
+let pinned=-1, loop=true;
+const E=x=>x<0.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
+const btn=[document.getElementById('m0'),document.getElementById('m1'),document.getElementById('m2')];
+const lpb=document.getElementById('lp');
+
+function hud(i){
+  document.getElementById('rn').textContent=['I','II','III'][i];
+  document.getElementById('mn').textContent=MOV[i].n;
+  document.getElementById('sb').textContent=MOV[i].s;
+  for(let k=0;k<3;k++) btn[k].classList.toggle('on',k===i);
+}
+function show(i){
+  pinned=i; loop=false; lpb.classList.remove('on');
+  t0=performance.now()/1000;
+}
+btn.forEach((b,i)=>b.addEventListener('click',()=>show(i)));
+lpb.addEventListener('click',()=>{
+  loop=!loop; lpb.classList.toggle('on',loop);
+  if(loop){pinned=-1; t0=performance.now()/1000;}
+});
+
+function frame(now){
+  const T=now/1000-t0;
+  let idx,lp;
+  if(pinned>=0){ idx=pinned; lp=Math.min(0.92,0.08+(T%DUR)/DUR); }
+  else { idx=Math.floor(T/DUR)%3; lp=(T%DUR)/DUR; }
+  const a=0.42+(RM?0:T*0.075), el=0.32+(RM?0:Math.sin(T*0.10)*0.09);
+
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.globalCompositeOperation='source-over';
+  ctx.fillStyle='#0b1119'; ctx.fillRect(0,0,W,H);
+  ctx.globalCompositeOperation='lighter';
+
+  const vis=(RM||pinned>=0)?1:Math.min(1,Math.min(lp,1-lp)/(FADE/DUR));
+
+  if(idx===0){
+    const g=RM?1:Math.min(1,lp*1.8);
+    for(const e of edges){
+      const r=e.dep/MAXDEP;
+      const k=Math.max(0,Math.min(1,(g-r*0.80)/0.20));
+      if(k<=0) continue;
+      const A=proj(e.a,a,el), B=proj(e.b,a,el);
+      const dep=1-e.dep/MAXDEP;
+      gline(A.x,A.y,A.x+(B.x-A.x)*k,A.y+(B.y-A.y)*k,BONE,(0.13+0.30*dep)*vis,1.0+dep*0.8);
+    }
+    const tv=RM?1:Math.max(0,Math.min(1,(lp-0.40)*4));
+    for(const t of tips){
+      const p=proj(t,a,el);
+      gdot(p.x,p.y,1.9*p.s,TEAL,0.62*vis*tv);
+    }
+  }
+
+  if(idx===1){
+    const m=E(Math.min(1,Math.max(0,(lp-0.08)/0.60)));
+    if(m>0.50) mesh(a,el,0.20*((m-0.50)/0.50)*vis);
+    for(const c of cloud){
+      const x=c.from.x+(c.to.x-c.from.x)*m;
+      const y=c.from.y+(c.to.y-c.from.y)*m;
+      const z=c.from.z+(c.to.z-c.from.z)*m;
+      const p=proj({x:x,y:y+(RM?0:Math.sin(T*1.1+c.ph)*0.010),z:z},a,el);
+      gdot(p.x,p.y,1.7*p.s,m>0.55?TEAL:BONE,(0.34+0.40*(1-c.r))*vis);
+    }
+  }
+
+  if(idx===2){
+    mesh(a,el,0.26*vis);
+    for(const c of cloud){
+      const p=proj(c.to,a,el);
+      gdot(p.x,p.y,1.3*p.s,TEAL,0.26*vis);
+    }
+    for(const pr of probes){
+      let k=lp*1.55-pr.d;
+      if(k<=0) continue;
+      k=Math.min(1,k/0.40);
+      const e=E(k), col=pr.out?ROSE:TEAL;
+      const at=u=>proj({x:pr.s.x+(pr.t.x-pr.s.x)*u,y:pr.s.y+(pr.t.y-pr.s.y)*u,
+                        z:pr.s.z+(pr.t.z-pr.s.z)*u},a,el);
+      for(let j=1;j<=6;j++){
+        const q=at(Math.max(0,e-j*0.032));
+        gdot(q.x,q.y,1.1*q.s,col,0.11*(1-j/7)*vis);
+      }
+      const p=at(e);
+      gdot(p.x,p.y,3.6*p.s,col,0.92*vis);
+      if(k>=1){
+        const f=Math.sin(T*2.2+pr.d*11)*0.5+0.5;
+        if(pr.out){
+          ctx.strokeStyle=rgba(ROSE,(0.16+0.30*f)*vis); ctx.lineWidth=1.4;
+          ctx.beginPath();ctx.arc(p.x,p.y,(16+f*16)*p.s,0,6.2832);ctx.stroke();
+          ctx.strokeStyle=rgba(ROSE,0.12*vis); ctx.lineWidth=1;
+          ctx.beginPath();ctx.arc(p.x,p.y,(30+f*22)*p.s,0,6.2832);ctx.stroke();
+        } else {
+          ctx.strokeStyle=rgba(TEAL,(0.10+0.14*f)*vis); ctx.lineWidth=1;
+          ctx.beginPath();ctx.arc(p.x,p.y,(9+f*5)*p.s,0,6.2832);ctx.stroke();
+        }
+      }
+    }
+  }
+
+  hud(idx);
+  requestAnimationFrame(frame);
+}
+
+fit();
+window.addEventListener('resize',fit);
+lpb.classList.add('on');
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
