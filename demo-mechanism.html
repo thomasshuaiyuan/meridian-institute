@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="A genealogy becomes a trained surface, and the surface has an edge — the three steps behind amortised phylodynamic inference, drawn as geometry.">
+<meta name="description" content="A genealogy becomes a trained surface, and support for that surface is a density with no boundary — the three steps behind amortised phylodynamic inference, drawn as geometry.">
 <title>Where the Training Set Ends</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>
@@ -48,25 +48,37 @@ h1{font-family:var(--display);font-weight:300;font-size:clamp(27px,4.4vw,38px);l
 .note{font-family:var(--mono);font-size:10.5px;line-height:1.85;letter-spacing:.04em;
   color:var(--ink-3);margin:18px 0 22px;text-transform:uppercase}
 
-/* the plate: committed dark in both themes, so it reads as one object */
-.plate{background:#0b1119;border:1px solid #1b2430;border-radius:2px;overflow:hidden;
-  margin:0 0 14px}
-.plate canvas{display:block;width:100%;height:clamp(330px,54vw,470px)}
-.hud{display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
-  padding:0 16px 14px;font-family:var(--mono);pointer-events:none;flex-wrap:wrap}
+.plate{position:relative;background:#0b1119;border:1px solid #1b2430;border-radius:2px;
+  overflow:hidden;margin:0 0 14px}
+.plate canvas{display:block;width:100%;height:clamp(330px,54vw,470px);
+  transition:opacity .3s}
+#vol{position:absolute;inset:0;height:100%}
+.hud{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:14px;
+  padding:0 16px 14px;font-family:var(--mono);pointer-events:none;flex-wrap:wrap;z-index:2}
 .hud .mv{display:flex;align-items:baseline;gap:10px}
 .hud .rn{font-size:11px;letter-spacing:.2em;color:#4d6470}
 .hud .nm{font-size:13px;letter-spacing:.22em;text-transform:uppercase;color:#d6e6e6}
 .hud .sb{font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:#4d6470;
   text-align:right;max-width:40ch;line-height:1.7}
 
-.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 30px}
+.controls{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px}
 .controls button{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
   background:transparent;color:var(--ink-3);border:1px solid var(--rule);border-radius:100px;
   padding:5px 13px;cursor:pointer;transition:all .15s}
 .controls button:hover{color:var(--amber);border-color:var(--amber)}
 .controls button.on{color:var(--paper);background:var(--ink);border-color:var(--ink)}
 .controls button:focus-visible{outline:2px solid var(--amber);outline-offset:2px}
+
+.cut{display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;margin:0 0 30px}
+.cut label{font-family:var(--mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--ink-3);white-space:nowrap}
+.cut input[type=range]{flex:1 1 220px;min-width:0;accent-color:#1b7f8c;height:18px}
+@media (prefers-color-scheme:dark){.cut input[type=range]{accent-color:#56c9d8}}
+.cut input[type=range]:focus-visible{outline:2px solid var(--amber);outline-offset:3px}
+.dots{display:flex;gap:7px;align-items:center}
+.dots i{width:9px;height:9px;border-radius:50%;display:block;transition:background .18s}
+.fbnote{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 30px}
 
 .step{border-top:1px solid var(--rule);padding:22px 0 0;margin:0 0 22px}
 .step h2{font-family:var(--display);font-weight:400;font-size:20px;margin:0 0 7px;line-height:1.3}
@@ -95,12 +107,13 @@ a.inl:hover{border-bottom-color:var(--amber)}
 <div class="page">
   <p class="eyebrow">Delay-NPE &middot; schematic</p>
   <h1>Where the training set ends.</h1>
-  <p class="intro">Amortised inference is usually described in two steps &mdash; train once, then answer instantly. The description leaves out the step that decides whether the answer is worth anything, which is the boundary of what was trained on. These are the three steps as geometry: a genealogy, the surface learned from many of them, and the edge of that surface.</p>
+  <p class="intro">Amortised inference is usually described in two steps &mdash; train once, then answer instantly. The description leaves out the step that decides whether the answer is worth anything, which is how well the training set covered the question being asked. These are the three steps as geometry: a genealogy, the surface learned from many of them, and the density of support that surface rests on.</p>
   <p class="intro">The shapes are the argument. <em>None of the three carries a number</em>, because the point each one makes is structural and survives without one.</p>
-  <p class="note">Schematic &middot; no data, measured or simulated<br>The tree is procedurally generated and the surface is drawn, not fitted</p>
+  <p class="note">Schematic &middot; no data, measured or simulated<br>The tree is procedurally generated and the density field is drawn, not fitted</p>
 
   <div class="plate">
-    <canvas id="st" aria-label="Three animated movements: a genealogy drawn with time as depth, its tips settling onto a learned surface, and probe points landing inside or outside the edge of that surface."></canvas>
+    <canvas id="st" aria-label="Three animated movements: a genealogy drawn with time as depth, its tips settling onto a learned surface, and the density of training support that surface rests on."></canvas>
+    <canvas id="vol" hidden aria-label="A volumetric rendering of training support density, with a movable cutoff and probe points that change colour as the cutoff crosses them."></canvas>
     <div class="hud">
       <div class="mv"><span class="rn" id="rn">I</span><span class="nm" id="mn">Genealogy</span></div>
       <div class="sb" id="sb">A sampled history, drawn with time as depth</div>
@@ -109,9 +122,15 @@ a.inl:hover{border-bottom-color:var(--amber)}
   <div class="controls">
     <button id="m0" class="on">I &middot; Genealogy</button>
     <button id="m1">II &middot; Amortisation</button>
-    <button id="m2">III &middot; Detection</button>
+    <button id="m2">III &middot; Support</button>
     <button id="lp">Loop</button>
   </div>
+  <div class="cut" id="cutrow" hidden>
+    <label for="th">Support cutoff</label>
+    <input id="th" type="range" min="4" max="48" step="1" value="17">
+    <span class="dots" id="dots" aria-label="Probe classifications at the current cutoff"></span>
+  </div>
+  <p class="fbnote" id="fbnote" hidden>Narrow screen &mdash; movement III falls back to a wireframe; the volume needs a desktop GPU</p>
 
   <div class="step">
     <h2><span class="ix">I</span>The data object is a shape</h2>
@@ -126,25 +145,137 @@ a.inl:hover{border-bottom-color:var(--amber)}
   </div>
 
   <div class="step">
-    <h2><span class="ix">III</span>The surface has an edge, and it is silent</h2>
-    <p>A query that lands on the surface gets an answer the training supports. A query that lands past its edge gets an answer too &mdash; <b>just as fast, and just as narrow</b>. Nothing in a forward pass hesitates. The estimator has no way to say that it is extrapolating, because the operation it performs is identical either way.</p>
-    <p>So the edge has to be found by something else. Teal probes land inside and settle. Rose probes stop short and flare: that flare is a detector firing, and in a deployed system it is the signal to route that query to a slower sampler instead of trusting the fast answer.</p>
+    <h2><span class="ix">III</span>Support is a quantity, and the edge is a choice</h2>
+    <p>A query that lands where training was dense gets an answer the training supports. One that lands out in the thin fog gets an answer too &mdash; <b>just as fast, and just as narrow</b>. Nothing in a forward pass hesitates, because the operation it performs is identical either way.</p>
+    <p>What the volume shows is that there is no boundary sitting there to be found. There is a density: thick where the simulated training set put many genealogies, thinning outward, never quite reaching zero. The grain at the rim is the point &mdash; out there the field is sampled too sparsely to support anything, and it degrades rather than stopping.</p>
+    <p>So a detector has to compute that density separately and compare it against a cutoff somebody picked. <b>Drag the cutoff and the fog does not change; only the verdict does.</b> Probes flip as the line crosses them. Push it high enough and even well-covered queries get routed to the slow path, which is the cost of being careful; leave it low and queries the estimator cannot answer sail through, which is the cost of not being.</p>
   </div>
 
   <div class="caveat">
-    <p><b>The surface drawn here is a stand-in.</b> It is a smooth saddle chosen because it reads clearly when it turns, not a picture of any trained estimator's actual geometry. The claim the page makes is about the <em>structure</em> &mdash; that a trained estimator has a support, that queries outside it are answered anyway, and that the boundary must be detected explicitly. Nothing here shows where a real boundary lies.</p>
+    <p><b>The density field here is invented.</b> It is a saddle with a smooth falloff and some noise, chosen because the thinning edge reads clearly when it turns &mdash; not a picture of any trained estimator's actual support. The claim the page makes is about the <em>structure</em>: that support is continuous, that queries outside it are answered anyway, and that the in-or-out verdict is a threshold someone chose. Nothing here shows where a real cutoff should sit.</p>
   </div>
 
-  <p class="foot"><strong>What would make this a figure rather than a schematic:</strong> a trained Delay-NPE estimator and its real support, with the probe points drawn from the surveillance record instead of scattered. Then the edge in the picture would be the edge in the method, and its shape would be a finding. Until that runs, this documents a mechanism, which is the smaller claim and the only one it supports.</p>
+  <p class="foot"><strong>What would make this a figure rather than a schematic:</strong> a trained Delay-NPE estimator and its real support density, with the probes drawn from the surveillance record instead of placed by hand. Then the fog would be the estimator's own, and where it thins would be a finding. Until that runs, this documents a mechanism, which is the smaller claim and the only one it supports.</p>
 </div>
 
 <script>
 (function(){
 const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 const cv=document.getElementById('st'), ctx=cv.getContext('2d');
+const vcv=document.getElementById('vol');
 const TEAL=[86,201,216], ROSE=[224,115,141], BONE=[214,230,230];
 const rgba=(c,a)=>'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')';
 let W=0,H=0,S=1,CX=0,CY=0,DPR=1;
+
+const RAD=1.15, CURV=0.36;
+function surf(u,r){
+  const x=Math.cos(u)*r*RAD, z=Math.sin(u)*r*RAD;
+  return {x:x, y:CURV*(x*x-z*z), z:z};
+}
+
+/* ---------- volume: raymarched support density (desktop GPUs only) ---------- */
+const VOLW = 760;
+let gl=null, prog=null, uRes=null, uTime=null, uTh=null, uA=null, uEl=null, uK=null;
+function initVol(){
+  if(window.innerWidth < VOLW || RM) return false;
+  try{ gl = vcv.getContext('webgl2',{antialias:false,alpha:false}); }catch(e){ gl=null; }
+  if(!gl) return false;
+  const VS='#version 300 es\nvoid main(){vec2 p=vec2((gl_VertexID<<1)&2,gl_VertexID&2);gl_Position=vec4(p*2.0-1.0,0.0,1.0);}';
+  const FS=`#version 300 es
+precision highp float;
+out vec4 outColor;
+uniform vec2 uRes; uniform float uTime, uThresh, uA, uEl, uK;
+uniform vec3 uProbe[7]; uniform float uSup[7];
+const float CURV=0.36, RAD=1.15;
+float hash(vec3 p){p=fract(p*0.3183099+vec3(0.11,0.17,0.13));p*=17.0;return fract(p.x*p.y*p.z*(p.x+p.y+p.z));}
+float vnoise(vec3 x){vec3 i=floor(x),f=fract(x);f=f*f*(3.0-2.0*f);
+ return mix(mix(mix(hash(i),hash(i+vec3(1,0,0)),f.x),mix(hash(i+vec3(0,1,0)),hash(i+vec3(1,1,0)),f.x),f.y),
+            mix(mix(hash(i+vec3(0,0,1)),hash(i+vec3(1,0,1)),f.x),mix(hash(i+vec3(0,1,1)),hash(i+vec3(1,1,1)),f.x),f.y),f.z);}
+float fbm(vec3 p){return 0.62*vnoise(p)+0.32*vnoise(p*2.47);}
+float support(vec3 p){
+  float h=CURV*(p.x*p.x-p.z*p.z);
+  float d=abs(p.y-h);
+  float r=length(p.xz)/RAD;
+  float tight=exp(-(d/0.078)*(d/0.078));
+  float wide =exp(-(d/0.30)*(d/0.30));
+  return smoothstep(1.10,0.30,r)*(tight+0.30*wide);
+}
+float density(vec3 p){
+  float s=support(p);
+  if(s<0.004) return 0.0;
+  float n=fbm(p*4.4+vec3(0.0,uTime*0.05,uTime*0.022));
+  return s*mix(0.92,0.30+1.30*n,clamp(1.0-s*1.15,0.0,1.0));
+}
+vec3 ramp(float d){
+  vec3 lo=vec3(0.88,0.45,0.55), md=vec3(0.83,0.66,0.33), hi=vec3(0.34,0.79,0.85);
+  return mix(mix(lo,md,smoothstep(uThresh*0.45,uThresh*1.35,d)),hi,smoothstep(uThresh*1.25,uThresh*3.1,d));
+}
+void main(){
+  vec2 q=(gl_FragCoord.xy-0.5*uRes)/uRes.y;
+  float ce=cos(uEl), se=sin(uEl);
+  vec3 ro=5.5*vec3(sin(uA)*ce, se, cos(uA)*ce);
+  vec3 ww=normalize(-ro), uu=normalize(cross(ww,vec3(0.0,1.0,0.0))), vv=cross(uu,ww);
+  vec3 rd=normalize(q.x*uu+q.y*vv+uK*ww);
+  float b=dot(ro,rd), c=dot(ro,ro)-4.41, disc=b*b-c;
+  vec3 col=vec3(0.0); float T=1.0;
+  if(disc>0.0){
+    float sq=sqrt(disc), t0=max(-b-sq,0.0), t1=-b+sq;
+    const int N=44;
+    float dt=(t1-t0)/float(N);
+    float t=t0+dt*hash(vec3(gl_FragCoord.xy,1.0))*0.9;
+    for(int i=0;i<N;i++){
+      if(T<0.025) break;
+      vec3 p=ro+rd*t;
+      float d=density(p);
+      if(d>0.003){
+        vec3 cc=ramp(d);
+        float al=clamp(d*dt*4.2,0.0,1.0);
+        cc+=vec3(0.90,0.94,1.00)*exp(-pow((d-uThresh)/(uThresh*0.10+0.006),2.0))*1.70;
+        col+=T*cc*al; T*=(1.0-al);
+      }
+      for(int k=0;k<7;k++){
+        vec3 dp=p-uProbe[k];
+        float g=exp(-dot(dp,dp)*620.0);
+        if(g>0.002){
+          vec3 pc = uSup[k]>=uThresh ? vec3(0.42,0.92,0.98) : vec3(0.96,0.50,0.60);
+          col+=T*pc*g*dt*9.0;
+        }
+      }
+      t+=dt;
+    }
+  }
+  col=col/(1.0+col*0.55);
+  col=pow(max(col,0.0),vec3(0.88));
+  outColor=vec4(col+vec3(0.027,0.032,0.039),1.0);
+}`;
+  function sh(ty,src){const s=gl.createShader(ty);gl.shaderSource(s,src);gl.compileShader(s);
+    if(!gl.getShaderParameter(s,gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(s));return s;}
+  try{
+    prog=gl.createProgram();
+    gl.attachShader(prog,sh(gl.VERTEX_SHADER,VS));
+    gl.attachShader(prog,sh(gl.FRAGMENT_SHADER,FS));
+    gl.linkProgram(prog);
+    if(!gl.getProgramParameter(prog,gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+  }catch(e){ gl=null; return false; }
+  gl.useProgram(prog);
+  const U=n=>gl.getUniformLocation(prog,n);
+  uRes=U('uRes'); uTime=U('uTime'); uTh=U('uThresh'); uA=U('uA'); uEl=U('uEl'); uK=U('uK');
+  gl.uniform3fv(U('uProbe'), new Float32Array(VP.flat()));
+  gl.uniform1fv(U('uSup'),   new Float32Array(VSUP));
+  return true;
+}
+function supportAt(p){
+  const h=CURV*(p[0]*p[0]-p[2]*p[2]);
+  const d=Math.abs(p[1]-h), r=Math.hypot(p[0],p[2])/RAD;
+  const core=Math.exp(-Math.pow(d/0.078,2)) + 0.30*Math.exp(-Math.pow(d/0.30,2));
+  const t=Math.min(1,Math.max(0,(r-1.10)/(0.30-1.10)));
+  return core*(t*t*(3-2*t));
+}
+const VP=[[0.10,0,0.06],[0.62,0,-0.34],[-0.55,0,0.48],[0.97,0,0.30],
+          [-1.02,0,-0.52],[1.34,0,-0.58],[-0.36,0,1.38]];
+VP.forEach(p=>{p[1]=CURV*(p[0]*p[0]-p[2]*p[2]);});
+const VSUP=VP.map(supportAt);
+const VOL_OK=initVol();
 
 function fit(){
   DPR=Math.min(window.devicePixelRatio||1,2);
@@ -152,6 +283,13 @@ function fit(){
   W=r.width; H=r.height;
   cv.width=Math.round(W*DPR); cv.height=Math.round(H*DPR);
   S=Math.min(W*0.36,H*0.70); CX=W/2; CY=H*0.50;
+  if(gl){
+    const sc=0.72, w=Math.max(1,Math.round(W*sc)), h=Math.max(1,Math.round(H*sc));
+    if(vcv.width!==w||vcv.height!==h){ vcv.width=w; vcv.height=h; }
+    gl.viewport(0,0,vcv.width,vcv.height);
+    gl.uniform2f(uRes,vcv.width,vcv.height);
+    gl.uniform1f(uK, 3.6*S/H);
+  }
 }
 
 function proj(p,a,el){
@@ -161,12 +299,6 @@ function proj(p,a,el){
   const y2=y*ce-z*se, z2=y*se+z*ce;
   const d=5.5, f=3.60, zz=Math.max(0.40,d+z2), s=f/zz;
   return {x:CX+x*s*S, y:CY-y2*s*S, s:s};
-}
-
-const RAD=1.15, CURV=0.36;
-function surf(u,r){
-  const x=Math.cos(u)*r*RAD, z=Math.sin(u)*r*RAD;
-  return {x:x, y:CURV*(x*x-z*z), z:z};
 }
 
 const nodes=[], edges=[], tips=[];
@@ -256,25 +388,44 @@ function mesh(a,el,al){
 const MOV=[
   {n:'Genealogy',   s:'A sampled history, drawn with time as depth'},
   {n:'Amortisation',s:'Many simulated histories, learned once as a surface'},
-  {n:'Detection',   s:'What the surface covers, and what falls outside it'}
+  {n:'Support',     s:'A density with no boundary, and a cutoff you choose'}
 ];
 const DUR=10.5, FADE=1.2;
 let t0=performance.now()/1000-5.0;
-let pinned=-1, loop=true;
+let pinned=-1, loop=true, lastIdx=-1;
 const E=x=>x<0.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
 const btn=[document.getElementById('m0'),document.getElementById('m1'),document.getElementById('m2')];
 const lpb=document.getElementById('lp');
+const cutrow=document.getElementById('cutrow'), slider=document.getElementById('th');
+const dots=document.getElementById('dots');
+let TH=parseFloat(slider.value)/100;
+
+if(VOL_OK){
+  VP.forEach(function(){ dots.appendChild(document.createElement('i')); });
+  const dEls=[].slice.call(dots.children);
+  const paint=function(){
+    dEls.forEach(function(el,i){ el.style.background = VSUP[i]>=TH ? '#1b7f8c' : '#bf4f68'; });
+  };
+  slider.addEventListener('input',function(){ TH=parseFloat(slider.value)/100; paint(); });
+  paint();
+} else {
+  document.getElementById('fbnote').hidden=false;
+}
 
 function hud(i){
   document.getElementById('rn').textContent=['I','II','III'][i];
   document.getElementById('mn').textContent=MOV[i].n;
   document.getElementById('sb').textContent=MOV[i].s;
   for(let k=0;k<3;k++) btn[k].classList.toggle('on',k===i);
+  if(i!==lastIdx){
+    lastIdx=i;
+    const useVol = VOL_OK && i===2;
+    vcv.hidden = !useVol;
+    cv.style.opacity = useVol ? '0' : '1';
+    if(VOL_OK) cutrow.hidden = (i!==2);
+  }
 }
-function show(i){
-  pinned=i; loop=false; lpb.classList.remove('on');
-  t0=performance.now()/1000;
-}
+function show(i){ pinned=i; loop=false; lpb.classList.remove('on'); t0=performance.now()/1000; }
 btn.forEach((b,i)=>b.addEventListener('click',()=>show(i)));
 lpb.addEventListener('click',()=>{
   loop=!loop; lpb.classList.toggle('on',loop);
@@ -287,12 +438,19 @@ function frame(now){
   if(pinned>=0){ idx=pinned; lp=Math.min(0.92,0.08+(T%DUR)/DUR); }
   else { idx=Math.floor(T/DUR)%3; lp=(T%DUR)/DUR; }
   const a=0.42+(RM?0:T*0.075), el=0.32+(RM?0:Math.sin(T*0.10)*0.09);
+  hud(idx);
+
+  if(VOL_OK && idx===2){
+    gl.uniform1f(uTime,T); gl.uniform1f(uTh,TH);
+    gl.uniform1f(uA,a); gl.uniform1f(uEl,el);
+    gl.drawArrays(gl.TRIANGLES,0,3);
+    requestAnimationFrame(frame); return;
+  }
 
   ctx.setTransform(DPR,0,0,DPR,0,0);
   ctx.globalCompositeOperation='source-over';
   ctx.fillStyle='#0b1119'; ctx.fillRect(0,0,W,H);
   ctx.globalCompositeOperation='lighter';
-
   const vis=(RM||pinned>=0)?1:Math.min(1,Math.min(lp,1-lp)/(FADE/DUR));
 
   if(idx===0){
@@ -306,10 +464,7 @@ function frame(now){
       gline(A.x,A.y,A.x+(B.x-A.x)*k,A.y+(B.y-A.y)*k,BONE,(0.13+0.30*dep)*vis,1.0+dep*0.8);
     }
     const tv=RM?1:Math.max(0,Math.min(1,(lp-0.40)*4));
-    for(const t of tips){
-      const p=proj(t,a,el);
-      gdot(p.x,p.y,1.9*p.s,TEAL,0.62*vis*tv);
-    }
+    for(const t of tips){ const p=proj(t,a,el); gdot(p.x,p.y,1.9*p.s,TEAL,0.62*vis*tv); }
   }
 
   if(idx===1){
@@ -326,10 +481,7 @@ function frame(now){
 
   if(idx===2){
     mesh(a,el,0.26*vis);
-    for(const c of cloud){
-      const p=proj(c.to,a,el);
-      gdot(p.x,p.y,1.3*p.s,TEAL,0.26*vis);
-    }
+    for(const c of cloud){ const p=proj(c.to,a,el); gdot(p.x,p.y,1.3*p.s,TEAL,0.26*vis); }
     for(const pr of probes){
       let k=lp*1.55-pr.d;
       if(k<=0) continue;
@@ -337,10 +489,7 @@ function frame(now){
       const e=E(k), col=pr.out?ROSE:TEAL;
       const at=u=>proj({x:pr.s.x+(pr.t.x-pr.s.x)*u,y:pr.s.y+(pr.t.y-pr.s.y)*u,
                         z:pr.s.z+(pr.t.z-pr.s.z)*u},a,el);
-      for(let j=1;j<=6;j++){
-        const q=at(Math.max(0,e-j*0.032));
-        gdot(q.x,q.y,1.1*q.s,col,0.11*(1-j/7)*vis);
-      }
+      for(let j=1;j<=6;j++){ const q=at(Math.max(0,e-j*0.032)); gdot(q.x,q.y,1.1*q.s,col,0.11*(1-j/7)*vis); }
       const p=at(e);
       gdot(p.x,p.y,3.6*p.s,col,0.92*vis);
       if(k>=1){
@@ -357,8 +506,6 @@ function frame(now){
       }
     }
   }
-
-  hud(idx);
   requestAnimationFrame(frame);
 }
 
