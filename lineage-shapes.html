@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Lineage That Stops</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Cormorant+Garamond:ital,wght@1,300&display=swap">
+<style>
+:root{color-scheme:dark}
+*{box-sizing:border-box}
+html{margin:0;scroll-behavior:smooth}
+body{min-height:500vh;margin:0;background:#040708;font-family:'IBM Plex Mono',ui-monospace,monospace;cursor:ns-resize}
+#cv{position:fixed;inset:0;width:100%;height:100%;display:block}
+.ui{
+  position:fixed;inset:0;
+  padding:max(22px,env(safe-area-inset-top,0px)) max(22px,env(safe-area-inset-right,0px))
+          calc(24px + env(safe-area-inset-bottom,0px)) max(22px,env(safe-area-inset-left,0px));
+  display:flex;flex-direction:column;justify-content:space-between;
+  pointer-events:none;z-index:3
+}
+.top{display:flex;justify-content:space-between;align-items:flex-start}
+.bot{display:flex;justify-content:space-between;align-items:flex-end;gap:16px}
+.eyebrow{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#35C9C0;opacity:.75;margin:0}
+.sub{
+  font-family:'Cormorant Garamond',Georgia,serif;font-style:italic;font-weight:300;
+  font-size:14px;color:rgba(214,230,230,.50);max-width:50ch;line-height:1.65;margin:0
+}
+.note{
+  font-size:9px;letter-spacing:.13em;text-transform:uppercase;
+  color:rgba(214,230,230,.20);line-height:1.9;margin:0;text-align:right;white-space:nowrap
+}
+.back{
+  font-family:'IBM Plex Mono',ui-monospace,monospace;
+  font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(77,217,255,.45);text-decoration:none;
+  pointer-events:all;transition:color .2s
+}
+.back:hover{color:rgba(77,217,255,.75)}
+/* scroll progress rail — right edge, amber */
+#rail{
+  position:fixed;right:0;top:0;width:2px;height:100%;z-index:4;pointer-events:none;
+  background:rgba(224,166,75,0.06)
+}
+#rail-thumb{
+  position:absolute;top:0;left:0;width:100%;
+  background:rgba(224,166,75,0.32);
+  transition:height 0.1s linear
+}
+@media(max-width:560px){.sub,.note{display:none}}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<div class="ui">
+  <div class="top">
+    <a href="index.html" class="back">&larr; Meridian Institute</a>
+    <p class="eyebrow">A lineage that stops</p>
+  </div>
+  <div class="bot">
+    <p class="sub">Every branch you can see is built from sequences. Everything left of that line exists, but has not been read.</p>
+    <p class="note">no archive access<br>has been secured<br>no inventory made</p>
+  </div>
+</div>
+<div id="rail"><div id="rail-thumb"></div></div>
+
+<script>
+(function(){
+'use strict';
+const RM  = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const cv  = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const thumb = document.getElementById('rail-thumb');
+
+const BONE  = [214,230,230];
+const AMBER = [224,166,75];
+const PALETTES = [
+  [53,201,192],   // teal
+  [210,100,135],  // rose
+  [140,105,225],  // violet
+  [75,195,140],   // sage
+  [70,155,225],   // sky
+];
+let paletteIdx = 0;
+const rgba  = (c,a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+
+/* ── scroll state ── */
+let scrollProgress = 0; // 0–1 across full page
+
+function onScroll(){
+  const maxScroll = document.documentElement.scrollHeight - innerHeight;
+  scrollProgress = maxScroll > 0 ? Math.min(1, scrollY / maxScroll) : 0;
+  thumb.style.height = (scrollProgress * 100) + '%';
+
+  // Zone = which palette (0–4). Rebuild tree when zone changes.
+  const targetZone = Math.min(PALETTES.length - 1, Math.floor(scrollProgress * PALETTES.length));
+  if(targetZone !== paletteIdx){
+    paletteIdx = targetZone;
+    buildTree();
+    t0 = performance.now()/1000; // reset fade-in on tree change
+  }
+}
+
+addEventListener('scroll', onScroll, {passive:true});
+
+/* ── canvas sizing ── */
+let W=0,H=0,DPR=1,XT=0;
+function fit(){
+  DPR = Math.min(devicePixelRatio||1,2);
+  W = innerWidth; H = innerHeight;
+  cv.width = W*DPR; cv.height = H*DPR;
+  XT = W * 0.33;
+}
+fit();
+
+/* ── drawing primitives ── */
+function gdot(x,y,r,c,a){
+  if(a<0.004) return;
+  ctx.fillStyle=rgba(c,Math.min(a*0.14,0.14));
+  ctx.beginPath(); ctx.arc(x,y,r*3.6,0,6.2832); ctx.fill();
+  ctx.fillStyle=rgba(c,a);
+  ctx.beginPath(); ctx.arc(x,y,r,0,6.2832); ctx.fill();
+}
+function gline(x1,y1,x2,y2,c,a,w){
+  if(a<0.004) return;
+  ctx.strokeStyle=rgba(c,a*0.14); ctx.lineWidth=w*3;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.strokeStyle=rgba(c,a); ctx.lineWidth=w;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+}
+/* Soft-glow — no sharp core, wide diffuse halo */
+function glowline(x1,y1,x2,y2,c,a,w){
+  if(a<0.004) return;
+  ctx.strokeStyle=rgba(c,a*0.07); ctx.lineWidth=w*8;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.strokeStyle=rgba(c,a*0.13); ctx.lineWidth=w*2.5;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.strokeStyle=rgba(c,a*0.09); ctx.lineWidth=w*0.6;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+}
+
+/* ── tree ── */
+let treeEdges=[], treeTips=[], treeNodes=[], treeRoot=null;
+
+function buildTree(){
+  treeEdges=[]; treeTips=[];
+  const nodes=[];
+  function grow(x,y,angle,depth){
+    const n={x,y,depth,leaf:false};
+    nodes.push(n);
+    if(depth===0) treeRoot=n;
+    const MAX_D=9, p_stop=depth>4?0.08:0;
+    if(depth>=MAX_D||Math.random()<p_stop){ n.leaf=true; treeTips.push(n); return n; }
+    const spread=0.50*Math.pow(0.80,depth);
+    const len   =0.46*Math.pow(0.87,depth)*(0.70+Math.random()*0.60);
+    const k     =depth<2?2:(Math.random()<0.90?2:1);
+    for(let i=0;i<k;i++){
+      const da=(i===0?1:-1)*spread+(Math.random()-0.5)*spread*0.40;
+      const na=Math.max(-1.15,Math.min(1.15,angle+da));
+      const child=grow(x+Math.cos(na)*len, y+Math.sin(na)*len, na, depth+1);
+      treeEdges.push({a:n,b:child,depth});
+    }
+    return n;
+  }
+  grow(0,0,0,0);
+  const xs=nodes.map(n=>n.x), ys=nodes.map(n=>n.y);
+  const mnx=Math.min(...xs),mxx=Math.max(...xs);
+  const mny=Math.min(...ys),mxy=Math.max(...ys);
+  const kx=1/(mxx-mnx||1), ky=1/(mxy-mny||1);
+  for(const n of nodes){
+    n.cx=XT+(n.x-mnx)*kx*(W*0.976-XT);
+    n.cy=H*0.07+(n.y-mny)*ky*(H*0.86);
+  }
+  treeNodes = nodes.filter(n=>!n.leaf);
+  buildPatterns();
+}
+
+/*
+ * Ghost patterns — depth-stratum readings of the same tree.
+ * 1. Root convergence   — all tips trace back to the common ancestor
+ * 2. Branching zone     depth 3–5
+ * 3. Recent growth      depth 6–8
+ * 4. Terminal reach     leaf edges
+ */
+let ghostPatterns=[];
+
+function buildPatterns(){
+  ghostPatterns=[];
+  if(treeEdges.length<4) return;
+  if(treeRoot) ghostPatterns.push(treeTips.map(t=>
+    ({ax:treeRoot.cx,ay:treeRoot.cy,bx:t.cx,by:t.cy,w:0.75})));
+  ghostPatterns.push(treeEdges.filter(e=>e.depth>=3&&e.depth<=5).map(e=>
+    ({ax:e.a.cx,ay:e.a.cy,bx:e.b.cx,by:e.b.cy,w:1.1})));
+  ghostPatterns.push(treeEdges.filter(e=>e.depth>=6&&e.depth<=8).map(e=>
+    ({ax:e.a.cx,ay:e.a.cy,bx:e.b.cx,by:e.b.cy,w:0.75})));
+  ghostPatterns.push(treeEdges.filter(e=>e.b.leaf).map(e=>
+    ({ax:e.a.cx,ay:e.a.cy,bx:e.b.cx,by:e.b.cy,w:0.65})));
+}
+
+buildTree();
+
+const ARCH_N=72;
+const archDots=Array.from({length:ARCH_N},()=>({
+  ax:Math.random(), ay:Math.random(), sz:0.8+Math.random()*0.9
+}));
+
+/* ── scroll-driven pattern selection ── */
+function ss(a,b,t){ const x=Math.max(0,Math.min(1,(t-a)/(b-a))); return x*x*(3-2*x); }
+
+function getPatternState(){
+  if(RM || !ghostPatterns.length) return {pidx:0, pa:0};
+  const G = ghostPatterns.length;
+  // zoneProgress: how far through the current palette zone (0–1)
+  const zoneProgress = (scrollProgress * PALETTES.length) % 1;
+  // map zone into pattern slots
+  const patProgress = zoneProgress * G;
+  const pidx = Math.min(G-1, Math.floor(patProgress));
+  const lt = patProgress % 1; // position within this pattern's slot (0–1)
+  let pa;
+  if(lt < 0.15)       pa = ss(0, 0.15, lt);
+  else if(lt < 0.72)  pa = 1;
+  else if(lt < 0.92)  pa = 1 - ss(0.72, 0.92, lt);
+  else                pa = 0;
+  return {pidx, pa};
+}
+
+let t0 = performance.now()/1000;
+
+function frame(now){
+  const T  = now/1000 - t0;
+  // fi: fade-in on page load or tree rebuild; re-triggered via t0 reset
+  const fi = Math.min(1, T / 2.2);
+
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+  ctx.globalCompositeOperation='source-over';
+  ctx.fillStyle='#040708'; ctx.fillRect(0,0,W,H);
+  ctx.globalCompositeOperation='lighter';
+
+  /* Archive zone dots */
+  for(const d of archDots){
+    const x=d.ax*(XT*0.90), y=H*0.07+d.ay*H*0.86;
+    ctx.fillStyle=rgba(AMBER,0.038*fi);
+    ctx.beginPath(); ctx.arc(x,y,d.sz,0,6.2832); ctx.fill();
+  }
+
+  /* Threshold line */
+  {
+    const la=0.10*fi;
+    ctx.strokeStyle=rgba(AMBER,la*0.12); ctx.lineWidth=8; ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(XT,H*0.065); ctx.lineTo(XT,H*0.935); ctx.stroke();
+    ctx.strokeStyle=rgba(AMBER,la); ctx.lineWidth=1; ctx.setLineDash([4,8]);
+    ctx.beginPath(); ctx.moveTo(XT,H*0.065); ctx.lineTo(XT,H*0.935); ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  /* Base tree */
+  for(const e of treeEdges){
+    const t=e.depth/9;
+    const P=PALETTES[paletteIdx];
+    const col=[BONE[0]+(P[0]-BONE[0])*t, BONE[1]+(P[1]-BONE[1])*t, BONE[2]+(P[2]-BONE[2])*t];
+    gline(e.a.cx,e.a.cy,e.b.cx,e.b.cy,col,(0.07+0.26*t)*fi,Math.max(0.5,1.5-e.depth*0.10));
+  }
+
+  /* Ghost pattern — scroll-driven amber overlay */
+  const {pidx, pa} = getPatternState();
+  const paf = pa * fi;
+  if(paf > 0.004 && ghostPatterns.length){
+    for(const e of ghostPatterns[pidx]){
+      glowline(e.ax,e.ay,e.bx,e.by, AMBER, paf*0.85, e.w);
+    }
+  }
+
+  /* Internal nodes — branching events */
+  for(const nd of treeNodes){
+    const t=nd.depth/9;
+    const P=PALETTES[paletteIdx];
+    const col=[BONE[0]+(P[0]-BONE[0])*t,BONE[1]+(P[1]-BONE[1])*t,BONE[2]+(P[2]-BONE[2])*t];
+    const baseA = nd.depth===0 ? 0.38 : (0.10+0.18*t);
+    gdot(nd.cx,nd.cy, nd.depth===0?2.0:1.1, col, baseA*fi);
+  }
+
+  /* Tips — pulse on clock time, bloom on terminal pattern */
+  for(const tip of treeTips){
+    const pulse=RM?0:Math.sin(T*1.15+tip.cx*0.011+tip.cy*0.009)*0.10;
+    const extra=paf*(pidx===3?0.70:0.30);
+    gdot(tip.cx,tip.cy,2.4+pulse*2,PALETTES[paletteIdx],(0.70+pulse+extra)*fi);
+  }
+
+  requestAnimationFrame(frame);
+}
+
+/* Click: jump to next zone (manual override when embedded without scroll) */
+addEventListener('click',()=>{
+  const next = (paletteIdx + 1) % PALETTES.length;
+  // Snap scroll to that zone's start
+  const maxScroll = document.documentElement.scrollHeight - innerHeight;
+  const targetScroll = (next / PALETTES.length) * maxScroll;
+  window.scrollTo({top: targetScroll, behavior:'smooth'});
+  // If maxScroll is 0 (embedded), advance directly
+  if(maxScroll < 10){
+    paletteIdx = next;
+    buildTree();
+    t0 = performance.now()/1000;
+  }
+});
+
+addEventListener('resize',()=>{ fit(); buildTree(); });
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
