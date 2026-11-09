@@ -1,0 +1,596 @@
+<title>Meridian Institute</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap">
+
+<style>
+/* Layout: full-width stacked bands; max-width column centered; generous vertical rhythm */
+:root {
+  --navy:        #0c1a2e;
+  --navy-mid:    #152338;
+  --cream:       #faf8f4;
+  --parchment:   #f3f0e8;
+  --ink:         #1c1c2e;
+  --ink-mid:     #46465e;
+  --ink-light:   #8888a0;
+  --amber:       #b8832a;
+  --amber-pale:  #d4a855;
+  --rule:        #dedad0;
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body:    'DM Sans', system-ui, sans-serif;
+
+  --max-w: 740px;
+  --wide-w: 1080px;
+  --gutter: max(24px, env(safe-area-inset-left, 0px));
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --cream:      #0f1621;
+    --parchment:  #161e2d;
+    --ink:        #e4e0d8;
+    --ink-mid:    #a8a4a0;
+    --ink-light:  #686878;
+    --rule:       #252e3e;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --cream:      #0f1621;
+  --parchment:  #161e2d;
+  --ink:        #e4e0d8;
+  --ink-mid:    #a8a4a0;
+  --ink-light:  #686878;
+  --rule:       #252e3e;
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.75;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+}
+
+/* ─── NAV ─────────────────────────────────────────── */
+nav {
+  position: sticky;
+  top: env(safe-area-inset-top, 0px);
+  z-index: 100;
+  background: var(--navy);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0 0 auto;
+  height: env(safe-area-inset-top, 0px);
+  z-index: 101;
+  background: var(--navy);
+}
+
+.nav-inner {
+  max-width: var(--wide-w);
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  padding-block: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.nav-wordmark {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: #fff;
+}
+
+.nav-links {
+  display: flex;
+  gap: 32px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.nav-links a:hover { color: #fff; }
+
+@media (max-width: 600px) { .nav-links { display: none; } }
+
+/* ─── HERO ────────────────────────────────────────── */
+.hero {
+  background: var(--navy);
+  padding-top: 96px;
+  padding-bottom: 108px;
+}
+
+.hero-inner {
+  max-width: var(--wide-w);
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+}
+
+.hero-eyebrow {
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--amber-pale);
+  margin-bottom: 28px;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5.5vw, 68px);
+  font-weight: 300;
+  line-height: 1.06;
+  color: #fff;
+  text-wrap: balance;
+  max-width: 760px;
+  margin-bottom: 36px;
+}
+
+.hero-title em {
+  font-style: italic;
+  color: rgba(255,255,255,0.55);
+}
+
+.hero-sub {
+  font-size: 16px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.52);
+  max-width: 500px;
+  line-height: 1.7;
+}
+
+/* ─── BANDS ───────────────────────────────────────── */
+.band {
+  background: var(--cream);
+}
+.band--alt { background: var(--parchment); }
+.band--dark { background: var(--navy); }
+
+.band-inner {
+  max-width: var(--wide-w);
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  padding-block: 88px;
+}
+
+hr.rule { border: none; border-top: 1px solid var(--rule); }
+
+/* ─── TYPE HIERARCHY ──────────────────────────────── */
+.eyebrow {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 18px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.5vw, 44px);
+  font-weight: 400;
+  line-height: 1.12;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.body-text {
+  font-size: 16px;
+  color: var(--ink-mid);
+  line-height: 1.8;
+}
+.body-text p + p { margin-top: 18px; }
+
+/* ─── PROBLEM TWO-COL ─────────────────────────────── */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 64px;
+  align-items: start;
+}
+@media (max-width: 680px) { .two-col { grid-template-columns: 1fr; gap: 36px; } }
+
+/* ─── METRICS GRID ────────────────────────────────── */
+.metrics-row {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 0;
+  margin-top: 64px;
+  border-top: 1px solid var(--rule);
+}
+@media (max-width: 640px) { .metrics-row { grid-template-columns: 1fr; } }
+
+.metric {
+  padding: 32px 28px 32px 0;
+  border-right: 1px solid var(--rule);
+}
+.metric:last-child { border-right: none; }
+.metric:not(:first-child) { padding-left: 28px; }
+@media (max-width: 640px) {
+  .metric { padding: 24px 0; border-right: none; border-bottom: 1px solid var(--rule); }
+  .metric:last-child { border-bottom: none; }
+  .metric:not(:first-child) { padding-left: 0; }
+}
+
+.metric-amber {
+  width: 32px;
+  height: 2px;
+  background: var(--amber);
+  margin-bottom: 16px;
+}
+
+.metric-name {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--ink);
+  margin-bottom: 10px;
+}
+
+.metric-desc {
+  font-size: 14px;
+  color: var(--ink-light);
+  line-height: 1.65;
+}
+
+/* ─── TEAM ────────────────────────────────────────── */
+.team-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 64px;
+  align-items: start;
+}
+@media (max-width: 680px) { .team-grid { grid-template-columns: 1fr; gap: 36px; } }
+
+.team-photo-placeholder {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: var(--navy-mid);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.team-name {
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3vw, 38px);
+  font-weight: 400;
+  color: var(--ink);
+  margin-bottom: 6px;
+  line-height: 1.1;
+}
+
+.team-title {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 28px;
+}
+
+.affil-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+}
+
+.affil {
+  font-size: 12px;
+  color: var(--ink-light);
+  border: 1px solid var(--rule);
+  padding: 4px 12px;
+  border-radius: 2px;
+}
+
+/* ─── PUBLICATIONS ────────────────────────────────── */
+.pub-list { list-style: none; border-top: 1px solid var(--rule); }
+
+.pub {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 24px;
+  align-items: start;
+  padding-block: 28px;
+  border-bottom: 1px solid var(--rule);
+}
+@media (max-width: 580px) { .pub { grid-template-columns: 1fr; gap: 8px; } }
+
+.pub-title {
+  font-family: var(--font-display);
+  font-size: 19px;
+  font-weight: 400;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 6px;
+}
+
+.pub-meta {
+  font-size: 13px;
+  color: var(--ink-light);
+}
+.pub-meta em { font-style: italic; }
+
+.pub-tag {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--amber);
+  white-space: nowrap;
+  padding-top: 4px;
+}
+
+/* ─── FOOTER ──────────────────────────────────────── */
+footer { background: var(--navy); }
+
+.footer-inner {
+  max-width: var(--wide-w);
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  padding-block: 72px 56px;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 48px;
+  align-items: start;
+}
+@media (max-width: 580px) { .footer-inner { grid-template-columns: 1fr; gap: 40px; } }
+
+.footer-name {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 400;
+  color: #fff;
+  margin-bottom: 12px;
+}
+
+.footer-desc {
+  font-size: 14px;
+  color: rgba(255,255,255,0.38);
+  line-height: 1.7;
+  max-width: 360px;
+}
+
+.footer-contact-label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--amber-pale);
+  margin-bottom: 12px;
+}
+
+.footer-email {
+  font-family: var(--font-display);
+  font-size: 21px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.8);
+  word-break: break-all;
+}
+
+.footer-address {
+  font-size: 13px;
+  color: rgba(255,255,255,0.32);
+  line-height: 1.75;
+  margin-top: 20px;
+}
+
+.footer-bottom {
+  max-width: var(--wide-w);
+  margin: 0 auto;
+  padding-left: var(--gutter);
+  padding-right: max(24px, env(safe-area-inset-right, 0px));
+  padding-block: 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  font-size: 12px;
+  color: rgba(255,255,255,0.25);
+  padding-bottom: max(20px, env(safe-area-inset-bottom, 0px));
+}
+</style>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <circle cx="13" cy="13" r="11.5" stroke="rgba(255,255,255,0.22)" stroke-width="1"/>
+        <line x1="13" y1="1.5" x2="13" y2="24.5" stroke="rgba(255,255,255,0.45)" stroke-width="1"/>
+        <line x1="1.5" y1="13" x2="24.5" y2="13" stroke="rgba(255,255,255,0.18)" stroke-width="0.75"/>
+        <circle cx="13" cy="13" r="2.5" fill="#b8832a"/>
+        <circle cx="13" cy="13" r="2.5" fill="#b8832a" opacity="0.4" transform="scale(2)" transform-origin="13 13"/>
+      </svg>
+      <span class="nav-wordmark">Meridian Institute</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#research">Research</a></li>
+      <li><a href="#team">Team</a></li>
+      <li><a href="#publications">Publications</a></li>
+      <li><a href="#contact">Contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <p class="hero-eyebrow">Computational Vaccine Safety Science · Hong Kong</p>
+    <h1 class="hero-title">Quantifying the boundaries<br>of <em>safe attenuation.</em></h1>
+    <p class="hero-sub">We develop genome-scale methods to characterize reversion risk in live-attenuated viral vaccines — the quantitative evidence regulators and developers need before clinical deployment.</p>
+  </div>
+</section>
+
+<!-- PROBLEM -->
+<section class="band" id="research">
+  <div class="band-inner">
+    <div class="two-col">
+      <div>
+        <p class="eyebrow">The Problem</p>
+        <h2 class="section-title">A documented gap in vaccine safety science.</h2>
+      </div>
+      <div class="body-text">
+        <p>Live-attenuated vaccines are among the most effective prophylactic tools in infectious disease prevention. They are also the least characterized in one critical respect: no standardized, reproducible method exists to quantify how far a candidate sits from reversion to pathogenicity.</p>
+        <p>The consequences are documented. Circulating vaccine-derived polioviruses tripled in incidence over a five-year period. HSV attenuation programs have advanced without a quantitative framework for stability assessment. Regulatory dossiers on genetic stability remain descriptive rather than computational.</p>
+        <p>Every live-attenuated vaccine developer faces this gap at some point in their development program. No independent scientific resource currently closes it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- APPROACH -->
+<section class="band band--alt">
+  <div class="band-inner">
+    <p class="eyebrow">Our Approach</p>
+    <h2 class="section-title" style="max-width:560px">Barrier metrics: a reproducible genome-level standard.</h2>
+    <p class="body-text" style="max-width:640px; margin-top:20px">We compute genome-scale conservation scores, mutational constraint distributions, and reversion probability estimates from curated sequence corpora. The result is a pathogen-specific dossier that answers the question developers and regulators need answered: which residues are under selective constraint, which mutational pathways to virulence remain accessible, and how much evolutionary distance separates the candidate from its nearest pathogenic neighbor in sequence space.</p>
+
+    <div class="metrics-row">
+      <div class="metric">
+        <div class="metric-amber"></div>
+        <div class="metric-name">Conservation Analysis</div>
+        <div class="metric-desc">Position-level entropy and covariation across curated genome corpora. Identifies sites under functional constraint across thousands of clinical isolates.</div>
+      </div>
+      <div class="metric">
+        <div class="metric-amber"></div>
+        <div class="metric-name">Reversion Probability</div>
+        <div class="metric-desc">Bayesian estimates of per-site reversion likelihood under replication pressure, calibrated against documented reversion events in the literature.</div>
+      </div>
+      <div class="metric">
+        <div class="metric-amber"></div>
+        <div class="metric-name">Sequence Distance</div>
+        <div class="metric-desc">Genomic distance from candidate to the nearest characterized pathogenic sequence — a quantitative margin of attenuation for the full genome.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- TEAM -->
+<section class="band" id="team">
+  <div class="band-inner">
+    <p class="eyebrow">Founder</p>
+    <div class="team-grid">
+      <div class="team-photo-placeholder" aria-hidden="true">
+        <svg viewBox="0 0 80 80" width="80" height="80" fill="none">
+          <circle cx="40" cy="33" r="16" fill="rgba(255,255,255,0.07)"/>
+          <ellipse cx="40" cy="66" rx="24" ry="13" fill="rgba(255,255,255,0.04)"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="team-name">Shuai (Thomas) Yuan</h2>
+        <p class="team-title">Founder &amp; Director</p>
+        <div class="body-text">
+          <p>Thomas is a doctoral researcher in computational infectious disease epidemiology at the University of Hong Kong, where he works in the Dhanasekaran Laboratory at the HKU-Pasteur Research Pole. His research develops computational methods for phylodynamic inference and genomic surveillance of respiratory and neurotropic viruses.</p>
+          <p>His founding work on barrier metrics grew from a systematic analysis of HSV-1 genome conservation across more than 400 clinical isolates — the first genome-scale quantitative characterization of reversion constraint in a live-attenuated herpesvirus candidate. He holds an MS in Epidemiology from Columbia University Mailman School of Public Health and a BA in Biology from Washington University in St. Louis.</p>
+        </div>
+        <div class="affil-row">
+          <span class="affil">University of Hong Kong</span>
+          <span class="affil">HKU-Pasteur Research Pole</span>
+          <span class="affil">Columbia University (MS)</span>
+          <span class="affil">Washington University in St. Louis (BA)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="rule">
+
+<!-- PUBLICATIONS -->
+<section class="band band--alt" id="publications">
+  <div class="band-inner">
+    <p class="eyebrow">Publications</p>
+    <h2 class="section-title" style="max-width:480px; margin-bottom:44px">Founding science.</h2>
+    <ul class="pub-list">
+      <li class="pub">
+        <div>
+          <div class="pub-title">Genome-scale barrier metrics for quantifying reversion risk in live-attenuated HSV-1 vaccine candidates</div>
+          <div class="pub-meta">Yuan S et al. &nbsp;·&nbsp; <em>In preparation</em> &nbsp;·&nbsp; 2026</div>
+        </div>
+        <div class="pub-tag">Forthcoming</div>
+      </li>
+      <li class="pub">
+        <div>
+          <div class="pub-title">Vaccination with the live-attenuated HSV-1 VC2 strain confers protection against HSV-1 and HSV-2 genital infections</div>
+          <div class="pub-meta">Stanfield BA, Kousoulas KG &nbsp;·&nbsp; <em>Vaccines</em> &nbsp;·&nbsp; 2021</div>
+        </div>
+        <div class="pub-tag">PMID 34452501</div>
+      </li>
+      <li class="pub">
+        <div>
+          <div class="pub-title">Increase in circulating poliovirus strains derived from oral poliovirus vaccine, 2017–2018</div>
+          <div class="pub-meta">Jorba J et al. &nbsp;·&nbsp; <em>MMWR</em> &nbsp;·&nbsp; 2019</div>
+        </div>
+        <div class="pub-tag">PMID 31725706</div>
+      </li>
+      <li class="pub">
+        <div>
+          <div class="pub-title">Herpes simplex virus type 2 vaccine candidates: covering the gaps</div>
+          <div class="pub-meta">Bernstein DI et al. &nbsp;·&nbsp; <em>Curr Opin Virol</em> &nbsp;·&nbsp; 2018</div>
+        </div>
+        <div class="pub-tag">PMID 30471955</div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer id="contact">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-name">Meridian Institute</div>
+      <p class="footer-desc">Independent computational research in live-attenuated vaccine safety science. Hong Kong Special Administrative Region.</p>
+    </div>
+    <div>
+      <p class="footer-contact-label">Research Enquiries</p>
+      <div class="footer-email">inquiry@meridianinstitute.org</div>
+      <div class="footer-address">
+        HKU-Pasteur Research Pole<br>
+        School of Public Health<br>
+        The University of Hong Kong<br>
+        Pokfulam, Hong Kong SAR
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    © 2026 Meridian Institute
+  </div>
+</footer>

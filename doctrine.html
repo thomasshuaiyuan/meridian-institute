@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="The rule I use to choose research problems — unfair access, a need with money attached, and a question a demonstration can settle — and where that rule was copied from.">
+<title>How I Choose What to Work On</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{
+  --paper:#faf8f4;--ink:#1c1c2e;--ink-2:#46465e;--ink-3:#8888a0;
+  --rule:#dedad0;--hair:rgba(28,28,46,0.08);
+  --amber:#b8832a;--amber-soft:rgba(184,131,42,0.13);
+  --teal:#1b7f8c;--flag:#bf4f68;
+  --display:"Cormorant Garamond",Georgia,serif;
+  --sans:"DM Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:15px;font-weight:300;line-height:1.75;-webkit-font-smoothing:antialiased}
+.sitenav{max-width:780px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:22px 0;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.sitenav span{display:flex;gap:20px;flex-wrap:wrap}
+.sitenav a{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);text-decoration:none}
+.sitenav a:hover{color:var(--amber)}
+.page{max-width:780px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:34px 80px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 14px}
+h1{font-family:var(--display);font-weight:300;font-size:clamp(28px,4.6vw,40px);line-height:1.17;
+  margin:0 0 20px;text-wrap:balance}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(20px,3vw,25px);line-height:1.25;
+  margin:0 0 12px;text-wrap:balance}
+p{color:var(--ink-2);max-width:62ch;margin:0 0 14px}
+p em{font-style:normal;color:var(--ink)}
+p b{color:var(--ink);font-weight:500}
+.lede{font-size:16.5px}
+section{border-top:1px solid var(--rule);padding-block:30px 0;margin-top:34px}
+section.open{border-top:0;padding-top:0;margin-top:26px}
+
+.venn{display:block;width:100%;height:auto;max-width:620px;margin:26px auto 10px}
+.vlabel{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;
+  fill:var(--ink-3)}
+.vcore{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  fill:var(--amber)}
+.vcap{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--ink-3);text-align:center;margin:0 auto 10px;max-width:52ch}
+
+ol.tests{list-style:none;counter-reset:t;padding:0;margin:20px 0 0}
+ol.tests li{counter-increment:t;border-top:1px solid var(--rule);padding:18px 0 0;margin:0 0 18px;
+  display:grid;grid-template-columns:42px 1fr;gap:0 16px}
+ol.tests li::before{content:counter(t,upper-roman);font-family:var(--mono);font-size:10px;
+  letter-spacing:.16em;color:var(--ink-3);padding-top:4px}
+ol.tests h3{font-family:var(--display);font-weight:400;font-size:18.5px;margin:0 0 5px;
+  line-height:1.3;color:var(--ink)}
+ol.tests p{margin:0;font-size:14.5px;grid-column:2}
+ol.tests .q{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--amber);margin-top:7px}
+
+.pull{border-left:2px solid var(--amber);padding-left:18px;margin:26px 0}
+.pull p{margin:0;color:var(--ink);font-family:var(--display);font-size:19px;line-height:1.45;
+  max-width:54ch}
+.caveat{border-left:2px solid var(--flag);padding-left:16px;margin:24px 0}
+.caveat p{margin:0;font-size:14.5px}
+.ship{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);border:1px solid var(--rule);border-radius:2px;padding:14px 16px;
+  line-height:1.9;margin:22px 0 0}
+.ship b{color:var(--amber);font-weight:400}
+a.inl{color:var(--amber);text-decoration:none;border-bottom:1px solid var(--amber-soft)}
+a.inl:hover{border-bottom-color:var(--amber)}
+.foot{margin-top:38px;border-top:1px solid var(--rule);padding-top:22px;font-size:14px}
+@media(max-width:560px){ol.tests li{grid-template-columns:1fr}ol.tests li::before{display:none}
+  ol.tests p{grid-column:1}}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <a href="index.html">&larr; Meridian Institute</a>
+  <span><a href="program.html">Research programme</a><a href="record.html">The record</a><a href="methods.html">Methods</a></span>
+</nav>
+
+<div class="page">
+  <p class="eyebrow">Doctrine &middot; v1 &middot; 8 November 2026</p>
+  <h1>How I choose what to work on.</h1>
+  <p class="lede">A research programme needs a rule for choosing problems, not a list of interests. Without one you drift toward whatever the field is currently excited about, which is the most crowded place to stand and the one where your particular advantages count for least.</p>
+  <p class="lede">This is the rule I use, what it is copied from, and the mechanism that is supposed to catch me when I break it.</p>
+
+  <section>
+    <h2>Three circles.</h2>
+    <p>I only take problems where three things overlap. Any two without the third is a trap I have watched people spend years in.</p>
+
+    <svg class="venn" viewBox="0 0 620 452" role="img" aria-label="Three overlapping circles labelled unfair access to the data, a need with money attached, and a question a demonstration can settle; the region where all three overlap is marked as where I work.">
+      <defs>
+        <clipPath id="cA"><circle cx="240" cy="178" r="115"/></clipPath>
+        <clipPath id="cB"><circle cx="380" cy="178" r="115"/></clipPath>
+      </defs>
+      <g clip-path="url(#cA)"><g clip-path="url(#cB)">
+        <circle cx="310" cy="298" r="115" fill="var(--amber)" opacity="0.26"/>
+      </g></g>
+      <circle cx="240" cy="178" r="115" fill="none" stroke="var(--ink-3)" stroke-width="1"/>
+      <circle cx="380" cy="178" r="115" fill="none" stroke="var(--ink-3)" stroke-width="1"/>
+      <circle cx="310" cy="298" r="115" fill="none" stroke="var(--ink-3)" stroke-width="1"/>
+      <text class="vlabel" x="128" y="48" text-anchor="middle">Unfair access</text>
+      <text class="vlabel" x="128" y="64" text-anchor="middle">to the data</text>
+      <text class="vlabel" x="492" y="48" text-anchor="middle">A need with</text>
+      <text class="vlabel" x="492" y="64" text-anchor="middle">money attached</text>
+      <text class="vlabel" x="310" y="440" text-anchor="middle">A question a demonstration can settle</text>
+      <text class="vcore" x="310" y="222" text-anchor="middle">Where I work</text>
+    </svg>
+    <p class="vcap">Access without a need is a hobby &middot; a need without access is consulting &middot; neither settles anything without a demonstration</p>
+
+    <p><b>Unfair access</b> means data or materials I can reach and most people cannot. Not better data &mdash; <em>differently available</em> data. The frontier of fashion and the frontier of access are different places, and only one of them is uncrowded.</p>
+    <p><b>A need with money attached</b> is the discipline that stops a programme becoming self-referential. If no one is willing to fund the answer, either the problem is not real or I have failed to find who it is real for.</p>
+    <p><b>A question a demonstration can settle</b> is the hardest of the three and the one most often skipped. If the only way to adjudicate my claim is for a specialist to trust my judgement, I have not built an instrument. I have built an opinion.</p>
+  </section>
+
+  <section>
+    <h2>Four tests, applied before anything starts.</h2>
+    <ol class="tests">
+      <li>
+        <h3>Does the archive exist before the theory needs it?</h3>
+        <p>Collect first, interpret later. An anomaly base built before you know what it is for is the thing that cannot be assembled retrospectively once you do.
+        <span class="q">If not &mdash; someone with better access gets there first</span></p>
+      </li>
+      <li>
+        <h3>Is there a fundamental question inside the applied one?</h3>
+        <p>Never take an applied problem with no fundamental core; never take a fundamental problem with no need attached. The need is what pays for the instrument, and the instrument is what answers the deeper question.
+        <span class="q">If not &mdash; it is contract work, and should be priced as such</span></p>
+      </li>
+      <li>
+        <h3>If the competing letter arrives tomorrow, is my dated disclosure already in place?</h3>
+        <p>Priority comes from dated artifacts, not from secrecy. Numbered documents and filed predictions are the mechanism, which is why <a class="inl" href="record.html">the record</a> is not housekeeping.
+        <span class="q">If not &mdash; the work exists but the claim does not</span></p>
+      </li>
+      <li>
+        <h3>Am I building the credibility base, or only the claim?</h3>
+        <p>The tedious, thorough, unglamorous work that makes a large claim undismissable is not a delay before the real thing. It is the reason the real thing survives contact with reviewers.
+        <span class="q">If not &mdash; the claim gets filed under ambitious and ignored</span></p>
+      </li>
+    </ol>
+  </section>
+
+  <section>
+    <h2>Where this was copied from.</h2>
+    <p>These are not my principles. I extracted them from how two people actually chose problems, which is a different exercise from admiring what they discovered.</p>
+    <p><b>Darwin</b> took a position nobody wanted &mdash; unpaid companion to a ship's captain, against his father's plan &mdash; because it was the door to data nobody else had. He collected before he theorised; the finches were not even labelled by island when he gathered them. He wrote the heresy down and dated it two decades before he published, which is the only reason priority survived a competing letter arriving in 1858. And he spent eight years on barnacles first, so that when the large claim came it could not be dismissed as the work of an amateur.</p>
+    <p><b>Pasteur</b> attacked a problem the field had declared closed, by reading the literature for the discrepancy everyone had stepped over. He took an industry's practical complaint and found a fundamental question inside it. He designed experiments to be read by people who were not scientists, and he pre-registered a protocol aloud, in front of a crowd, with the result declared in advance.</p>
+
+    <div class="caveat">
+      <p><b>The footnote that matters more than the example.</b> Historians later showed that Pasteur's record of that public trial was tidier than his actual practice. I keep the story anyway, and I keep the correction attached to it, because it makes the point better than the clean version would: the signed, pre-registered, publicly-read protocol is the standard precisely <em>because</em> even the person who invented the form cut corners behind it. The rules are not there for other people.</p>
+    </div>
+
+    <div class="pull">
+      <p>I am copying two decision procedures. I am not claiming a place in the tradition that produced them &mdash; that would be a status marker running well ahead of the evidence, which is the specific thing this doctrine forbids.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>The mode: new messengers, pointed at the past.</h2>
+    <p>When a field gets a genuinely new way of observing, it tends to find regularities nobody had predicted. Neutrino astronomy is the clean case: the prizes went for building the detector and seeing what could not previously be seen. The physics came after the instrument.</p>
+    <p>Molecular epidemiology reads one messenger almost exclusively &mdash; pathogen sequence &mdash; and infers the past from it. There are at least three others sitting largely unread:</p>
+    <p><b>The immune archive.</b> Every person carries a physical record of the pathogens they have met, written in their B and T cell repertoires and in serum antibody. That is the selective-pressure half of the fitness landscape, which every escape model currently parameterises by hand rather than measuring.</p>
+    <p><b>The pathology archive.</b> Fixed tissue blocks, archived sera, newborn blood spots, museum specimens &mdash; a century of pathogen evolution sitting in freezers and paraffin. Individual reconstructions have proved the substrate works. Nobody has industrialised it. The payoff is the one thing sequence-only inference can never have: direct observation of the past, against which clock assumptions can be falsified rather than compared to other inferences.</p>
+    <p><b>The exposure ledger.</b> Who received what, in how many doses, under what surveillance sensitivity and what sequencing coverage. This is detector calibration, and it has never been unified.</p>
+
+    <div class="ship">
+      <b>Filed as a prediction, not an ambition.</b><br>
+      A numbered archive prospectus &mdash; an inventory of what the accessible archives actually hold, the first question only an archive can answer, what access would require, and a shallow prototype &mdash; <b>by 8 November 2027</b>.<br>
+      It is scored on <a class="inl" href="record.html">the record</a> alongside everything else. If it does not exist by that date, that is a miss and it is recorded as one.
+    </div>
+    <p style="margin-top:16px">Until the prospectus exists, this section states a direction and nothing more. No archive access has been secured; no inventory has been made. I am publishing the intent because an intent with a date attached can fail in public, and an intent without one cannot.</p>
+  </section>
+
+  <section>
+    <h2>On status, stated plainly.</h2>
+    <p>A calibrated risk engine for pathogen evolution is infrastructure and standards work. In the comparison people reach for, it is NIST-grade, not Nobel-grade, and pretending otherwise is the characteristic failure of ambitious people. I would rather write that down than have a reviewer think it first.</p>
+    <p>There are two honest routes to something larger, and both are byproducts rather than goals. An instrument of this class may turn up a result only possible because the instrument exists. And if evolutionary forecasting ever becomes scored and institutionalised the way weather forecasting did, the validation scheme for rare events will be the hard and valuable part.</p>
+
+    <div class="pull">
+      <p>Aim the relentlessness at the artifact, not the category.</p>
+    </div>
+
+    <p>This is a rule because it cuts against temperament, not with it. The physicist who built the first solar neutrino detector saw thirty years of disagreement with theory before the field decided he had been right all along. The one who built a detector to find proton decay never found it; the thing it is remembered for was something else entirely. Darwin's own word for his passion was <em>collecting</em>, and he called it wretched. In each case greatness was residue &mdash; what was left after relentlessness aimed at a detector, an archive, a demonstration.</p>
+    <p>Passion aimed directly at greatness is unfalsifiable. No experiment tests it, no date resolves it, no annual scoring can mark it wrong. <a class="inl" href="record.html">The record</a> can score whether a specific paper exists by a specific December. It cannot score greatness, which is the reason it does not try.</p>
+  </section>
+
+  <section>
+    <h2>The freedom to fail, and why it has to be structural.</h2>
+    <p>Granting yourself permission to fail is worth nothing if there is no machinery that makes failure visible. The machinery here is four things: every document numbered, dated and designed to be superseded; every forward-looking claim filed with a date and a confidence and scored when it comes due; every plan written once from the future in which it failed; and the programme arranged so it survives its single worst outcome.</p>
+    <p>A correction is a success of the system rather than a failure of a person &mdash; but only if corrections actually appear. So: <b>at least one scored miss per year.</b> A register that records only hits is not evidence of accuracy. It is evidence that the scoring is not real.</p>
+    <p>What this does not license: unfalsifiable claims, undisclosed conflicts, status markers that outrun the evidence, and work aimed at the category rather than the artifact. The freedom to fail is the freedom to be wrong in public while telling the truth about where things stand. It is not the freedom to be vague.</p>
+    <p class="foot">Numbered, dated, and correctable. Supersede this document rather than quietly editing it &mdash; the changes are logged on <a class="inl" href="record.html">the record</a>.</p>
+  </section>
+</div>
+</body>
+</html>

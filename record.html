@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Dated predictions with the dates they resolve by, the corrections register, and what has been withdrawn — the scoring mechanism for Meridian's stated claims.">
+<title>Predictions and Corrections</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=DM+Sans:wght@300;400;500&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+:root{
+  --paper:#faf8f4;--ink:#1c1c2e;--ink-2:#46465e;--ink-3:#8888a0;
+  --rule:#dedad0;--hair:rgba(28,28,46,0.08);
+  --amber:#b8832a;--amber-soft:rgba(184,131,42,0.13);
+  --teal:#1b7f8c;--flag:#bf4f68;
+  --display:"Cormorant Garamond",Georgia,serif;
+  --sans:"DM Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#0f1621;--ink:#e4e0d8;--ink-2:#a8a4a0;--ink-3:#686878;
+  --rule:#252e3e;--hair:rgba(228,224,216,0.10);
+  --amber:#d4a855;--amber-soft:rgba(212,168,85,0.15);
+  --teal:#56c9d8;--flag:#e0738d;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:15px;font-weight:300;line-height:1.75;-webkit-font-smoothing:antialiased}
+.sitenav{max-width:860px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:22px 0;
+  display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.sitenav span{display:flex;gap:20px;flex-wrap:wrap}
+.sitenav a{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);text-decoration:none}
+.sitenav a:hover{color:var(--amber)}
+.page{max-width:860px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:34px 80px}
+.eyebrow{font-family:var(--mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 14px}
+h1{font-family:var(--display);font-weight:300;font-size:clamp(28px,4.6vw,40px);line-height:1.17;
+  margin:0 0 18px;text-wrap:balance}
+h2{font-family:var(--display);font-weight:400;font-size:clamp(19px,2.8vw,23px);margin:0 0 6px}
+p{color:var(--ink-2);max-width:64ch;margin:0 0 14px}
+p b{color:var(--ink);font-weight:500}
+section{border-top:1px solid var(--rule);padding-top:28px;margin-top:36px}
+.sub{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);margin:0 0 18px}
+
+.tw{overflow-x:auto;margin:0 0 10px}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
+th{font-family:var(--mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:400;text-align:left;padding:0 14px 8px 0;
+  border-bottom:1px solid var(--rule);vertical-align:bottom;white-space:nowrap}
+td{padding:14px 14px 14px 0;border-bottom:1px solid var(--rule);color:var(--ink-2);
+  vertical-align:top;line-height:1.62}
+td.d{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);white-space:nowrap;
+  font-variant-numeric:tabular-nums}
+td.c{font-family:var(--mono);font-size:11.5px;color:var(--ink-3);text-align:center}
+td b{color:var(--ink);font-weight:500}
+.pill{font-family:var(--mono);font-size:9px;letter-spacing:.11em;text-transform:uppercase;
+  border:1px solid var(--rule);border-radius:100px;padding:3px 9px;white-space:nowrap;
+  display:inline-block;color:var(--ink-3)}
+.pill.open{color:var(--amber);border-color:var(--amber)}
+.pill.miss{color:var(--flag);border-color:rgba(191,79,104,.5)}
+.pill.met{color:var(--teal);border-color:rgba(27,127,140,.45)}
+ul.crit{margin:8px 0 0;padding-left:17px;font-size:13.5px;color:var(--ink-3)}
+ul.crit li{margin-bottom:3px}
+
+.rules{border-left:2px solid var(--amber);padding-left:18px;margin:22px 0 0}
+.rules p{margin:0 0 10px;font-size:14.5px}
+.rules p:last-child{margin-bottom:0}
+.pend{border-left:2px solid var(--flag);padding-left:16px;margin:20px 0 0}
+.pend p{margin:0;font-size:14.5px}
+.note{font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--ink-3);line-height:1.9;margin:10px 0 0}
+a.inl{color:var(--amber);text-decoration:none;border-bottom:1px solid var(--amber-soft)}
+a.inl:hover{border-bottom-color:var(--amber)}
+</style>
+</head>
+<body>
+<nav class="sitenav">
+  <a href="index.html">&larr; Meridian Institute</a>
+  <span><a href="doctrine.html">Doctrine</a><a href="program.html">Research programme</a><a href="methods.html">Methods</a></span>
+</nav>
+
+<div class="page">
+  <p class="eyebrow">The record &middot; opened 8 November 2026</p>
+  <h1>What I said, and what became of it.</h1>
+  <p>Every forward-looking claim this programme makes is filed here with a date it resolves by. When that date arrives the claim is marked met or missed, and a miss is recorded with the same prominence as anything else. Corrections to published pages are logged below them.</p>
+  <p>This exists because the alternative is a programme that describes itself as rigorous and has no mechanism that could ever show otherwise. <a class="inl" href="doctrine.html">The doctrine</a> explains why the mechanism is the claim.</p>
+
+  <section>
+    <h2>Open predictions</h2>
+    <p class="sub">Dates do not move &middot; criteria are not restated</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Filed</th><th>Claim</th><th>Resolves by</th><th>Conf.</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="d">2026&#8209;11&#8209;03</td>
+            <td><b>The positioning claim.</b> It stands only if all four hold:
+              <ul class="crit">
+                <li>a published framework for quantifying reversion barriers in engineered live-attenuated constructs;</li>
+                <li>a published analysis of the regulatory gap in genetic-stability standards for live vaccines;</li>
+                <li>a faculty appointment or funded fellowship held for this programme;</li>
+                <li>at least one researcher outside Meridian running the barrier pipeline on a question of their own.</li>
+              </ul>
+              Fewer than four and the claim failed.</td>
+            <td class="d">2028&#8209;06&#8209;30</td>
+            <td class="c">&mdash;</td>
+            <td><span class="pill open">Open</span></td>
+          </tr>
+          <tr>
+            <td class="d">2026&#8209;11&#8209;08</td>
+            <td><b>The archive prospectus exists.</b> A numbered document inventorying what the accessible hospital archives and serum banks hold, naming the first question only an archive can answer, stating what access would require, and specifying a shallow prototype.</td>
+            <td class="d">2027&#8209;11&#8209;08</td>
+            <td class="c">&mdash;</td>
+            <td><span class="pill open">Open</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="note">Confidences are set when a prediction is filed. Both entries above predate this page and have not been assigned one; they will be before the next entry is added.</p>
+  </section>
+
+  <section>
+    <h2>Corrections</h2>
+    <p class="sub">Published pages changed after the fact, and why</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Date</th><th>What changed</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="d">2026&#8209;11&#8209;03</td>
+            <td><b>A construct I am a named inventor on was removed from the published comparator list.</b></td>
+            <td>The site had described the reversion-barrier analysis as ranking that construct. The pre-registration ranks four constructs developed by others and holds mine out. The error ran in the direction that flatters, on the pages about rigour.</td>
+          </tr>
+          <tr>
+            <td class="d">2026&#8209;11&#8209;03</td>
+            <td><b>Patent inventorship disclosed</b> in the founder biography and conflicts statement, in all languages.</td>
+            <td>The conflicts statement was incomplete without it. The application is published, not granted, and the page says so.</td>
+          </tr>
+          <tr>
+            <td class="d">2026&#8209;11&#8209;03</td>
+            <td><b>Corpus size, metric values and the ordering they produced removed</b> from every page.</td>
+            <td>Quantitative values had gone public ahead of the artifact that produces them. The standing rule is now that nothing quantitative appears before its preprint.</td>
+          </tr>
+          <tr>
+            <td class="d">2026&#8209;11&#8209;03</td>
+            <td><b>Institutional name corrected</b> in the Traditional Chinese pages.</td>
+            <td>The term used was not the institution's own. Small, but the register records small things too or it is not a register.</td>
+          </tr>
+          <tr>
+            <td class="d">2026&#8209;10&#8209;30</td>
+            <td><b>&ldquo;Independent&rdquo; removed</b> from the site's self-description.</td>
+            <td>Funding from a single commercial source is under consideration. The claim would not have survived it, so it came off before the funding arrived rather than after.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Withdrawn</h2>
+    <p class="sub">Work that did not survive its own checks</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th>Date</th><th>What was withdrawn</th><th>What it changed</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="d">pending</td>
+            <td><b>An early version of a comparative analysis.</b> Sequences from two influenza subtypes had been aligned together. Two findings that depended on that alignment did not survive separating them, and the analysis was withdrawn rather than patched.</td>
+            <td>Subtype separation is now verified and reported before every alignment, as a standing rule rather than a checklist item. No result from the withdrawn version was ever carried forward.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="pend">
+      <p><b>This entry is awaiting its date.</b> The register opened on 8 November 2026 and is being backfilled; where the date of an earlier event is not yet recovered from the logs it is marked pending rather than estimated.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>How this page works</h2>
+    <div class="rules">
+      <p><b>Dates do not move and criteria are not restated.</b> A claim whose deadline slides or whose conditions get rewritten after filing is not a prediction. It is a mission statement with a calendar attached.</p>
+      <p><b>A miss is published at the same size as a hit.</b> Nothing here is quietly deleted; a superseded entry stays with its replacement linked.</p>
+      <p><b>At least one scored miss per year.</b> If a year passes with none, the thing to doubt is not the accuracy &mdash; it is whether the scoring is real.</p>
+      <p><b>Corrections are a success of the system.</b> They are logged against the page that changed, dated, and never folded silently into a revision.</p>
+    </div>
+    <p class="note" style="margin-top:22px">Documents are numbered and dated and are superseded rather than edited. This page is the index of what has been superseded, corrected, or withdrawn.</p>
+  </section>
+</div>
+</body>
+</html>
